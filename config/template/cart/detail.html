@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Mon panier{% endblock %}
+
+{% block content %}
+
+<style>
+
+.clear-cart-btn {
+    display: block;
+    margin-bottom: 12px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 10px;
+    background: #3a1c22;
+    color: #ff7b89;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.clear-cart-btn:hover {
+    background: #4a222a;
+}
+
+</style>
+<section class="cart-page">
+
+    <div class="page-header">
+        <h1>Mon panier</h1>
+        <p>Retrouvez ici les formations et produits que vous souhaitez acheter.</p>
+    </div>
+
+
+    {% if items %}
+
+        <div class="cart-layout">
+
+            <!-- ========================= -->
+            <!-- LISTE DES ARTICLES -->
+            <!-- ========================= -->
+
+            <div class="cart-items">
+
+                {% for item in items %}
+
+                    <article class="cart-item">
+
+                        <!-- IMAGE -->
+                        <div class="cart-item-image">
+
+                            {% if item.product and item.product.image %}
+
+                                <img
+                                    src="{{ item.product.image.url }}"
+                                    alt="{{ item.product.name }}"
+                                >
+
+                            {% elif item.course and item.course.image %}
+
+                                <img
+                                    src="{{ item.course.image.url }}"
+                                    alt="{{ item.course.title }}"
+                                >
+
+                            {% else %}
+
+                                <div class="cart-placeholder">
+                                    🛍️
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- INFORMATIONS -->
+                        <div class="cart-item-info">
+
+                            {% if item.product %}
+
+                                <span class="category">
+                                    Produit
+                                </span>
+
+                                <h2>
+                                    {{ item.product.name }}
+                                </h2>
+
+                                <p>
+                                    {{ item.product.description|truncatewords:15 }}
+                                </p>
+
+                                <strong>
+                                    {{ item.product.price|floatformat:0 }} FCFA
+                                </strong>
+
+
+                            {% elif item.course %}
+
+                                <span class="category">
+                                    Formation
+                                </span>
+
+                                <h2>
+                                    {{ item.course.title }}
+                                </h2>
+
+                                <p>
+                                    {{ item.course.description|truncatewords:15 }}
+                                </p>
+
+                                <strong>
+                                    {{ item.course.price|floatformat:0 }} FCFA
+                                </strong>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- QUANTITÉ -->
+                        <div class="cart-item-actions">
+
+                            <div class="quantity-controls">
+
+                                <a
+                                    href="{% url 'decrease_quantity' item.pk %}"
+                                    class="quantity-btn"
+                                >
+                                    −
+                                </a>
+
+                                <span class="quantity">
+                                    {{ item.quantity }}
+                                </span>
+
+                                <a
+                                    href="{% url 'increase_quantity' item.pk %}"
+                                    class="quantity-btn"
+                                >
+                                    +
+                                </a>
+
+                            </div>
+
+
+                            <!-- SOUS-TOTAL -->
+                            <div class="item-subtotal">
+
+                                {% if item.product %}
+
+                                    <strong>
+                                        {% widthratio item.product.price 1 item.quantity %}
+                                        FCFA
+                                    </strong>
+
+                                {% elif item.course %}
+
+                                    <strong>
+                                        {% widthratio item.course.price 1 item.quantity %}
+                                        FCFA
+                                    </strong>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- SUPPRIMER -->
+                            <a
+                                href="{% url 'remove_from_cart' item.pk %}"
+                                class="remove-btn"
+                            >
+                                Supprimer
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- RÉSUMÉ DU PANIER -->
+            <!-- ========================= -->
+
+            <aside class="cart-summary">
+
+                <h2>Résumé de la commande</h2>
+
+                <div class="summary-line">
+
+                    <span>
+                        Articles
+                    </span>
+
+                    <strong>
+                        {{ items|length }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-line total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        {{ total|floatformat:0 }} FCFA
+                    </strong>
+
+                </div>
+<a
+    href="{% url 'clear_cart' %}"
+    class="clear-cart-btn"
+    onclick="return confirm('Voulez-vous vraiment vider votre panier ?');"
+>
+    🗑️ Vider le panier
+</a>
+
+                <a
+                    href="{% url 'create_order' %}"
+                    class="btn-primary checkout-btn"
+                >
+                    Passer la commande
+                </a>
+
+
+                <a
+                    href="{% url 'course_list' %}"
+                    class="continue-shopping"
+                >
+                    ← Continuer mes achats
+                </a>
+
+            </aside>
+
+        </div>
+
+
+    {% else %}
+
+        <!-- ========================= -->
+        <!-- PANIER VIDE -->
+        <!-- ========================= -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🛒
+            </div>
+
+            <h2>
+                Votre panier est vide
+            </h2>
+
+            <p>
+                Ajoutez une formation ou un produit pour commencer.
+            </p>
+
+            <div class="empty-actions">
+
+                <a
+                    href="{% url 'course_list' %}"
+                    class="btn-primary"
+                >
+                    Voir les formations
+                </a>
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="btn-secondary"
+                >
+                    Voir les produits
+                </a>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}
+Devenir formateur — FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section class="trainer-page">
+
+    <div class="trainer-card">
+
+        <div class="trainer-header">
+
+            <span class="section-label">
+                FORMA SHOP
+            </span>
+
+            <h1>
+                Devenir formateur
+            </h1>
+
+            <p>
+                Partagez vos connaissances, créez vos formations
+                et aidez d'autres personnes à progresser.
+            </p>
+
+        </div>
+
+
+        <form method="POST" class="trainer-form">
+
+            {% csrf_token %}
+
+
+            <div class="trainer-form-group">
+
+                <label for="full_name">
+                    Nom complet
+                </label>
+
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    placeholder="Ex : Roland Mezatsa"
+                    required
+                >
+
+            </div>
+
+
+            <div class="trainer-form-group">
+
+                <label for="phone">
+                    Numéro de téléphone
+                </label>
+
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    placeholder="Ex : 6XXXXXXXX"
+                    required
+                >
+
+            </div>
+
+
+            <div class="trainer-form-group">
+
+                <label for="expertise">
+                    Domaine d'expertise
+                </label>
+
+                <input
+                    type="text"
+                    id="expertise"
+                    name="expertise"
+                    placeholder="Ex : Python, Laravel, Réseaux..."
+                    required
+                >
+
+            </div>
+
+
+            <div class="trainer-form-group">
+
+                <label for="description">
+                    Présentez-vous
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Expliquez votre expérience, vos compétences et ce que vous souhaitez enseigner..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="trainer-submit"
+            >
+                Envoyer ma candidature →
+            </button>
+
+        </form>
+
+
+        <div class="trainer-footer">
+
+            <p>
+                Votre candidature sera examinée par notre équipe.
+            </p>
+
+            <a href="{% url 'home' %}">
+                ← Retour à l'accueil
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

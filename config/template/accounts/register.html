@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Créer un compte — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="auth-page">
+
+    <div class="auth-card">
+
+        <span class="section-label">FORMASHOP</span>
+
+        <h1>Créer un compte</h1>
+
+        <p class="auth-subtitle">
+            Créez votre compte pour accéder aux formations,
+            produits et commandes.
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="btn-primary auth-button">
+                Créer mon compte
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+            Vous avez déjà un compte ?
+            <a href="{% url 'login' %}">
+                Se connecter
+            </a>
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

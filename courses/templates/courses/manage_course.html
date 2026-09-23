@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Gérer {{ course.title }} - FormaShop{% endblock %}
+
+{% block content %}
+
+<div class="manage-page">
+
+    <div class="manage-container">
+
+        <a href="{% url 'trainer_courses' %}" class="back-link">
+            ← Mes formations
+        </a>
+
+        <div class="manage-header">
+
+            <div>
+                <span>ESPACE FORMATEUR</span>
+                <h1>{{ course.title }}</h1>
+                <p>Gérez le contenu de votre formation.</p>
+            </div>
+
+            <a
+                href="{% url 'create_lesson' course.id %}"
+                class="add-button"
+            >
+                + Ajouter une leçon
+            </a>
+
+        </div>
+
+
+        <div class="stats">
+
+            <div>
+                <strong>{{ lessons.count }}</strong>
+                <span>Leçons</span>
+            </div>
+
+            <div>
+                <strong>{{ course.students.count }}</strong>
+                <span>Étudiants</span>
+            </div>
+
+            <div>
+                <strong>{{ course.price }}</strong>
+                <span>Prix</span>
+            </div>
+
+        </div>
+
+
+        <div class="lessons-section">
+
+            <h2>Leçons de la formation</h2>
+
+            {% if lessons %}
+
+                {% for lesson in lessons %}
+
+                    <div class="lesson-card">
+
+                        <div class="lesson-number">
+                            {{ forloop.counter }}
+                        </div>
+
+                        <div class="lesson-info">
+
+                            <h3>{{ lesson.title }}</h3>
+
+                            {% if lesson.video_url %}
+                                <span class="video-badge">
+                                    ● Vidéo disponible
+                                </span>
+                            {% else %}
+                                <span class="no-video-badge">
+                                    Pas de vidéo
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    <h3>Aucune leçon</h3>
+                    <p>Commencez par ajouter votre première leçon.</p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.manage-page {
+    min-height: 85vh;
+    padding: 45px 20px 80px;
+    background: #080b12;
+    color: white;
+}
+
+.manage-container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+.back-link {
+    color: #929bad;
+    text-decoration: none;
+}
+
+.manage-header {
+    margin-top: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.manage-header span {
+    color: #7c5cff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.manage-header h1 {
+    margin: 8px 0;
+    font-size: 38px;
+}
+
+.manage-header p {
+    color: #858ea0;
+}
+
+.add-button {
+    background: #7c5cff;
+    color: white;
+    text-decoration: none;
+    padding: 13px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 35px 0;
+}
+
+.stats div {
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 14px;
+    padding: 22px;
+}
+
+.stats strong {
+    display: block;
+    font-size: 24px;
+}
+
+.stats span {
+    color: #7f899b;
+    font-size: 13px;
+}
+
+.lessons-section {
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 18px;
+    padding: 28px;
+}
+
+.lessons-section h2 {
+    margin-top: 0;
+}
+
+.lesson-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 0;
+    border-top: 1px solid #252b3a;
+}
+
+.lesson-number {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(124,92,255,.12);
+    color: #9a86ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.lesson-info h3 {
+    margin: 0 0 8px;
+}
+
+.video-badge {
+    color: #75d99a;
+    font-size: 13px;
+}
+
+.no-video-badge {
+    color: #7f899b;
+    font-size: 13px;
+}
+
+.empty {
+    padding: 40px 0;
+    text-align: center;
+    color: #858ea0;
+}
+
+@media (max-width: 700px) {
+
+    .manage-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+{% endblock %}

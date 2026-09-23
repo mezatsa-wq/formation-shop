@@ -1,0 +1,133 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+.page {
+    min-height: 100vh;
+    padding: 50px 20px;
+}
+
+.form-container {
+    width: min(750px, 100%);
+    margin: auto;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .06);
+}
+
+.form-header {
+    margin-bottom: 30px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #e9eefc;
+    color: #3155c7;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.form-header h1 {
+    font-size: 32px;
+    margin: 15px 0 8px;
+}
+
+.form-header p {
+    color: #737c8f;
+}
+
+.field {
+    margin-bottom: 23px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.form-control {
+    width: 100%;
+    border: 1px solid #dfe4ed;
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: .2s;
+}
+
+.form-control:focus {
+    border-color: #3155c7;
+    box-shadow: 0 0 0 3px rgba(49, 85, 199, .1);
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+small {
+    display: block;
+    margin-top: 7px;
+    color: #8a92a2;
+}
+
+.error {
+    margin-top: 7px;
+    color: #d63636;
+    font-size: 14px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.cancel-button,
+.submit-button {
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background: #f0f2f5;
+    color: #3f4858;
+}
+
+.submit-button {
+    border: none;
+    background: #3155c7;
+    color: white;
+}
+
+@media (max-width: 600px) {
+
+    .form-container {
+        padding: 25px 20px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .cancel-button,
+    .submit-button {
+        width: 100%;
+        text-align: center;
+    }
+}

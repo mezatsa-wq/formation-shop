@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Formations — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="listing-hero">
+    <div>
+        <span class="section-label">APPRENDRE</span>
+
+        <h1>Nos formations</h1>
+
+        <p>
+            Développez vos compétences avec nos formations
+            pratiques et accessibles.
+        </p>
+    </div>
+</section>
+
+
+<section class="section">
+
+    <div class="listing-header">
+
+        <div>
+            <h2>Toutes les formations</h2>
+
+            <span>
+                {{ courses|length }} formation{{ courses|length|pluralize }}
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        {% for course in courses %}
+
+        <article class="course-card">
+
+            {% if course.image %}
+
+                <img
+                    src="{{ course.image.url }}"
+                    alt="{{ course.title }}"
+                >
+
+            {% else %}
+
+                <div class="placeholder-image">
+                    🎓
+                </div>
+
+            {% endif %}
+
+
+            <div class="card-content">
+
+                <span class="category">
+                    {{ course.category.name }}
+                </span>
+
+                <h3>
+                    {{ course.title }}
+                </h3>
+
+                <p>
+                    {{ course.description|truncatewords:20 }}
+                </p>
+
+
+                <div class="card-bottom">
+
+                    <strong>
+                        {{ course.price|floatformat:0 }} FCFA
+                    </strong>
+
+                    <a
+                        href="{% url 'course_detail' course.slug %}"
+                    >
+                        Découvrir →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div class="empty-state">
+
+            <div>🎓</div>
+
+            <h3>Aucune formation disponible</h3>
+
+            <p>
+                Les formations seront bientôt disponibles.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

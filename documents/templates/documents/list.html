@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}
+Documents — FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">
+                RESSOURCES
+            </span>
+
+            <h2>
+                Documents disponibles
+            </h2>
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        {% for document in documents %}
+
+            <article class="course-card">
+
+                <div class="placeholder-image">
+                    📄
+                </div>
+
+                <div class="card-content">
+
+                    <span class="category">
+                        Document
+                    </span>
+
+                    <h3>
+                        {{ document.title }}
+                    </h3>
+
+                    <p>
+                        {{ document.description|truncatewords:20 }}
+                    </p>
+
+                    <div class="card-bottom">
+
+                        <strong>
+                            {{ document.token_price }} jetons
+                        </strong>
+
+                        <a href="{% url 'document_detail' document.id %}">
+                            Voir →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <p>
+                Aucun document disponible pour le moment.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

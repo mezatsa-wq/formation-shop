@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block title %}
+Paiement — {{ course.title }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.payment-page {
+    min-height: 75vh;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.payment-card {
+    width: 100%;
+    max-width: 650px;
+    padding: 42px;
+    background: #111622;
+    border: 1px solid #2b3345;
+    border-radius: 28px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.payment-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: rgba(124,92,255,.15);
+    border: 1px solid rgba(124,92,255,.35);
+    font-size: 30px;
+}
+
+.payment-header h1 {
+    margin: 0;
+    color: white;
+    font-size: 32px;
+}
+
+.payment-header p {
+    color: #8f98aa;
+    margin-top: 10px;
+}
+
+.payment-course {
+    padding: 24px;
+    margin-bottom: 30px;
+    border-radius: 18px;
+    background: #181e2b;
+    border: 1px solid #2b3447;
+}
+
+.payment-course span {
+    color: #8d96a9;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.payment-course h2 {
+    color: white;
+    margin: 8px 0 15px;
+    font-size: 21px;
+}
+
+.payment-price {
+    color: #9d89ff;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.payment-form h3 {
+    color: white;
+    margin-bottom: 18px;
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.payment-method {
+    min-height: 90px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    box-sizing: border-box;
+    background: #181e2b;
+    border: 1px solid #30394d;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.payment-method:hover {
+    border-color: #7c5cff;
+    transform: translateY(-3px);
+}
+
+.payment-method input {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0;
+    accent-color: #7c5cff;
+}
+
+.payment-method strong {
+    display: block;
+    color: white;
+    font-size: 14px;
+}
+
+.payment-method small {
+    display: block;
+    margin-top: 5px;
+    color: #7f899d;
+}
+
+.payment-field {
+    margin-bottom: 25px;
+}
+
+.payment-field label {
+    display: block;
+    margin-bottom: 9px;
+    color: #e5e8ef;
+    font-weight: 600;
+}
+
+.payment-field input {
+    width: 100% !important;
+    height: 55px;
+    box-sizing: border-box;
+    padding: 0 17px;
+    background: #181e2b !important;
+    color: white !important;
+    border: 1px solid #30394d !important;
+    border-radius: 13px;
+    outline: none;
+    font-size: 15px;
+}
+
+.payment-field input:focus {
+    border-color: #7c5cff !important;
+    box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+}
+
+.payment-button {
+    width: 100% !important;
+    height: 56px;
+    border: 0 !important;
+    border-radius: 14px;
+    background: linear-gradient(135deg,#7c5cff,#6040e5) !important;
+    color: white !important;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.payment-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(124,92,255,.3);
+}
+
+@media (max-width: 650px) {
+
+    .payment-card {
+        padding: 25px 18px;
+    }
+
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-header h1 {
+        font-size: 26px;
+    }
+}
+
+</style>
+
+
+<div class="payment-page">
+
+    <div class="payment-card">
+
+        <div class="payment-header">
+
+            <div class="payment-icon">
+                💳
+            </div>
+
+            <h1>
+                Paiement de la formation
+            </h1>
+
+            <p>
+                Finalisez votre inscription en toute simplicité.
+            </p>
+
+        </div>
+
+
+        <div class="payment-course">
+
+            <span>Formation</span>
+
+            <h2>
+                {{ course.title }}
+            </h2>
+
+            <div class="payment-price">
+                {{ course.price }} FCFA
+            </div>
+
+        </div>
+
+
+        <form method="POST" class="payment-form">
+
+    {% csrf_token %}
+
+    <h3>
+        1. Choisissez votre moyen de paiement
+    </h3>
+
+    <div class="payment-methods">
+
+        <label class="payment-method">
+
+            <input
+                type="radio"
+                name="method"
+                value="mtn"
+                required
+                onchange="showPaymentNumber('mtn')"
+            >
+
+            <div>
+                <strong>
+                    MTN Mobile Money
+                </strong>
+
+                <small>
+                    Paiement avec MTN
+                </small>
+            </div>
+
+        </label>
+
+
+        <label class="payment-method">
+
+            <input
+                type="radio"
+                name="method"
+                value="orange"
+                required
+                onchange="showPaymentNumber('orange')"
+            >
+
+            <div>
+                <strong>
+                    Orange Money
+                </strong>
+
+                <small>
+                    Paiement avec Orange
+                </small>
+            </div>
+
+        </label>
+
+    </div>
+
+
+    <!-- INSTRUCTIONS DE PAIEMENT -->
+
+    <div
+        id="payment-instructions"
+        style="
+            display:none;
+            margin-bottom:25px;
+            padding:22px;
+            border-radius:18px;
+            background:#181e2b;
+            border:1px solid #30394d;
+        "
+    >
+
+        <h3 style="margin-top:0;">
+            2. Effectuez le dépôt
+        </h3>
+
+        <p style="color:#9299aa; line-height:1.6;">
+            Envoyez exactement le montant suivant au numéro
+            indiqué ci-dessous.
+        </p>
+
+
+        <div
+            id="mtn-payment"
+            style="display:none;"
+        >
+
+            <p style="color:#9299aa;">
+                Numéro MTN Mobile Money
+            </p>
+
+            <strong
+                style="
+                    display:block;
+                    color:#ffffff;
+                    font-size:24px;
+                    margin-bottom:10px;
+                "
+            >
+                654454429
+            </strong>
+
+        </div>
+
+
+        <div
+            id="orange-payment"
+            style="display:none;"
+        >
+
+            <p style="color:#9299aa;">
+                Numéro Orange Money
+            </p>
+
+            <strong
+                style="
+                    display:block;
+                    color:#ffffff;
+                    font-size:24px;
+                    margin-bottom:10px;
+                "
+            >
+                694452058
+            </strong>
+
+        </div>
+
+
+        <div
+            style="
+                margin-top:15px;
+                padding:14px;
+                border-radius:12px;
+                background:rgba(124,92,255,.10);
+                color:#b9adff;
+            "
+        >
+            💰 Montant à envoyer :
+            <strong>
+                {{ course.price }} FCFA
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- NUMERO DU CLIENT -->
+
+    <div class="payment-field">
+
+        <label for="phone_number">
+            3. Votre numéro de téléphone
+        </label>
+
+        <input
+            type="text"
+            id="phone_number"
+            name="phone_number"
+            placeholder="6XXXXXXXX"
+            required
+        >
+
+        <small
+            style="
+                display:block;
+                margin-top:8px;
+                color:#777f92;
+            "
+        >
+            Indiquez le numéro depuis lequel vous avez effectué
+            le dépôt.
+        </small>
+
+    </div>
+
+
+    <button
+        type="submit"
+        class="payment-button"
+    >
+        J'ai effectué le paiement
+    </button>
+
+</form>
+
+
+<script>
+
+function showPaymentNumber(method) {
+
+    const instructions =
+        document.getElementById("payment-instructions");
+
+    const mtn =
+        document.getElementById("mtn-payment");
+
+    const orange =
+        document.getElementById("orange-payment");
+
+
+    instructions.style.display = "block";
+
+    mtn.style.display = "none";
+
+    orange.style.display = "none";
+
+
+    if (method === "mtn") {
+
+        mtn.style.display = "block";
+
+    }
+
+    if (method === "orange") {
+
+        orange.style.display = "block";
+
+    }
+
+}
+
+</script>
+    </div>
+</div>
+
+{% endblock %}

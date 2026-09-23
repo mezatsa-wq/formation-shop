@@ -1,0 +1,248 @@
+/* ================================
+   FormaShop Django Admin
+================================ */
+
+:root {
+    --fs-purple: #7c5cff;
+    --fs-purple-light: #9b84ff;
+    --fs-bg: #080b12;
+    --fs-card: #10141d;
+    --fs-card-2: #151a24;
+    --fs-border: #252b38;
+    --fs-text: #f5f5f7;
+    --fs-muted: #9298a5;
+}
+
+
+/* ================================
+   PAGE
+================================ */
+
+body {
+    background: var(--fs-bg) !important;
+    color: var(--fs-text);
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+#header {
+    background: #0d1119 !important;
+    border-bottom: 1px solid var(--fs-border);
+    padding: 16px 28px;
+}
+
+
+#header a:link,
+#header a:visited {
+    color: var(--fs-text);
+}
+
+
+/* ================================
+   LOGO
+================================ */
+
+.formashop-admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.formashop-admin-brand a {
+    font-size: 25px;
+    font-weight: 800;
+    text-decoration: none;
+    color: white !important;
+}
+
+.formashop-admin-brand a span {
+    color: var(--fs-purple);
+}
+
+.formashop-admin-brand small {
+    color: var(--fs-muted);
+    font-size: 13px;
+}
+
+
+/* ================================
+   USER / HEADER LINKS
+================================ */
+
+#user-tools {
+    color: var(--fs-muted);
+}
+
+#user-tools a {
+    color: #ffffff !important;
+}
+
+#user-tools a:hover {
+    color: var(--fs-purple-light) !important;
+}
+
+
+/* ================================
+   SIDEBAR
+================================ */
+
+#nav-sidebar {
+    background: #0d1119;
+    border-right: 1px solid var(--fs-border);
+}
+
+#nav-sidebar a {
+    color: #c9cdd5;
+}
+
+#nav-sidebar a:hover {
+    color: white;
+    background: rgba(124, 92, 255, 0.12);
+}
+
+
+/* ================================
+   CONTENT
+================================ */
+
+#content {
+    padding: 30px;
+}
+
+#content h1 {
+    color: white;
+    font-weight: 800;
+}
+
+
+/* ================================
+   MODULES / TABLES
+================================ */
+
+.module,
+#changelist,
+.inline-group {
+    background: var(--fs-card) !important;
+    border: 1px solid var(--fs-border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+
+.module h2,
+.module caption {
+    background: #151a24 !important;
+    color: white !important;
+}
+
+
+/* ================================
+   TABLE
+================================ */
+
+#result_list {
+    background: var(--fs-card);
+}
+
+#result_list thead th {
+    background: #151a24;
+}
+
+#result_list tbody tr {
+    background: var(--fs-card);
+}
+
+#result_list tbody tr:hover {
+    background: rgba(124, 92, 255, 0.08);
+}
+
+#result_list td,
+#result_list th {
+    border-color: var(--fs-border);
+}
+
+#result_list a {
+    color: var(--fs-purple-light);
+}
+
+
+/* ================================
+   BUTTONS
+================================ */
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+    background: var(--fs-purple) !important;
+    border-radius: 9px !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 700;
+}
+
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.submit-row input:hover,
+a.button:hover {
+    background: var(--fs-purple-light) !important;
+}
+
+
+/* ================================
+   FORMULAIRES
+================================ */
+
+input,
+textarea,
+select {
+    background: #0b0f17 !important;
+    color: white !important;
+    border: 1px solid var(--fs-border) !important;
+    border-radius: 8px !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--fs-purple) !important;
+    outline: none;
+}
+
+
+/* ================================
+   BREADCRUMBS
+================================ */
+
+div.breadcrumbs {
+    background: #10141d !important;
+    color: var(--fs-muted);
+    border-bottom: 1px solid var(--fs-border);
+}
+
+div.breadcrumbs a {
+    color: var(--fs-purple-light);
+}
+
+
+/* ================================
+   MESSAGES
+================================ */
+
+.messagelist li {
+    border-radius: 10px;
+}
+
+
+/* ================================
+   FOOTER
+================================ */
+
+#footer {
+    color: var(--fs-muted);
+}

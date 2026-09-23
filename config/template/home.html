@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}
+FormaShop — Apprendre et acheter
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="badge">
+            🚀 La marketplace nouvelle génération
+        </span>
+
+        <h1>
+            Apprenez.
+            <span>Créez.</span>
+            Évoluez.
+        </h1>
+
+        <p>
+            Découvrez des formations professionnelles,
+            des produits utiles et des ressources
+            sélectionnées pour vous aider à progresser.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="{% url 'course_list' %}" class="primary-btn">
+                Découvrir les formations →
+            </a>
+
+            <a href="{% url 'product_list' %}" class="secondary-btn">
+                Explorer les produits
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-card">
+
+        <div class="floating-card card-one">
+            🎓
+            <strong>Formation</strong>
+            <span>Django professionnel</span>
+        </div>
+
+        <div class="floating-card card-two">
+            🛍️
+            <strong>Produit</strong>
+            <span>Nouveautés</span>
+        </div>
+
+        <div class="hero-circle">
+            <span>FS</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="stats">
+
+    <div>
+        <strong>{{ courses_count }}</strong>
+        <span>Formations</span>
+    </div>
+
+    <div>
+        <strong>{{ products_count }}</strong>
+        <span>Produits</span>
+    </div>
+
+    <div>
+        <strong>24/7</strong>
+        <span>Accès</span>
+    </div>
+
+    <div>
+        <strong>100%</strong>
+        <span>Sécurisé</span>
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="section-heading">
+        <div>
+            <span class="section-label">APPRENDRE</span>
+
+            <h2>
+                Formations populaires
+            </h2>
+        </div>
+
+        <a href="{% url 'course_list' %}">
+            Voir toutes →
+        </a>
+    </div>
+
+
+    <div class="cards">
+
+        {% for course in courses %}
+
+        <article class="course-card">
+
+            {% if course.image %}
+                <img src="{{ course.image.url }}" alt="{{ course.title }}">
+            {% else %}
+                <div class="placeholder-image">
+                    🎓
+                </div>
+            {% endif %}
+
+            <div class="card-content">
+
+                <span class="category">
+                    {{ course.category.name }}
+                </span>
+
+                <h3>
+                    {{ course.title }}
+                </h3>
+
+                <p>
+                    {{ course.description|truncatewords:18 }}
+                </p>
+
+                <div class="card-bottom">
+
+                    <strong>
+                        {{ course.price }} FCFA
+                    </strong>
+
+                    <a href="{% url 'course_detail' course.slug %}">
+                        Voir →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <p>Aucune formation disponible pour le moment.</p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<section class="section products-section">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">
+                BOUTIQUE
+            </span>
+
+            <h2>
+                Produits populaires
+            </h2>
+        </div>
+
+        <a href="{% url 'product_list' %}">
+            Voir tous →
+        </a>
+
+    </div>
+
+
+    <div class="cards">
+
+        {% for product in products %}
+
+        <article class="product-card">
+
+            {% if product.image %}
+
+                <img
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+
+            {% else %}
+
+                <div class="placeholder-image">
+                    🛍️
+                </div>
+
+            {% endif %}
+
+
+            <div class="card-content">
+
+                <span class="category">
+                    {{ product.category.name }}
+                </span>
+
+                <h3>
+                    {{ product.name }}
+                </h3>
+
+                <p>
+                    {{ product.description|truncatewords:15 }}
+                </p>
+
+                <div class="card-bottom">
+
+                    <strong>
+                        {{ product.price }} FCFA
+                    </strong>
+
+                    <a href="{% url 'product_detail' product.id %}">
+                        Voir →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <p>
+            Aucun produit disponible.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

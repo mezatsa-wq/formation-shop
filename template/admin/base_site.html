@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+
+{% load static %}
+
+{% block title %}
+    FormaShop Administration
+{% endblock %}
+
+{% block branding %}
+<div class="formashop-admin-brand">
+
+    <a href="{% url 'admin:index' %}">
+        Forma<span>Shop</span>
+    </a>
+
+    <small>
+        Administration
+    </small>
+
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'admin/css/custom_admin.css' %}"
+    >
+{% endblock %}

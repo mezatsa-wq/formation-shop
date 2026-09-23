@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+{% block title %}Mes formations créées - FormaShop{% endblock %}
+
+{% block content %}
+
+<div class="trainer-courses-page">
+
+    <div class="trainer-container">
+
+        <a href="{% url 'trainer_dashboard' %}" class="back-link">
+            ← Tableau de bord
+        </a>
+
+        <div class="page-heading">
+
+            <span>ESPACE FORMATEUR</span>
+
+            <h1>Mes formations</h1>
+
+            <p>
+                Gérez les formations que vous avez créées.
+            </p>
+
+        </div>
+
+
+        {% if courses %}
+
+            <div class="courses-grid">
+
+                {% for course in courses %}
+
+                    <div class="course-card">
+
+                        {% if course.image %}
+                            <img
+                                src="{{ course.image.url }}"
+                                alt="{{ course.title }}"
+                            >
+                        {% else %}
+                            <div class="course-placeholder">
+                                FORMATION
+                            </div>
+                        {% endif %}
+
+
+                        <div class="course-body">
+
+                            <div class="course-status">
+                                {% if course.is_published %}
+                                    Publiée
+                                {% else %}
+                                    Brouillon
+                                {% endif %}
+                            </div>
+
+                            <h2>{{ course.title }}</h2>
+
+                            <div class="course-stats">
+
+                                <div>
+                                    <strong>
+                                        {{ course.students.count }}
+                                    </strong>
+                                    <span>Étudiants</span>
+                                </div>
+
+                                <div>
+                                    <strong>{{ course.price }}</strong>
+                                    <span>Prix</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="course-actions">
+
+                                <a
+                                    href="{% url 'course_detail' course.slug %}"
+                                    class="view-button"
+                                >
+                                    Voir
+                                </a>
+
+                                <a
+                                    href="{% url 'manage_course' course.id %}"
+                                    class="manage-button"
+                                >
+                                    Gérer
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div>📚</div>
+
+                <h2>Aucune formation</h2>
+
+                <p>
+                    Vous n'avez pas encore créé de formation.
+                </p>
+
+                <a href="{% url 'create_course' %}">
+                    Créer ma première formation
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<style>
+
+.trainer-courses-page {
+    min-height: 85vh;
+    padding: 45px 20px 80px;
+    background: #080b12;
+    color: white;
+}
+
+.trainer-container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.back-link {
+    color: #9ca4b5;
+    text-decoration: none;
+}
+
+.page-heading {
+    margin: 35px 0;
+}
+
+.page-heading span {
+    color: #7c5cff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.page-heading h1 {
+    font-size: 40px;
+    margin: 8px 0;
+}
+
+.page-heading p {
+    color: #8790a1;
+}
+
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+
+.course-card {
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+
+.course-card img,
+.course-placeholder {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+}
+
+
+.course-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #181e2b;
+    color: #7c5cff;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+
+.course-body {
+    padding: 22px;
+}
+
+
+.course-status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: rgba(124,92,255,.12);
+    color: #9c89ff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.course-body h2 {
+    margin: 14px 0 20px;
+    font-size: 20px;
+}
+
+
+.course-stats {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 22px;
+}
+
+
+.course-stats strong {
+    display: block;
+    font-size: 18px;
+}
+
+
+.course-stats span {
+    color: #737d90;
+    font-size: 12px;
+}
+
+
+.course-actions {
+    display: flex;
+    gap: 10px;
+}
+
+
+.view-button,
+.manage-button {
+    flex: 1;
+    text-align: center;
+    padding: 11px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+
+.view-button {
+    background: #1b2230;
+    color: white;
+}
+
+
+.manage-button {
+    background: #7c5cff;
+    color: white;
+}
+
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 20px;
+}
+
+
+.empty-state div {
+    font-size: 45px;
+}
+
+
+.empty-state p {
+    color: #858e9f;
+}
+
+
+.empty-state a {
+    display: inline-block;
+    margin-top: 15px;
+    background: #7c5cff;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 9px;
+    text-decoration: none;
+}
+
+
+@media (max-width: 850px) {
+    .courses-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+@media (max-width: 550px) {
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+{% endblock %}

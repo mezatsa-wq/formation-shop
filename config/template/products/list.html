@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Produits — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="listing-hero">
+
+    <div>
+
+        <span class="section-label">
+            BOUTIQUE
+        </span>
+
+        <h1>Nos produits</h1>
+
+        <p>
+            Découvrez notre sélection de produits
+            disponibles sur FormaShop.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <div class="listing-header">
+
+        <div>
+
+            <h2>Tous les produits</h2>
+
+            <span>
+                {{ products|length }} produit{{ products|length|pluralize }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        {% for product in products %}
+
+        <article class="product-card">
+
+            {% if product.image %}
+
+                <img
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+
+            {% else %}
+
+                <div class="placeholder-image">
+                    🛍️
+                </div>
+
+            {% endif %}
+
+
+            <div class="card-content">
+
+                <span class="category">
+                    {{ product.category.name }}
+                </span>
+
+                <h3>
+                    {{ product.name }}
+                </h3>
+
+                <p>
+                    {{ product.description|truncatewords:20 }}
+                </p>
+
+
+                <div class="card-bottom">
+
+                    <strong>
+                        {{ product.price|floatformat:0 }} FCFA
+                    </strong>
+
+                    <a
+                        href="{% url 'product_detail' product.id %}"
+                    >
+                        Découvrir →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div class="empty-state">
+
+            <div>🛍️</div>
+
+            <h3>Aucun produit disponible</h3>
+
+            <p>
+                Les produits seront bientôt disponibles.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

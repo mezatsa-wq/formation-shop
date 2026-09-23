@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Commande confirmée — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="order-success">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <span class="section-label">
+            FORMASHOP
+        </span>
+
+        <h1>
+            Commande enregistrée !
+        </h1>
+
+        <p>
+            Merci {{ user.username }}.
+            Votre commande a bien été enregistrée.
+        </p>
+
+        <div class="order-number">
+
+            <span>
+                Numéro de commande
+            </span>
+
+            <strong>
+                #{{ order.id }}
+            </strong>
+
+        </div>
+
+        <div class="order-total">
+
+            <span>
+                Total
+            </span>
+
+            <strong>
+                {{ order.total|floatformat:0 }} FCFA
+            </strong>
+
+        </div>
+
+        <div class="order-status">
+
+            <span>
+                Statut
+            </span>
+
+            <strong>
+                En attente de paiement
+            </strong>
+
+        </div>
+
+        <a
+            href="{% url 'product_list' %}"
+            class="btn-primary"
+        >
+            Continuer mes achats
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

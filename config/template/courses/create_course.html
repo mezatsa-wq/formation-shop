@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Créer une formation - FormaShop{% endblock %}
+
+{% block content %}
+
+<div class="create-course-page">
+
+    <div class="create-course-container">
+
+        <a href="{% url 'trainer_dashboard' %}" class="back-link">
+            ← Retour au tableau de bord
+        </a>
+
+        <div class="page-heading">
+            <span>ESPACE FORMATEUR</span>
+            <h1>Créer une formation</h1>
+            <p>
+                Partagez vos connaissances et créez une formation
+                accessible aux apprenants.
+            </p>
+        </div>
+
+
+        <form method="POST" enctype="multipart/form-data" class="course-form">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+
+            <div class="form-section">
+
+                <div class="section-number">
+                    01
+                </div>
+
+                <div class="section-content">
+
+                    <h2>Informations générales</h2>
+
+                    <p class="section-description">
+                        Présentez votre formation aux apprenants.
+                    </p>
+
+
+                    {% for field in form %}
+
+                        <div class="form-group">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <small>
+                                    {{ field.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% if field.errors %}
+                                <div class="field-error">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <div class="form-footer">
+
+                <a href="{% url 'trainer_courses' %}" class="cancel-button">
+                    Annuler
+                </a>
+
+                <button type="submit" class="submit-button">
+                    Créer la formation →
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.create-course-page {
+    min-height: 85vh;
+    padding: 45px 20px 80px;
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(124, 92, 255, 0.10),
+            transparent 35%
+        ),
+        #080b12;
+    color: white;
+}
+
+.create-course-container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.back-link {
+    color: #a9b0c0;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    color: #ffffff;
+}
+
+.page-heading {
+    margin-top: 35px;
+    margin-bottom: 35px;
+}
+
+.page-heading span {
+    color: #7c5cff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.page-heading h1 {
+    font-size: 42px;
+    margin: 8px 0;
+}
+
+.page-heading p {
+    color: #8f98aa;
+    font-size: 16px;
+}
+
+
+.course-form {
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 22px;
+    overflow: hidden;
+}
+
+
+.form-section {
+    display: flex;
+    gap: 25px;
+    padding: 35px;
+}
+
+
+.section-number {
+    min-width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(124, 92, 255, 0.13);
+    color: #9a84ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+
+.section-content {
+    flex: 1;
+}
+
+.section-content h2 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.section-description {
+    margin-top: 7px;
+    margin-bottom: 30px;
+    color: #7f899b;
+}
+
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+
+.form-group label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #e8ebf2;
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: #181e2b;
+    color: #ffffff;
+    border: 1px solid #303747;
+    border-radius: 11px;
+    padding: 14px 15px;
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: .2s;
+}
+
+
+.form-group textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #7c5cff;
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, .10);
+}
+
+
+.form-group input[type="file"] {
+    padding: 11px;
+    cursor: pointer;
+}
+
+
+.form-group input[type="file"]::file-selector-button {
+    background: #7c5cff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    margin-right: 12px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+.form-group small {
+    display: block;
+    color: #707a8d;
+    margin-top: 7px;
+}
+
+
+.field-error,
+.form-error {
+    color: #ff6b7a;
+    margin-top: 7px;
+    font-size: 13px;
+}
+
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 22px 35px;
+    border-top: 1px solid #252b3a;
+    background: #0e131d;
+}
+
+
+.cancel-button,
+.submit-button {
+    padding: 13px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+
+.cancel-button {
+    color: #aab1bf;
+    background: #1a202c;
+}
+
+
+.submit-button {
+    border: none;
+    background: #7c5cff;
+    color: white;
+}
+
+
+.submit-button:hover {
+    background: #6d4ff0;
+}
+
+
+@media (max-width: 700px) {
+
+    .page-heading h1 {
+        font-size: 32px;
+    }
+
+    .form-section {
+        padding: 25px 20px;
+    }
+
+    .form-footer {
+        padding: 20px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

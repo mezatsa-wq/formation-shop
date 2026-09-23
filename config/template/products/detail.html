@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="detail-page">
+
+    <div class="detail-image">
+
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <div class="detail-placeholder">🛍️</div>
+        {% endif %}
+
+    </div>
+
+    <div class="detail-content">
+
+        <span class="category">
+            {{ product.category.name }}
+        </span>
+
+        <h1>{{ product.name }}</h1>
+
+        <p class="detail-description">
+            {{ product.description }}
+        </p>
+
+        <div class="detail-info">
+
+            <div>
+                <span>Disponibilité</span>
+
+                {% if product.stock > 0 %}
+                    <strong>{{ product.stock }} disponible(s)</strong>
+                {% else %}
+                    <strong>Rupture de stock</strong>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="detail-price">
+            {{ product.price|floatformat:0 }} FCFA
+        </div>
+
+        {% if product.stock > 0 %}
+
+            <a href="{% url 'add_product_to_cart' product.id %}" class="btn-primary">
+                Ajouter au panier
+            </a>
+
+        {% else %}
+
+            <button class="btn-disabled" disabled>
+                Produit indisponible
+            </button>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block title %}
+Paiement en attente — FormaShop
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================
+   PAIEMENT EN ATTENTE
+========================================= */
+
+.pending-page {
+    min-height: 78vh;
+
+    padding: 70px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(124, 92, 255, 0.12),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(124, 92, 255, 0.10),
+            transparent 30%
+        );
+}
+
+
+/* CARTE */
+
+.pending-card {
+    width: 100%;
+    max-width: 650px;
+
+    padding: 45px;
+
+    box-sizing: border-box;
+
+    background: #111622;
+
+    border: 1px solid #2b3345;
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, .45),
+        0 0 50px rgba(124, 92, 255, .07);
+
+    text-align: center;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+/* LIGNE LUMINEUSE */
+
+.pending-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 10%;
+    right: 10%;
+
+    height: 2px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #7c5cff,
+        #a995ff,
+        #7c5cff,
+        transparent
+    );
+}
+
+
+/* =========================================
+   ICÔNE
+========================================= */
+
+.pending-icon {
+    width: 82px;
+    height: 82px;
+
+    margin: 0 auto 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(124, 92, 255, .12);
+
+    border: 1px solid rgba(124, 92, 255, .35);
+
+    color: #a995ff;
+
+    font-size: 38px;
+
+    box-shadow:
+        0 0 35px rgba(124, 92, 255, .12);
+}
+
+
+/* =========================================
+   TITRE
+========================================= */
+
+.pending-card h1 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 31px;
+
+    font-weight: 800;
+
+    letter-spacing: -.5px;
+}
+
+.pending-subtitle {
+    margin: 12px auto 30px;
+
+    max-width: 500px;
+
+    color: #929bad;
+
+    line-height: 1.7;
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   FORMATION
+========================================= */
+
+.pending-course {
+    text-align: left;
+
+    padding: 23px;
+
+    margin-bottom: 22px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124, 92, 255, .10),
+            rgba(255, 255, 255, .02)
+        );
+
+    border: 1px solid rgba(124, 92, 255, .20);
+}
+
+.pending-course-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #858ea1;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.4px;
+
+    text-transform: uppercase;
+}
+
+.pending-course h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 20px;
+}
+
+.pending-price {
+    margin-top: 12px;
+
+    color: #a995ff;
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================
+   STATUT
+========================================= */
+
+.pending-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 19px;
+
+    margin-bottom: 25px;
+
+    text-align: left;
+
+    border-radius: 16px;
+
+    background: #181e2b;
+
+    border: 1px solid #30394d;
+}
+
+.status-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: rgba(124, 92, 255, .14);
+
+    color: #a995ff;
+
+    font-size: 20px;
+}
+
+.status-content strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+}
+
+.status-content span {
+    color: #818b9e;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   INFORMATION
+========================================= */
+
+.pending-info {
+    padding: 18px;
+
+    margin-bottom: 27px;
+
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, .025);
+
+    color: #8992a5;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   BOUTONS
+========================================= */
+
+.pending-actions {
+    display: flex;
+
+    gap: 13px;
+}
+
+.pending-button {
+    flex: 1;
+
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 20px;
+
+    border-radius: 13px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: .25s;
+}
+
+.pending-button-primary {
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #6040e5
+        );
+
+    color: white;
+
+    box-shadow:
+        0 12px 30px rgba(124, 92, 255, .20);
+}
+
+.pending-button-primary:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 17px 38px rgba(124, 92, 255, .30);
+}
+
+.pending-button-secondary {
+    background: #181e2b;
+
+    color: #d8dce5;
+
+    border: 1px solid #30394d;
+}
+
+.pending-button-secondary:hover {
+    transform: translateY(-3px);
+
+    border-color: #7c5cff;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+
+    .pending-page {
+        padding: 40px 15px;
+    }
+
+    .pending-card {
+        padding: 32px 20px;
+
+        border-radius: 22px;
+    }
+
+    .pending-card h1 {
+        font-size: 26px;
+    }
+
+    .pending-actions {
+        flex-direction: column;
+    }
+}
+
+</style>
+
+
+<div class="pending-page">
+
+    <div class="pending-card">
+
+
+        <!-- ICÔNE -->
+
+        <div class="pending-icon">
+            ✓
+        </div>
+
+
+        <!-- TITRE -->
+
+        <h1>
+            Paiement enregistré
+        </h1>
+
+        <p class="pending-subtitle">
+            Votre demande de paiement a bien été reçue.
+            Votre inscription sera activée après vérification
+            de votre paiement.
+        </p>
+
+
+        <!-- FORMATION -->
+
+        <div class="pending-course">
+
+            <span class="pending-course-label">
+                Formation
+            </span>
+
+            <h2>
+                {{ course.title }}
+            </h2>
+
+            <div class="pending-price">
+                {{ course.price }} FCFA
+            </div>
+
+        </div>
+
+
+        <!-- STATUT -->
+
+        <div class="pending-status">
+
+            <div class="status-icon">
+                ⏳
+            </div>
+
+            <div class="status-content">
+
+                <strong>
+                    Paiement en cours de vérification
+                </strong>
+
+                <span>
+                    L'administrateur doit confirmer votre
+                    paiement avant que la formation soit
+                    disponible dans votre espace.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="pending-info">
+
+            🔐 Votre paiement n'est pas perdu.
+            Une fois confirmé, votre inscription sera
+            automatiquement créée et la formation apparaîtra
+            dans <strong>Mes formations</strong>.
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="pending-actions">
+
+            <a
+                href="{% url 'my_courses' %}"
+                class="pending-button pending-button-primary"
+            >
+                Mes formations
+            </a>
+
+            <a
+                href="{% url 'home' %}"
+                class="pending-button pending-button-secondary"
+            >
+                Retour à l'accueil
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

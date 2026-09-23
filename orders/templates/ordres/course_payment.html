@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+Paiement — {{ course.title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="payment-page">
+
+    <div class="payment-card">
+
+        <h1>Paiement de la formation</h1>
+
+        <h2>{{ course.title }}</h2>
+
+        <p>
+            Prix :
+            <strong>{{ course.price }} FCFA</strong>
+        </p>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label>
+                Numéro de téléphone
+            </label>
+
+            <input
+                type="text"
+                name="phone_number"
+                placeholder="6XXXXXXXX"
+                required
+            >
+
+            <label>
+                Moyen de paiement
+            </label>
+
+            <select name="method" required>
+
+                <option value="">
+                    Choisir
+                </option>
+
+                <option value="mtn">
+                    MTN Mobile Money
+                </option>
+
+                <option value="orange">
+                    Orange Money
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Confirmer le paiement
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

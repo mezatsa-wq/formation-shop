@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Mes formations{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <h1>Mes formations</h1>
+    <p>Retrouvez ici toutes les formations que vous avez achetées.</p>
+</section>
+
+<section class="products-grid">
+
+    {% for enrollment in enrollments %}
+
+        <article class="product-card">
+
+            {% if enrollment.course.image %}
+                <img
+                    src="{{ enrollment.course.image.url }}"
+                    alt="{{ enrollment.course.title }}"
+                >
+            {% endif %}
+
+            <div class="product-card-content">
+
+                <span class="category">
+                    Formation
+                </span>
+
+                <h2>
+                    {{ enrollment.course.title }}
+                </h2>
+
+                <p>
+                    {{ enrollment.course.description|truncatewords:20 }}
+                </p>
+
+                <a
+                    href="{% url 'course_learning' enrollment.course.slug %}"
+                    class="btn-primary"
+                >
+                    ▶️ Continuer la formation
+                </a>
+
+            </div>
+
+        </article>
+
+    {% empty %}
+
+        <div class="empty-state">
+
+            <h2>Vous n'avez aucune formation</h2>
+
+            <p>
+                Découvrez nos formations et commencez votre apprentissage.
+            </p>
+
+            <a href="{% url 'course_list' %}" class="btn-primary">
+                Voir les formations
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Paiement échoué — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="order-success">
+
+    <div class="success-card">
+
+        <div class="failed-icon">
+            ×
+        </div>
+
+        <span class="section-label">
+            PAIEMENT
+        </span>
+
+        <h1>
+            Paiement échoué
+        </h1>
+
+        <p>
+            Le paiement de la commande #{{ order.id }}
+            n'a pas pu être effectué.
+        </p>
+
+        <div class="order-total">
+
+            <span>
+                Montant
+            </span>
+
+            <strong>
+                {{ order.total|floatformat:0 }} FCFA
+            </strong>
+
+        </div>
+
+        <a
+            href="{% url 'payment' order.id %}"
+            class="btn-primary"
+        >
+            Réessayer le paiement
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

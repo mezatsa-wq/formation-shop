@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+
+<section class="learning-page">
+
+    <div class="learning-header">
+
+        <span class="category">
+            Formation
+        </span>
+
+        <h1>{{ course.title }}</h1>
+
+        <p>
+            {{ course.description }}
+        </p>
+
+    </div>
+
+
+    <div class="lessons-container">
+
+        <h2>Programme de la formation</h2>
+
+        {% for lesson in lessons %}
+
+            <article class="lesson-card">
+
+                <div class="lesson-number">
+                    {{ forloop.counter }}
+                </div>
+
+                <div class="lesson-info">
+
+                    <h3>
+                        {{ lesson.title }}
+                    </h3>
+
+                    {% if lesson.content %}
+                        <p>
+                            {{ lesson.content }}
+                        </p>
+                    {% endif %}
+
+                    {% if lesson.video_url %}
+
+                        <a
+                            href="{{ lesson.video_url }}"
+                            target="_blank"
+                            class="btn-primary"
+                        >
+                            ▶️ Regarder la leçon
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <p>
+                Les leçons de cette formation seront bientôt disponibles.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

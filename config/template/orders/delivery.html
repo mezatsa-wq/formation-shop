@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}
+Informations de livraison
+{% endblock %}
+
+{% block content %}
+
+<div class="delivery-page">
+
+    <div class="delivery-card">
+
+        <div class="delivery-header">
+
+            <div class="delivery-icon">
+                🚚
+            </div>
+
+            <h1>
+                Informations de livraison
+            </h1>
+
+            <p>
+                Renseignez vos coordonnées afin que nous puissions
+                vous contacter pour la livraison.
+            </p>
+
+        </div>
+
+
+        <div class="delivery-notice">
+
+            <strong>
+                💰 Paiement à la livraison
+            </strong>
+
+            <p>
+                Vous ne payez rien maintenant.
+                Le paiement sera effectué directement
+                au moment de la livraison.
+            </p>
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+
+                <label>
+                    Nom complet
+                </label>
+
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="Ex : Roland Mezatsa"
+                    value="{{ request.user.get_full_name }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Numéro de téléphone
+                </label>
+
+                <input
+                    type="tel"
+                    name="phone_number"
+                    placeholder="Ex : 6XXXXXXXX"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Adresse de livraison
+                </label>
+
+                <textarea
+                    name="delivery_address"
+                    rows="4"
+                    placeholder="Quartier, rue, lieu de référence..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="delivery-info">
+
+                <p>
+                    🚚 Un livreur vous contactera
+                    dans les prochaines 24 heures.
+                </p>
+
+                <p>
+                    📞 Assurez-vous que votre numéro
+                    de téléphone est correct.
+                </p>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="confirm-order-btn"
+            >
+                ✅ Confirmer ma commande
+            </button>
+
+
+            <a
+                href="{% url 'cart' %}"
+                class="back-cart"
+            >
+                ← Retour au panier
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.delivery-page {
+    min-height: 80vh;
+    padding: 60px 20px;
+    background: #080b12;
+}
+
+.delivery-card {
+    max-width: 650px;
+    margin: auto;
+    padding: 35px;
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 20px;
+    color: white;
+}
+
+.delivery-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.delivery-icon {
+    font-size: 45px;
+    margin-bottom: 10px;
+}
+
+.delivery-header h1 {
+    margin: 0 0 10px;
+}
+
+.delivery-header p {
+    color: #9ca3af;
+    line-height: 1.6;
+}
+
+.delivery-notice {
+    padding: 18px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    background: #18251d;
+    border: 1px solid #294432;
+}
+
+.delivery-notice strong {
+    color: #7ee2a8;
+}
+
+.delivery-notice p {
+    margin-bottom: 0;
+    color: #aeb8b2;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 15px;
+    border-radius: 10px;
+    border: 1px solid #303747;
+    background: #181e2b;
+    color: white;
+    font-size: 15px;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #7c5cff;
+}
+
+.delivery-info {
+    padding: 15px;
+    margin: 25px 0;
+    background: #181e2b;
+    border-radius: 10px;
+    color: #aeb6c5;
+    font-size: 14px;
+}
+
+.delivery-info p {
+    margin: 5px 0;
+}
+
+.confirm-order-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: #7c5cff;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirm-order-btn:hover {
+    opacity: 0.9;
+}
+
+.back-cart {
+    display: block;
+    margin-top: 18px;
+    text-align: center;
+    color: #9ca3af;
+    text-decoration: none;
+}
+
+</style>
+
+{% endblock %}

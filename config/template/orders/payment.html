@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Paiement — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="payment-page">
+
+    <div class="payment-card">
+
+        <span class="section-label">
+            FORMASHOP
+        </span>
+
+        <h1>
+            Paiement
+        </h1>
+
+        <p class="payment-description">
+            Choisissez votre méthode de paiement.
+        </p>
+
+
+        <div class="payment-order">
+
+            <span>
+                Commande #{{ order.id }}
+            </span>
+
+            <strong>
+                {{ order.total|floatformat:0 }} FCFA
+            </strong>
+
+        </div>
+
+
+        <form
+            method="post"
+            action="{% url 'process_payment' order.id %}"
+        >
+
+            {% csrf_token %}
+
+            <h3>
+                Mode de paiement
+            </h3>
+
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="success"
+                    required
+                >
+
+                <div>
+                    <strong>
+                        Paiement réussi
+                    </strong>
+
+                    <span>
+                        Simuler une transaction réussie
+                    </span>
+                </div>
+
+            </label>
+
+
+            <label class="payment-option">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="failed"
+                    required
+                >
+
+                <div>
+                    <strong>
+                        Paiement échoué
+                    </strong>
+
+                    <span>
+                        Simuler une transaction refusée
+                    </span>
+                </div>
+
+            </label>
+
+
+            <button
+                type="submit"
+                class="btn-primary payment-button"
+            >
+                Confirmer le paiement
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

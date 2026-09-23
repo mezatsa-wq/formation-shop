@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ document.title }} — FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-label">
+                DOCUMENT
+            </span>
+
+            <h2>
+                {{ document.title }}
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <article class="course-card">
+
+        <div class="card-content">
+
+            <span class="category">
+                Document
+            </span>
+
+            <h3>
+                {{ document.title }}
+            </h3>
+
+            <p>
+                {{ document.description }}
+            </p>
+
+
+            <div class="card-bottom">
+
+                <strong>
+                    {{ document.token_price }} jetons
+                </strong>
+
+
+                {% if already_owned %}
+
+                    <a href="{{ document.file.url }}">
+                        📥 Télécharger
+                    </a>
+
+                {% elif user.is_authenticated %}
+
+                    <a href="{% url 'buy_document' document.id %}">
+                        Acheter →
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'login' %}">
+                        Se connecter pour acheter
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}

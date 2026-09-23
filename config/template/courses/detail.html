@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="detail-page">
+
+    <div class="detail-image">
+        {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.title }}">
+        {% else %}
+            <div class="detail-placeholder">🎓</div>
+        {% endif %}
+    </div>
+
+    <div class="detail-content">
+
+        <span class="category">
+            {{ course.category.name }}
+        </span>
+
+        <h1>{{ course.title }}</h1>
+
+        <p class="detail-description">
+            {{ course.description }}
+        </p>
+
+        <div class="detail-info">
+            <div>
+                <span>Formateur</span>
+                <strong>{{ course.instructor.username }}</strong>
+            </div>
+
+            <div>
+                <span>Leçons</span>
+                <strong>{{ course.lessons.count }}</strong>
+            </div>
+        </div>
+
+        <div class="detail-price">
+            {{ course.price|floatformat:0 }} FCFA
+        </div>
+
+        {% if enrolled %}
+
+    <a href="{% url 'course_learning' course.slug %}" class="btn-primary">
+        ▶️ Commencer la formation
+    </a>
+
+{% else %}
+
+    <a href="{% url 'course_payment' course.id %}"
+                    class="btn-primary">
+        🛒 Acheter la formation
+    </a>
+
+{% endif %}
+
+    </div>
+
+</section>
+
+{% if course.lessons.exists %}
+<section class="section">
+
+    <div class="listing-header">
+        <div>
+            <span class="section-label">CONTENU</span>
+            <h2>Programme de la formation</h2>
+        </div>
+    </div>
+
+    <div class="lessons-list">
+
+        {% for lesson in course.lessons.all %}
+
+        <div class="lesson-item">
+
+            <div class="lesson-number">
+                {{ forloop.counter }}
+            </div>
+
+            <div>
+                <h3>{{ lesson.title }}</h3>
+
+                {% if lesson.content %}
+                    <p>{{ lesson.content|truncatewords:20 }}</p>
+                {% endif %}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+{% endif %}
+
+{% endblock %}

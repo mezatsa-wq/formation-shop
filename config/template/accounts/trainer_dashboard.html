@@ -1,0 +1,542 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Espace formateur</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'accounts/css/trainer.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="brand-icon">F</span>
+            <span>Formation</span>
+        </div>
+
+
+        <div class="trainer-mini-profile">
+
+            <div class="avatar">
+                {{ request.user.username|first|upper }}
+            </div>
+
+            <div>
+
+                <strong>
+                    {{ request.user.username }}
+                </strong>
+
+                <span>
+                    Formateur
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="{% url 'trainer_dashboard' %}"
+                class="nav-link active"
+            >
+                <span>▣</span>
+                Tableau de bord
+            </a>
+
+
+            <a href="{% url 'trainer_courses' %}" class="nav-link">
+                <span>▤</span>
+                Mes formations
+            </a>
+
+
+            <a href="#" class="nav-link">
+                <span>◫</span>
+                Mes documents
+            </a>
+
+
+            <a href="#" class="nav-link">
+                <span>◉</span>
+                Mes gains
+            </a>
+
+
+            <a href="#" class="nav-link">
+                <span>↗️</span>
+                Retirer mes gains
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="{% url 'home' %}"
+                class="home-link"
+            >
+                ← Retour au site
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="welcome-small">
+                    ESPACE FORMATEUR
+                </p>
+
+                <h1>
+                    Bonjour {{ request.user.username }} 👋
+                </h1>
+
+                <p class="subtitle">
+                    Gérez vos formations, vos documents et vos revenus.
+                </p>
+
+            </div>
+
+
+            <div class="notification-button">
+
+                <span class="notification-icon">
+                    ♢
+                </span>
+
+                {% if unread_notifications > 0 %}
+
+                    <span class="notification-count">
+                        {{ unread_notifications }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </header>
+
+    <div class="dashboard-action">
+
+    <div>
+        <strong>
+            Prêt à partager vos connaissances ?
+        </strong>
+
+        <span>
+            Créez votre prochaine formation.
+        </span>
+    </div>
+
+    <a
+        href="{% url 'create_course' %}"
+        class="create-button"
+    >
+        + Ajouter une formation
+    </a>
+
+</div>
+
+        <!-- WALLET -->
+
+        <section class="wallet-card">
+
+            <div>
+
+                <p class="wallet-label">
+                    SOLDE DU PORTEFEUILLE
+                </p>
+
+                <h2>
+                    {{ trainer_wallet.balance }} FCFA
+                </h2>
+
+                <p class="wallet-info">
+                    Solde disponible pour vos retraits
+                </p>
+
+            </div>
+
+
+            <div class="wallet-symbol">
+                FCFA
+            </div>
+
+        </section>
+
+
+
+        <!-- STATISTICS -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    ◈
+                </div>
+
+                <div>
+
+                    <span>
+                        Formations
+                    </span>
+
+                    <strong>
+                        {{ trainer_courses|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                         ◫
+                </div>
+
+                <div>
+
+                    <span>
+                        Documents
+                    </span>
+
+                    <strong>
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    +
+                </div>
+
+                <div>
+
+                    <span>
+                        Solde actuel
+                    </span>
+
+                    <strong>
+                        {{ trainer_wallet.balance }} FCFA
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- PROFILE + NOTIFICATIONS -->
+
+        <section class="content-grid">
+
+
+            <!-- PROFILE -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <p class="panel-kicker">
+                            MON PROFIL
+                        </p>
+
+                        <h2>
+                            Informations du formateur
+                        </h2>
+
+                    </div>
+
+                    <span class="status-badge">
+                        ✓ Formateur accepté
+                    </span>
+
+                </div>
+
+
+                <div class="profile-details">
+
+
+                    <div class="detail">
+
+                        <span>
+                            Nom complet
+                        </span>
+
+                        <strong>
+                            {{ trainer_profile.user.username }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            Téléphone
+                        </span>
+
+                        <strong>
+                            {{ trainer_profile.phone|default:"Non renseigné" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            Expertise
+                        </span>
+
+                        <strong>
+                            {{ trainer_profile.expertise|default:"Non renseignée" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail description">
+
+                        <span>
+                            Présentation
+                        </span>
+
+                        <p>
+                            {{ trainer_profile.bio|default:"Aucune présentation pour le moment." }}
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- NOTIFICATIONS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <p class="panel-kicker">
+                            NOTIFICATIONS
+                        </p>
+
+                        <h2>
+                            Activité récente
+                        </h2>
+
+                    </div>
+
+                    {% if unread_notifications > 0 %}
+
+                        <span class="notification-badge">
+                            {{ unread_notifications }} nouvelle(s)
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="notifications-list">
+
+                    {% for notification in notifications|slice:":5" %}
+
+                        <div
+                            class="notification-item
+                            {% if not notification.is_read %}
+                                unread
+                            {% endif %}"
+                        >
+
+                            <div class="notification-dot"></div>
+
+                            <div>
+
+                                <strong>
+                                    {{ notification.title }}
+                                </strong>
+
+                                <p>
+                                    {{ notification.message }}
+                                </p>
+
+                                <small>
+                                    {{ notification.created_at|date:"d/m/Y à H:i" }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ♢
+                            </div>
+
+                            <p>
+                                Aucune notification pour le moment.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- EARNINGS -->
+
+        <section class="panel earnings-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <p class="panel-kicker">
+                        REVENUS
+                    </p>
+
+                    <h2>
+                        Historique de mes gains
+                    </h2>
+
+                </div>
+
+                <span class="earnings-total">
+                    {{ trainer_wallet.balance }} FCFA disponible
+                </span>
+
+            </div>
+
+
+            <div class="earnings-list">
+
+                {% for earning in earnings|slice:":5" %}
+
+                    <div class="earning-row">
+
+                        <div class="earning-info">
+
+                            <div class="earning-icon">
+                                +
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ earning.description }}
+                                </strong>
+
+                                <span>
+                                    {{ earning.created_at|date:"d/m/Y à H:i" }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <strong class="earning-amount">
+                            + {{ earning.amount }} FCFA
+                        </strong>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="empty-earnings">
+
+                        <p>
+                            Vous n'avez encore reçu aucun gain.
+                        </p>
+
+                        <span>
+                            Vos revenus apparaîtront ici lorsqu'une
+                            formation sera payée et confirmée.
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

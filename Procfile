@@ -1,0 +1,1 @@
+web: gunicorn formation_shop.wsgi

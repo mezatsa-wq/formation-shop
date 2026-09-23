@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter une leçon - FormaShop{% endblock %}
+
+{% block content %}
+
+<div class="lesson-page">
+
+    <div class="lesson-container">
+
+        <a
+            href="{% url 'manage_course' course.id %}"
+            class="back-link"
+        >
+            ← Retour à la formation
+        </a>
+
+        <div class="heading">
+            <span>ESPACE FORMATEUR</span>
+
+            <h1>Ajouter une leçon</h1>
+
+            <p>
+                Ajoutez une nouvelle leçon à :
+                <strong>{{ course.title }}</strong>
+            </p>
+        </div>
+
+
+        <form method="POST" class="lesson-form">
+
+            {% csrf_token %}
+
+            {% for field in form %}
+
+                <div class="form-group">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="error">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'manage_course' course.id %}"
+                    class="cancel"
+                >
+                    Annuler
+                </a>
+
+                <button type="submit">
+                    Ajouter la leçon →
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.lesson-page {
+    min-height: 85vh;
+    padding: 50px 20px 80px;
+    background: #080b12;
+    color: white;
+}
+
+.lesson-container {
+    max-width: 850px;
+    margin: auto;
+}
+
+.back-link {
+    color: #929bad;
+    text-decoration: none;
+}
+
+.heading {
+    margin: 35px 0;
+}
+
+.heading span {
+    color: #7c5cff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.heading h1 {
+    font-size: 40px;
+    margin: 8px 0;
+}
+
+.heading p {
+    color: #858ea0;
+}
+
+.lesson-form {
+    background: #111622;
+    border: 1px solid #252b3a;
+    border-radius: 20px;
+    padding: 32px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #303747;
+    background: #181e2b;
+    color: white;
+    outline: none;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #7c5cff;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 7px;
+    color: #737d90;
+}
+
+.error {
+    color: #ff6878;
+    margin-top: 6px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid #252b3a;
+}
+
+.cancel,
+.form-actions button {
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.cancel {
+    background: #1a202c;
+    color: white;
+}
+
+.form-actions button {
+    border: none;
+    background: #7c5cff;
+    color: white;
+    cursor: pointer;
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title> formation-shop</title>
+    </head>
+    <body>
+       <h1> formation-shop</h1>
+       <p> Bienvenue sur  le site de vente</p>
+    {% if nombre_produit == 0 %}
+    <p> il n'y aucun produit dans l'entrepot</p>
+    {% else %}
+    <p> il ya actuellement {{nombre_produit }} produit dans l'entrepot {{nom_entrepot}}</p>
+    {% endif %}
+    <a href="/about">clique sur ce lien pour aller dans la page de a propos</a>
+    </body>
+</html>
