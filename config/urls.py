@@ -8,6 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .views import home
+from app.views import admin_dashboard
 
 
 urlpatterns = [
@@ -16,6 +17,7 @@ urlpatterns = [
         "admin/",
         admin.site.urls
     ),
+    path("admin-dashboard/", admin_dashboard, name="admin_dashboard"),
 
     path(
         "",

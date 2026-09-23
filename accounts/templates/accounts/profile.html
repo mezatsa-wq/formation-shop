@@ -88,7 +88,7 @@
 
             {% if user.is_superuser %}
 
-                <a href="/admin/" class="profile-button">
+                <a href="{% url 'admin_dashboard' %}" class="profile-button">
                     ⚙️ Administration
                 </a>
 

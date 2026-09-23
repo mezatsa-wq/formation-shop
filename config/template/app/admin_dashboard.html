@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administration - FormaShop</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="fixed left-0 top-0 h-screen w-64 bg-slate-950 text-white">
+
+        <div class="p-6 border-b border-slate-800">
+
+            <h1 class="text-2xl font-bold">
+                Forma<span class="text-indigo-400">Shop</span>
+            </h1>
+
+            <p class="text-sm text-slate-400 mt-1">
+                Administration
+            </p>
+
+        </div>
+
+        <nav class="p-4 space-y-2">
+
+            <a href="{% url 'admin_dashboard' %}"
+               class="block px-4 py-3 rounded-xl bg-indigo-600">
+                📊 Tableau de bord
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                👥 Utilisateurs
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                👨‍🏫 Formateurs
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                🎓 Formations
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                🛒 Produits
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                📦 Commandes
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                💳 Paiements
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-xl hover:bg-slate-800">
+                💰 Retraits
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENU -->
+    <main class="ml-64 p-8">
+
+        <!-- HEADER -->
+        <header class="flex items-center justify-between mb-8">
+
+            <div>
+
+                <h2 class="text-3xl font-bold text-slate-900">
+                    Tableau de bord
+                </h2>
+
+                <p class="text-slate-500 mt-1">
+                    Vue générale de votre plateforme FormaShop
+                </p>
+
+            </div>
+
+            <div class="bg-white px-5 py-3 rounded-xl shadow-sm">
+
+                <span class="text-sm text-slate-500">
+                    Administrateur
+                </span>
+
+                <strong class="ml-2 text-slate-900">
+                    {{ request.user.username }}
+                </strong>
+
+            </div>
+
+        </header>
+
+
+        <!-- STATISTIQUES -->
+        <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+            <!-- USERS -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+                <div class="flex justify-between">
+
+                    <div>
+                        <p class="text-sm text-slate-500">
+                            Utilisateurs
+                        </p>
+
+                        <p class="text-3xl font-bold mt-2">
+                            {{ total_users }}
+                        </p>
+                    </div>
+
+                    <div class="w-12 h-12 rounded-xl bg-blue-100
+                                flex items-center justify-center text-xl">
+                        👥
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TRAINERS -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Formateurs
+                        </p>
+
+                        <p class="text-3xl font-bold mt-2">
+                            {{ total_trainers }}
+                        </p>
+
+                    </div>
+
+                    <div class="w-12 h-12 rounded-xl bg-purple-100
+                                flex items-center justify-center text-xl">
+                        👨‍🏫
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- COURSES -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Formations
+                        </p>
+
+                        <p class="text-3xl font-bold mt-2">
+                            {{ total_courses }}
+                        </p>
+
+                    </div>
+
+                    <div class="w-12 h-12 rounded-xl bg-green-100
+                                flex items-center justify-center text-xl">
+                        🎓
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUCTS -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Produits
+                        </p>
+
+                        <p class="text-3xl font-bold mt-2">
+                            {{ total_products }}
+                        </p>
+
+                    </div>
+
+                    <div class="w-12 h-12 rounded-xl bg-orange-100
+                                flex items-center justify-center text-xl">
+                        🛒
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- COMMANDES / PAIEMENTS -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+                <h3 class="text-lg font-semibold">
+                    Commandes
+                </h3>
+
+                <div class="flex justify-between mt-6">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Total des commandes
+                        </p>
+
+                        <p class="text-2xl font-bold mt-1">
+                            {{ total_orders }}
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Paiements en attente
+                        </p>
+
+                        <p class="text-2xl font-bold text-orange-500 mt-1">
+                            {{ pending_orders }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+                <h3 class="text-lg font-semibold">
+                    Paiements des formations
+                </h3>
+
+                <div class="mt-6">
+
+                    <p class="text-sm text-slate-500">
+                        Paiements à vérifier
+                    </p>
+
+                    <p class="text-3xl font-bold text-orange-500 mt-1">
+                        {{ pending_course_payments }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+        <section class="mt-6 bg-slate-950 text-white rounded-2xl p-8">
+
+            <h3 class="text-xl font-semibold">
+                Bienvenue dans l'administration FormaShop
+            </h3>
+
+            <p class="text-slate-400 mt-2">
+                Depuis cet espace, vous pourrez gérer les utilisateurs,
+                les formateurs, les formations, les produits, les commandes,
+                les paiements et les récompenses.
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
