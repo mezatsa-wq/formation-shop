@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Formateurs - FormaShop</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside
+        class="fixed left-0 top-0 h-screen w-64
+               bg-slate-950 text-white
+               hidden md:block"
+    >
+
+        <div class="p-6 border-b border-slate-800">
+
+            <h1 class="text-2xl font-bold">
+                Forma<span class="text-indigo-400">Shop</span>
+            </h1>
+
+            <p class="text-sm text-slate-400 mt-1">
+                Administration
+            </p>
+
+        </div>
+
+        <nav class="p-4 space-y-2">
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                📊 Tableau de bord
+            </a>
+
+            <a
+                href="#"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                👥 Utilisateurs
+            </a>
+
+            <a
+                href="{% url 'admin_trainers' %}"
+                class="block px-4 py-3 rounded-xl
+                       bg-indigo-600"
+            >
+                👨‍🏫 Formateurs
+            </a>
+
+            <a
+                href="#"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                🎓 Formations
+            </a>
+
+            <a
+                href="#"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                🛒 Produits
+            </a>
+
+            <a
+                href="#"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                📦 Commandes
+            </a>
+
+            <a
+                href="#"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                💳 Paiements
+            </a>
+
+            <a
+                href="#"
+                class="block px-4 py-3 rounded-xl
+                       hover:bg-slate-800"
+            >
+                💰 Retraits
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENU -->
+    <main class="md:ml-64 p-5 md:p-8">
+
+        <!-- HEADER -->
+        <header class="mb-8">
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="text-indigo-600 text-sm font-medium"
+            >
+                ← Retour au tableau de bord
+            </a>
+
+            <h1
+                class="text-3xl font-bold
+                       text-slate-900 mt-4"
+            >
+                Gestion des formateurs
+            </h1>
+
+            <p class="text-slate-500 mt-2">
+                Gérez les candidatures et les formateurs
+                de FormaShop.
+            </p>
+
+        </header>
+
+
+        <!-- MESSAGES -->
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="mb-4 p-4 rounded-xl
+                    {% if message.tags == 'success' %}
+                        bg-green-100 text-green-800
+                    {% else %}
+                        bg-yellow-100 text-yellow-800
+                    {% endif %}"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- TABLE -->
+        <div
+            class="bg-white rounded-2xl shadow-sm
+                   overflow-hidden"
+        >
+
+            <div
+                class="px-6 py-5 border-b
+                       border-slate-200"
+            >
+
+                <h2 class="text-lg font-semibold">
+                    Candidatures
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    {{ applications|length }}
+                    candidature(s)
+                </p>
+
+            </div>
+
+
+            <!-- DESKTOP -->
+            <div class="hidden md:block overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-slate-50">
+
+                        <tr>
+
+                            <th
+                                class="text-left px-6 py-4
+                                       text-sm text-slate-500"
+                            >
+                                Utilisateur
+                            </th>
+
+                            <th
+                                class="text-left px-6 py-4
+                                       text-sm text-slate-500"
+                            >
+                                Expertise
+                            </th>
+
+                            <th
+                                class="text-left px-6 py-4
+                                       text-sm text-slate-500"
+                            >
+                                Date
+                            </th>
+
+                            <th
+                                class="text-left px-6 py-4
+                                       text-sm text-slate-500"
+                            >
+                                Statut
+                            </th>
+
+                            <th
+                                class="text-right px-6 py-4
+                                       text-sm text-slate-500"
+                            >
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for application in applications %}
+
+                            <tr
+                                class="hover:bg-slate-50"
+                            >
+
+                                <td class="px-6 py-4">
+
+                                    <div class="font-medium">
+                                        {{ application.user.username }}
+                                    </div>
+
+                                    <div
+                                        class="text-sm
+                                               text-slate-500"
+                                    >
+                                        {{ application.user.email }}
+                                    </div>
+
+                                </td>
+
+
+                                <td class="px-6 py-4">
+
+                                    {{ application.expertise }}
+
+                                </td>
+
+
+                                <td
+                                    class="px-6 py-4
+                                           text-sm text-slate-500"
+                                >
+
+                                    {{ application.created_at|date:"d/m/Y" }}
+
+                                </td>
+
+
+                                <td class="px-6 py-4">
+
+                                    {% if application.status == "pending" %}
+
+                                        <span
+                                            class="px-3 py-1 rounded-full
+                                                   text-xs font-medium
+                                                   bg-orange-100
+                                                   text-orange-700"
+                                        >
+                                            En attente
+                                        </span>
+
+                                    {% elif application.status == "approved" %}
+
+                                        <span
+                                            class="px-3 py-1 rounded-full
+                                                   text-xs font-medium
+                                                   bg-green-100
+                                                   text-green-700"
+                                        >
+                                            Acceptée
+                                        </span>
+
+                                    {% else %}
+
+                                        <span
+                                            class="px-3 py-1 rounded-full
+                                                   text-xs font-medium
+                                                   bg-red-100
+                                                   text-red-700"
+                                        >
+                                            Refusée
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td class="px-6 py-4">
+
+                                    <div
+                                        class="flex justify-end
+                                               gap-2"
+                                    >
+
+                                        <a
+                                            href="{% url 'admin_trainer_detail' application.id %}"
+                                            class="px-3 py-2 rounded-lg
+                                                   bg-slate-100
+                                                   hover:bg-slate-200
+                                                   text-sm"
+                                        >
+                                            Voir
+                                        </a>
+
+
+                                        {% if application.status == "pending" %}
+
+                                            <form
+                                                method="POST"
+                                                action="{% url 'admin_trainer_approve' application.id %}"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-2
+                                                           rounded-lg
+                                                           bg-green-600
+                                                           hover:bg-green-700
+                                                           text-white
+                                                           text-sm"
+                                                >
+                                                    ✓ Accepter
+                                                </button>
+
+                                            </form>
+
+
+                                            <form
+                                                method="POST"
+                                                action="{% url 'admin_trainer_reject' application.id %}"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-2
+                                                           rounded-lg
+                                                           bg-red-600
+                                                           hover:bg-red-700
+                                                           text-white
+                                                           text-sm"
+                                                >
+                                                    ✕ Refuser
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="px-6 py-12
+                                           text-center
+                                           text-slate-500"
+                                >
+                                    Aucune candidature.
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- MOBILE -->
+            <div class="md:hidden">
+
+                {% for application in applications %}
+
+                    <div
+                        class="p-5 border-b
+                               border-slate-100"
+                    >
+
+                        <div
+                            class="flex justify-between
+                                   items-start"
+                        >
+
+                            <div>
+
+                                <h3
+                                    class="font-semibold
+                                           text-slate-900"
+                                >
+                                    {{ application.user.username }}
+                                </h3>
+
+                                <p
+                                    class="text-sm
+                                           text-slate-500"
+                                >
+                                    {{ application.user.email }}
+                                </p>
+
+                            </div>
+
+
+                            {% if application.status == "pending" %}
+
+                                <span
+                                    class="px-2 py-1 rounded-full
+                                           text-xs bg-orange-100
+                                           text-orange-700"
+                                >
+                                    En attente
+                                </span>
+
+                            {% elif application.status == "approved" %}
+
+                                <span
+                                    class="px-2 py-1 rounded-full
+                                           text-xs bg-green-100
+                                           text-green-700"
+                                >
+                                    Acceptée
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="px-2 py-1 rounded-full
+                                           text-xs bg-red-100
+                                           text-red-700"
+                                >
+                                    Refusée
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <p
+                            class="text-sm text-slate-600
+                                   mt-3"
+                        >
+                            <strong>Expertise :</strong>
+                            {{ application.expertise }}
+                        </p>
+
+
+                        <div
+                            class="flex gap-2 mt-4"
+                        >
+
+                            <a
+                                href="{% url 'admin_trainer_detail' application.id %}"
+                                class="flex-1 text-center
+                                       px-3 py-2 rounded-lg
+                                       bg-slate-100 text-sm"
+                            >
+                                Voir
+                            </a>
+
+
+                            {% if application.status == "pending" %}
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'admin_trainer_approve' application.id %}"
+                                    class="flex-1"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        class="w-full px-3 py-2
+                                               rounded-lg
+                                               bg-green-600
+                                               text-white text-sm"
+                                    >
+                                        ✓ Accepter
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div
+                        class="p-10 text-center
+                               text-slate-500"
+                    >
+                        Aucune candidature.
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

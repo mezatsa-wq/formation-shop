@@ -8,7 +8,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from .views import home
-from app.views import admin_dashboard
+from app.views import (
+    admin_dashboard,
+    admin_trainers,
+    admin_trainer_detail,
+    admin_trainer_approve,
+    admin_trainer_reject,
+)
 
 
 urlpatterns = [
@@ -18,7 +24,29 @@ urlpatterns = [
         admin.site.urls
     ),
     path("admin-dashboard/", admin_dashboard, name="admin_dashboard"),
+path(
+    "admin-dashboard/formateurs/",
+    admin_trainers,
+    name="admin_trainers"
+),
 
+path(
+    "admin-dashboard/formateurs/<int:application_id>/",
+    admin_trainer_detail,
+    name="admin_trainer_detail"
+),
+
+path(
+    "admin-dashboard/formateurs/<int:application_id>/accepter/",
+    admin_trainer_approve,
+    name="admin_trainer_approve"
+),
+
+path(
+    "admin-dashboard/formateurs/<int:application_id>/refuser/",
+    admin_trainer_reject,
+    name="admin_trainer_reject"
+),
     path(
         "",
         home,

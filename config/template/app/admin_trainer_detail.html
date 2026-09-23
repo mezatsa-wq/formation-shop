@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Candidature - FormaShop</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-slate-100 min-h-screen">
+
+    <main class="max-w-4xl mx-auto p-5 md:p-10">
+
+        <a
+            href="{% url 'admin_trainers' %}"
+            class="text-indigo-600 font-medium"
+        >
+            ← Retour aux candidatures
+        </a>
+
+
+        <div
+            class="bg-white rounded-2xl shadow-sm
+                   mt-6 overflow-hidden"
+        >
+
+            <div
+                class="p-6 md:p-8
+                       border-b border-slate-200"
+            >
+
+                <div
+                    class="flex flex-col md:flex-row
+                           md:items-center
+                           md:justify-between gap-4"
+                >
+
+                    <div>
+
+                        <h1
+                            class="text-2xl font-bold
+                                   text-slate-900"
+                        >
+                            {{ application.full_name }}
+                        </h1>
+
+                        <p class="text-slate-500 mt-1">
+                            @{{ application.user.username }}
+                        </p>
+
+                    </div>
+
+
+                    {% if application.status == "pending" %}
+
+                        <span
+                            class="px-4 py-2 rounded-full
+                                   bg-orange-100
+                                   text-orange-700
+                                   text-sm font-medium"
+                        >
+                            En attente
+                        </span>
+
+                    {% elif application.status == "approved" %}
+
+                        <span
+                            class="px-4 py-2 rounded-full
+                                   bg-green-100
+                                   text-green-700
+                                   text-sm font-medium"
+                        >
+                            Acceptée
+                        </span>
+
+                    {% else %}
+
+                        <span
+                            class="px-4 py-2 rounded-full
+                                   bg-red-100
+                                   text-red-700
+                                   text-sm font-medium"
+                        >
+                            Refusée
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="p-6 md:p-8 space-y-6">
+
+                <div>
+
+                    <p class="text-sm text-slate-500">
+                        Email
+                    </p>
+
+                    <p class="font-medium mt-1">
+                        {{ application.user.email }}
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-sm text-slate-500">
+                        Téléphone
+                    </p>
+
+                    <p class="font-medium mt-1">
+                        {{ application.phone }}
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-sm text-slate-500">
+                        Domaine d'expertise
+                    </p>
+
+                    <p class="font-medium mt-1">
+                        {{ application.expertise }}
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-sm text-slate-500">
+                        Présentation
+                    </p>
+
+                    <p
+                        class="mt-2 text-slate-700
+                               leading-relaxed"
+                    >
+                        {{ application.description }}
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-sm text-slate-500">
+                        Date de candidature
+                    </p>
+
+                    <p class="font-medium mt-1">
+                        {{ application.created_at|date:"d/m/Y à H:i" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if application.status == "pending" %}
+
+                <div
+                    class="p-6 md:p-8
+                           bg-slate-50
+                           border-t border-slate-200"
+                >
+
+                    <div
+                        class="flex flex-col sm:flex-row
+                               gap-3"
+                    >
+
+                        <form
+                            method="POST"
+                            action="{% url 'admin_trainer_approve' application.id %}"
+                            class="flex-1"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="w-full py-3
+                                       rounded-xl
+                                       bg-green-600
+                                       hover:bg-green-700
+                                       text-white font-medium"
+                            >
+                                ✓ Accepter la candidature
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            method="POST"
+                            action="{% url 'admin_trainer_reject' application.id %}"
+                            class="flex-1"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="w-full py-3
+                                       rounded-xl
+                                       bg-red-600
+                                       hover:bg-red-700
+                                       text-white font-medium"
+                            >
+                                ✕ Refuser la candidature
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
