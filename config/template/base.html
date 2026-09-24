@@ -93,15 +93,17 @@
         <a href="{% url 'my_courses' %}">
             📚 Mes formations
         </a>
-        {% if user.trainer_profile %}
-            <a href="{% url 'trainer_dashboard' %}">
-                📊 Dashboard
-            </a>
-        {% else %}
-            <a href="{% url 'become_trainer' %}">
-                👨‍🏫 Devenir formateur
-            </a>
-        {% endif %}
+       <a href="{% url 'trainer_dashboard' %}">
+    📊 Mon Dashboard
+</a>
+
+{% if not user.trainer_profile %}
+
+    <a href="{% url 'become_trainer' %}">
+        👨‍🏫 Devenir formateur
+    </a>
+
+{% endif %}
         <a href="{% url 'cart' %}">
             🛒 Panier
         </a>
