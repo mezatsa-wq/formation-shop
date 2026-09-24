@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}
+Finaliser la commande - FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <h1>Finaliser ma commande</h1>
+
+    <p>
+        Entrez les informations nécessaires pour la livraison.
+    </p>
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <p>
+                {{ message }}
+            </p>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div>
+
+            <label for="full_name">
+                Nom complet
+            </label>
+
+            <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="phone_number">
+                Numéro de téléphone
+            </label>
+
+            <input
+                type="text"
+                id="phone_number"
+                name="phone_number"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="neighborhood">
+                Quartier
+            </label>
+
+            <input
+                type="text"
+                id="neighborhood"
+                name="neighborhood"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="delivery_address">
+                Adresse de livraison
+            </label>
+
+            <textarea
+                id="delivery_address"
+                name="delivery_address"
+                rows="5"
+                required
+            ></textarea>
+
+        </div>
+
+
+        <button type="submit">
+            Confirmer la commande
+        </button>
+
+    </form>
+
+
+    <br>
+
+    <a href="{% url 'cart' %}">
+        ← Retour au panier
+    </a>
+
+</section>
+
+{% endblock %}

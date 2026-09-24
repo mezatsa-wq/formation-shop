@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Mes produits - FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <h1>Mes produits</h1>
+
+    <p>
+        Gérez les produits que vous proposez sur FormaShop.
+    </p>
+
+</section>
+
+
+<section class="products-grid">
+
+    {% if products %}
+
+        {% for product in products %}
+           {% if product.is_featured %}
+    <p>
+        ⭐ Produit actuellement mis en avant
+    </p>
+
+    {% if product.boost_until %}
+        <p>
+            Jusqu'au :
+            {{ product.boost_until|date:"d/m/Y H:i" }}
+        </p>
+    {% endif %}
+
+{% else %}
+
+    <a href="{% url 'feature_product' product.id %}">
+        ⭐ Mettre en avant
+    </a>
+
+{% endif %}
+            <article class="product-card">
+
+                {% if product.image %}
+
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.name }}"
+                    >
+
+                {% endif %}
+
+                <h2>
+                    {{ product.name }}
+                </h2>
+
+                <p>
+                    {{ product.description|truncatewords:20 }}
+                </p>
+
+                <strong>
+                    {{ product.price|floatformat:0 }} FCFA
+                </strong>
+
+                <p>
+                    Stock :
+                    {{ product.stock }}
+                </p>
+
+                <p>
+                    Récompense :
+                    {{ product.reward_tokens }} jetons
+                </p>
+
+                <div>
+
+                    <a
+                        href="{% url 'edit_product' product.id %}"
+                    >
+                        Modifier
+                    </a>
+
+                    <a
+                        href="{% url 'delete_product' product.id %}"
+                    >
+                        Supprimer
+                    </a>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div>
+
+            <h2>
+                Vous n'avez encore aucun produit.
+            </h2>
+
+            <a href="{% url 'create_product' %}">
+                Ajouter mon premier produit
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

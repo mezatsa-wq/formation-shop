@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}Devenir vendeur - FormaShop{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <h1>Devenir vendeur</h1>
+
+    <p>
+        Choisissez la formule qui vous convient.
+    </p>
+
+    <!-- CHOIX DU PLAN -->
+
+    <div>
+
+        <h2>Choisissez votre formule</h2>
+
+        <label>
+            <input
+                type="radio"
+                name="plan_choice"
+                value="standard"
+                checked
+                onclick="selectPlan('standard')"
+            >
+
+            Vendeur Standard
+        </label>
+
+        <p>
+            Gratuit — 0 FCFA
+        </p>
+
+        <ul>
+            <li>Créer des produits</li>
+            <li>Modifier vos produits</li>
+            <li>Gérer votre stock</li>
+            <li>Recevoir des commandes</li>
+            <li>Voir les informations de livraison</li>
+            <li>Gérer vos livraisons</li>
+            <li>Voir vos ventes</li>
+            <li>Recevoir vos notifications</li>
+        </ul>
+
+
+        <label>
+            <input
+                type="radio"
+                name="plan_choice"
+                value="premium"
+                onclick="selectPlan('premium')"
+            >
+
+            Vendeur Premium
+        </label>
+
+        <p>
+            1 000 FCFA / mois
+        </p>
+
+        <ul>
+            <li>Tout ce qui est inclus dans Standard</li>
+            <li>Badge Premium</li>
+            <li>Meilleure visibilité des produits</li>
+            <li>Possibilité de mettre des produits en avant</li>
+            <li>Fonctionnalités commerciales avancées à venir</li>
+            <li>Fonctionnalités promotionnelles à venir</li>
+        </ul>
+
+    </div>
+
+
+    <!-- FORMULAIRE -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="plan"
+            id="plan"
+            value="standard"
+        >
+
+
+        <h2>Informations du vendeur</h2>
+
+        <div>
+
+            <label for="full_name">
+                Nom complet
+            </label>
+
+            <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="phone">
+                Téléphone
+            </label>
+
+            <input
+                type="text"
+                id="phone"
+                name="phone"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="address">
+                Adresse
+            </label>
+
+            <textarea
+                id="address"
+                name="address"
+                required
+            ></textarea>
+
+        </div>
+
+
+        <div>
+
+            <label for="neighborhood">
+                Quartier
+            </label>
+
+            <input
+                type="text"
+                id="neighborhood"
+                name="neighborhood"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="city">
+                Ville
+            </label>
+
+            <input
+                type="text"
+                id="city"
+                name="city"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="activity">
+                Activité
+            </label>
+
+            <input
+                type="text"
+                id="activity"
+                name="activity"
+                required
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="description">
+                Présentez votre activité
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+                required
+            ></textarea>
+
+        </div>
+
+
+        <!-- PAIEMENT PREMIUM -->
+
+        <div id="premium-payment" style="display: none;">
+
+            <h2>Paiement Premium</h2>
+
+            <p>
+                Montant à payer :
+                <strong>1 000 FCFA</strong>
+            </p>
+
+            <div>
+
+                <label for="payment_method">
+                    Moyen de paiement
+                </label>
+
+                <select
+                    id="payment_method"
+                    name="payment_method"
+                >
+
+                    <option value="">
+                        Choisir
+                    </option>
+
+                    <option value="mtn">
+                        MTN Mobile Money
+                    </option>
+
+                    <option value="orange">
+                        Orange Money
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label for="payment_phone">
+                    Numéro utilisé pour le paiement
+                </label>
+
+                <input
+                    type="text"
+                    id="payment_phone"
+                    name="payment_phone"
+                >
+
+            </div>
+
+            <p>
+                Après votre demande, l'administrateur vérifiera
+                le paiement avant d'activer votre abonnement Premium.
+            </p>
+
+        </div>
+
+
+        <button type="submit">
+            Envoyer ma candidature
+        </button>
+
+    </form>
+
+</section>
+
+
+<script>
+
+function selectPlan(plan) {
+
+    const planInput = document.getElementById("plan");
+    const premiumPayment = document.getElementById("premium-payment");
+
+    const paymentMethod = document.getElementById("payment_method");
+    const paymentPhone = document.getElementById("payment_phone");
+
+    planInput.value = plan;
+
+    if (plan === "premium") {
+
+        premiumPayment.style.display = "block";
+
+        paymentMethod.required = true;
+        paymentPhone.required = true;
+
+    } else {
+
+        premiumPayment.style.display = "none";
+
+        paymentMethod.required = false;
+        paymentPhone.required = false;
+
+        paymentMethod.value = "";
+        paymentPhone.value = "";
+    }
+}
+
+</script>
+
+{% endblock %}

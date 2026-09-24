@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Commandes | Administration FormaShop</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+
+        tailwind.config = {
+
+            theme: {
+
+                extend: {
+
+                    colors: {
+
+                        brand: {
+                            400: "#818cf8",
+                            500: "#6366f1",
+                            600: "#4f46e5"
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    </script>
+
+</head>
+
+
+<body class="bg-slate-950 text-white">
+
+
+<!-- =====================================================
+     MOBILE OVERLAY
+===================================================== -->
+
+<div
+    id="overlay"
+    class="fixed inset-0
+           bg-black/70
+           backdrop-blur-sm
+           z-40
+           hidden
+           lg:hidden"
+></div>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside
+    id="sidebar"
+    class="fixed left-0 top-0
+           z-50
+           w-[280px]
+           h-screen
+           bg-slate-900
+           border-r border-slate-800
+           transform -translate-x-full
+           lg:translate-x-0
+           transition-transform duration-300"
+>
+
+    <div class="h-full flex flex-col">
+
+
+        <!-- LOGO -->
+
+        <div
+            class="h-20 px-6
+                   flex items-center
+                   border-b border-slate-800"
+        >
+
+            <div>
+
+                <h1 class="text-2xl font-black tracking-tight">
+
+                    Forma<span class="text-indigo-400">
+                        Shop
+                    </span>
+
+                </h1>
+
+                <p class="text-xs text-slate-500 mt-1">
+                    Administration
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADMIN USER -->
+
+        <div
+            class="px-5 py-5
+                   border-b border-slate-800"
+        >
+
+            <div class="flex items-center gap-3">
+
+                <div
+                    class="w-11 h-11
+                           rounded-xl
+                           bg-gradient-to-br
+                           from-indigo-500
+                           to-cyan-500
+                           flex items-center
+                           justify-center
+                           font-bold
+                           text-white"
+                >
+
+                    {{ request.user.username|first|upper }}
+
+                </div>
+
+
+                <div class="min-w-0">
+
+                    <p class="font-semibold truncate">
+
+                        {{ request.user.username }}
+
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+
+                        Administrateur
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <nav
+            class="flex-1
+                   overflow-y-auto
+                   px-4 py-6
+                   space-y-2"
+        >
+
+            <p
+                class="px-3 mb-3
+                       text-[11px]
+                       uppercase
+                       tracking-widest
+                       text-slate-500
+                       font-semibold"
+            >
+                Principal
+            </p>
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    📊
+                </span>
+
+                <span>
+                    Tableau de bord
+                </span>
+
+            </a>
+
+
+            <!-- UTILISATEURS -->
+
+            <a
+                href="/admin/auth/user/"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    👥
+                </span>
+
+                <span>
+                    Utilisateurs
+                </span>
+
+            </a>
+
+
+            <!-- FORMATEURS -->
+
+            <a
+                href="{% url 'admin_trainers' %}"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    👨‍🏫
+                </span>
+
+                <span>
+                    Formateurs
+                </span>
+
+            </a>
+
+
+            <!-- FORMATIONS -->
+
+            <a
+                href="/admin/courses/course/"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    🎓
+                </span>
+
+                <span>
+                    Formations
+                </span>
+
+            </a>
+
+
+            <!-- PRODUITS -->
+
+            <a
+                href="/admin/products/product/"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    🛍️
+                </span>
+
+                <span>
+                    Produits
+                </span>
+
+            </a>
+
+
+            <!-- COMMANDES ACTIVE -->
+
+            <a
+                href="{% url 'admin_orders' %}"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       bg-indigo-500/15
+                       text-indigo-300
+                       border border-indigo-500/20
+                       font-semibold"
+            >
+
+                <span class="text-lg">
+                    📦
+                </span>
+
+                <span>
+                    Commandes
+                </span>
+
+            </a>
+
+
+            <!-- SECTION -->
+
+            <p
+                class="px-3 pt-6 mb-3
+                       text-[11px]
+                       uppercase
+                       tracking-widest
+                       text-slate-500
+                       font-semibold"
+            >
+                Finance
+            </p>
+
+
+            <!-- PAIEMENTS -->
+
+            <a
+                href="/admin/orders/coursepayment/"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    💳
+                </span>
+
+                <span>
+                    Paiements
+                </span>
+
+            </a>
+
+
+            <!-- RETRAITS -->
+
+            <a
+                href="/admin/accounts/withdrawalrequest/"
+                class="flex items-center gap-3
+                       px-4 py-3
+                       rounded-xl
+                       text-slate-400
+                       hover:text-white
+                       hover:bg-slate-800
+                       transition"
+            >
+
+                <span class="text-lg">
+                    💰
+                </span>
+
+                <span>
+                    Retraits
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- RETOUR SITE -->
+
+        <div
+            class="p-4
+                   border-t border-slate-800"
+        >
+
+            <a
+                href="{% url 'home' %}"
+                class="flex items-center
+                       justify-center
+                       gap-2
+                       px-4 py-3
+                       rounded-xl
+                       bg-slate-800
+                       hover:bg-slate-700
+                       text-slate-300
+                       hover:text-white
+                       transition"
+            >
+
+                ← Retour au site
+
+            </a>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     CONTENU PRINCIPAL
+===================================================== -->
+
+<main class="lg:ml-[280px] min-h-screen">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================= -->
+
+    <header
+        class="h-20
+               bg-slate-950/80
+               backdrop-blur-xl
+               border-b border-slate-800
+               sticky top-0
+               z-30
+               flex items-center
+               justify-between
+               px-5 sm:px-8"
+    >
+
+        <div>
+
+            <p
+                class="text-[11px]
+                       uppercase
+                       tracking-widest
+                       text-indigo-400
+                       font-semibold"
+            >
+                Administration
+            </p>
+
+            <h1
+                class="text-xl sm:text-2xl
+                       font-bold
+                       mt-1"
+            >
+                Gestion des commandes
+            </h1>
+
+        </div>
+
+
+        <!-- ADMIN -->
+
+        <div class="hidden sm:block text-right">
+
+            <p class="text-sm font-semibold">
+
+                {{ request.user.username }}
+
+            </p>
+
+            <p class="text-xs text-slate-500">
+
+                Administrateur
+
+            </p>
+
+        </div>
+
+
+        <!-- MOBILE MENU -->
+
+        <button
+            id="menuButton"
+            type="button"
+            class="lg:hidden
+                   w-11 h-11
+                   rounded-xl
+                   bg-slate-800
+                   border border-slate-700
+                   text-xl"
+        >
+
+            ☰
+
+        </button>
+
+    </header>
+
+
+    <!-- =================================================
+         PAGE
+    ================================================= -->
+
+    <div class="p-5 sm:p-8">
+
+
+        <!-- =================================================
+             INTRODUCTION
+        ================================================= -->
+
+        <section class="mb-8">
+
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="inline-flex items-center gap-2
+                       text-sm
+                       text-indigo-400
+                       hover:text-indigo-300
+                       font-semibold
+                       transition"
+            >
+
+                ← Tableau de bord
+
+            </a>
+
+
+            <h2
+                class="text-3xl sm:text-4xl
+                       font-black
+                       tracking-tight
+                       mt-4"
+            >
+
+                Commandes
+
+            </h2>
+
+
+            <p
+                class="text-slate-500
+                       max-w-2xl
+                       mt-2"
+            >
+
+                Suivez les commandes, les livraisons,
+                les confirmations et validez les transactions
+                lorsque toutes les conditions sont réunies.
+
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             STATISTIQUES
+        ================================================= -->
+
+        <section
+            class="grid
+                   grid-cols-2
+                   lg:grid-cols-3
+                   xl:grid-cols-5
+                   gap-4
+                   mb-8"
+        >
+
+
+            <!-- TOTAL -->
+
+            <div
+                class="group
+                       bg-slate-900
+                       border border-slate-800
+                       hover:border-slate-700
+                       rounded-2xl
+                       p-5
+                       transition"
+            >
+
+                <div
+                    class="w-10 h-10
+                           rounded-xl
+                           bg-indigo-500/10
+                           text-indigo-300
+                           flex items-center
+                           justify-center
+                           mb-4"
+                >
+                    📦
+                </div>
+
+                <p class="text-sm text-slate-500">
+                    Total
+                </p>
+
+                <p
+                    class="text-3xl
+                           font-black
+                           mt-1"
+                >
+                    {{ total_orders }}
+                </p>
+
+                <p class="text-xs text-slate-600 mt-1">
+                    Toutes les commandes
+                </p>
+
+            </div>
+
+
+            <!-- À LIVRER -->
+
+            <div
+                class="bg-slate-900
+                       border border-amber-500/10
+                       hover:border-amber-500/25
+                       rounded-2xl
+                       p-5
+                       transition"
+            >
+
+                <div
+                    class="w-10 h-10
+                           rounded-xl
+                           bg-amber-500/10
+                           text-amber-300
+                           flex items-center
+                           justify-center
+                           mb-4"
+                >
+                    🚚
+                </div>
+
+                <p class="text-sm text-slate-500">
+                    À livrer
+                </p>
+
+                <p
+                    class="text-3xl
+                           font-black
+                           text-amber-300
+                           mt-1"
+                >
+                    {{ pending_delivery }}
+                </p>
+
+                <p class="text-xs text-slate-600 mt-1">
+                    En attente du vendeur
+                </p>
+
+            </div>
+
+
+            <!-- VENDEUR -->
+
+            <div
+                class="bg-slate-900
+                       border border-purple-500/10
+                       hover:border-purple-500/25
+                       rounded-2xl
+                       p-5
+                       transition"
+            >
+
+                <div
+                    class="w-10 h-10
+                           rounded-xl
+                           bg-purple-500/10
+                           text-purple-300
+                           flex items-center
+                           justify-center
+                           mb-4"
+                >
+                    📬
+                </div>
+
+                <p class="text-sm text-slate-500">
+                    Livrées vendeur
+                </p>
+
+                <p
+                    class="text-3xl
+                           font-black
+                           text-purple-300
+                           mt-1"
+                >
+                    {{ seller_delivered }}
+                </p>
+
+                <p class="text-xs text-slate-600 mt-1">
+                    En attente du client
+                </p>
+
+            </div>
+
+
+            <!-- PRÊTES -->
+
+            <div
+                class="bg-slate-900
+                       border border-cyan-500/10
+                       hover:border-cyan-500/25
+                       rounded-2xl
+                       p-5
+                       transition"
+            >
+
+                <div
+                    class="w-10 h-10
+                           rounded-xl
+                           bg-cyan-500/10
+                           text-cyan-300
+                           flex items-center
+                           justify-center
+                           mb-4"
+                >
+                    ✓
+                </div>
+
+                <p class="text-sm text-slate-500">
+                    Prêtes à valider
+                </p>
+
+                <p
+                    class="text-3xl
+                           font-black
+                           text-cyan-300
+                           mt-1"
+                >
+                    {{ ready_for_validation }}
+                </p>
+
+                <p class="text-xs text-slate-600 mt-1">
+                    Vendeur + client confirmés
+                </p>
+
+            </div>
+
+
+            <!-- TERMINÉES -->
+
+            <div
+                class="col-span-2
+                       lg:col-span-1
+                       bg-slate-900
+                       border border-emerald-500/10
+                       hover:border-emerald-500/25
+                       rounded-2xl
+                       p-5
+                       transition"
+            >
+
+                <div
+                    class="w-10 h-10
+                           rounded-xl
+                           bg-emerald-500/10
+                           text-emerald-300
+                           flex items-center
+                           justify-center
+                           mb-4"
+                >
+                    ✓
+                </div>
+
+                <p class="text-sm text-slate-500">
+                    Terminées
+                </p>
+
+                <p
+                    class="text-3xl
+                           font-black
+                           text-emerald-300
+                           mt-1"
+                >
+                    {{ completed_orders }}
+                </p>
+
+                <p class="text-xs text-slate-600 mt-1">
+                    Validées par l'administration
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FILTRES
+        ================================================= -->
+
+        <section
+            class="bg-slate-900
+                   border border-slate-800
+                   rounded-2xl
+                   p-5
+                   mb-6"
+        >
+
+            <div class="mb-4">
+
+                <h3 class="font-bold">
+                    Rechercher une commande
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Recherchez par client, vendeur, produit,
+                    nom ou numéro de téléphone.
+                </p>
+
+            </div>
+
+
+            <form
+                method="GET"
+                class="flex flex-col
+                       lg:flex-row
+                       gap-3"
+            >
+
+
+                <div class="flex-1 relative">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Client, vendeur, produit..."
+                        class="w-full
+                               px-4 py-3
+                               rounded-xl
+                               bg-slate-950
+                               border border-slate-800
+                               text-white
+                               placeholder:text-slate-600
+                               outline-none
+                               focus:border-indigo-500
+                               focus:ring-1
+                               focus:ring-indigo-500"
+                    >
+
+                </div>
+
+
+                <select
+                    name="status"
+                    class="px-4 py-3
+                           rounded-xl
+                           bg-slate-950
+                           border border-slate-800
+                           text-white
+                           outline-none
+                           focus:border-indigo-500"
+                >
+
+                    <option
+                        value="all"
+                        {% if status_filter == "all" %}
+                            selected
+                        {% endif %}
+                    >
+                        Toutes les commandes
+                    </option>
+
+
+                    <option
+                        value="pending_delivery"
+                        {% if status_filter == "pending_delivery" %}
+                            selected
+                        {% endif %}
+                    >
+                        À livrer
+                    </option>
+
+
+                    <option
+                        value="seller_delivered"
+                        {% if status_filter == "seller_delivered" %}
+                            selected
+                        {% endif %}
+                    >
+                        Livrées par le vendeur
+                    </option>
+
+
+                    <option
+                        value="ready"
+                        {% if status_filter == "ready" %}
+                            selected
+                        {% endif %}
+                    >
+                        Prêtes à valider
+                    </option>
+
+
+                    <option
+                        value="completed"
+                        {% if status_filter == "completed" %}
+                            selected
+                        {% endif %}
+                    >
+                        Terminées
+                    </option>
+
+                </select>
+
+
+                <button
+                    type="submit"
+                    class="px-6 py-3
+                           rounded-xl
+                           bg-indigo-500
+                           hover:bg-indigo-400
+                           text-white
+                           font-semibold
+                           transition
+                           shadow-lg
+                           shadow-indigo-500/10"
+                >
+
+                    Rechercher
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTE COMMANDES
+        ================================================= -->
+
+        <section
+            class="bg-slate-900
+                   border border-slate-800
+                   rounded-2xl
+                   overflow-hidden
+                   shadow-2xl"
+        >
+
+
+            <!-- HEADER LISTE -->
+
+            <div
+                class="px-6 py-5
+                       border-b border-slate-800
+                       flex flex-col
+                       sm:flex-row
+                       sm:items-center
+                       sm:justify-between
+                       gap-2"
+            >
+
+                <div>
+
+                    <h3 class="text-lg font-bold">
+                        Liste des commandes
+                    </h3>
+
+                    <p class="text-sm text-slate-500 mt-1">
+
+                        {{ orders|length }}
+                        commande(s) affichée(s)
+
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="text-xs
+                           text-slate-600"
+                >
+
+                    Actualisation selon les confirmations
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DESKTOP TABLE
+            ================================================= -->
+
+            <div class="hidden xl:block overflow-x-auto">
+
+                <table class="w-full">
+
+
+                    <thead class="bg-slate-950/60">
+
+                        <tr
+                            class="text-left
+                                   text-[11px]
+                                   uppercase
+                                   tracking-wider
+                                   text-slate-500"
+                        >
+
+                            <th class="px-5 py-4">
+                                Commande
+                            </th>
+
+                            <th class="px-5 py-4">
+                                Client
+                            </th>
+
+                            <th class="px-5 py-4">
+                                Vendeur
+                            </th>
+
+                            <th class="px-5 py-4">
+                                Produit
+                            </th>
+
+                            <th class="px-5 py-4">
+                                Montant
+                            </th>
+
+                            <th class="px-5 py-4">
+                                Confirmations
+                            </th>
+
+                            <th class="px-5 py-4 text-right">
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        class="divide-y
+                               divide-slate-800"
+                    >
+
+
+                        {% for order in orders %}
+
+                            <tr
+                                class="hover:bg-slate-800/30
+                                       transition"
+                            >
+
+
+                                <!-- COMMANDE -->
+
+                                <td class="px-5 py-5">
+
+                                    <p class="font-bold">
+                                        #{{ order.id }}
+                                    </p>
+
+                                    <p
+                                        class="text-xs
+                                               text-slate-500
+                                               mt-1"
+                                    >
+                                        {{ order.created_at|date:"d/m/Y H:i" }}
+                                    </p>
+
+                                </td>
+
+
+                                <!-- CLIENT -->
+
+                                <td class="px-5 py-5">
+
+                                    <p class="font-semibold">
+                                        {{ order.full_name }}
+                                    </p>
+
+                                    <p
+                                        class="text-sm
+                                               text-slate-500
+                                               mt-1"
+                                    >
+                                        @{{ order.user.username }}
+                                    </p>
+
+                                    <p
+                                        class="text-xs
+                                               text-slate-600
+                                               mt-1"
+                                    >
+                                        {{ order.phone_number }}
+                                    </p>
+
+                                </td>
+
+
+                                <!-- VENDEUR -->
+
+                                <td class="px-5 py-5">
+
+                                    {% if order.seller %}
+
+                                        <p class="font-semibold">
+                                            {{ order.seller.username }}
+                                        </p>
+
+                                    {% else %}
+
+                                        <span
+                                            class="text-slate-600"
+                                        >
+                                            Aucun vendeur
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- PRODUIT -->
+
+                                <td class="px-5 py-5">
+
+                                    {% if order.product %}
+
+                                        <p class="font-medium">
+                                            {{ order.product.name }}
+                                        </p>
+
+                                        <p
+                                            class="text-sm
+                                                   text-slate-500
+                                                   mt-1"
+                                        >
+                                            Quantité :
+                                            {{ order.quantity }}
+                                        </p>
+
+                                    {% else %}
+
+                                        <span
+                                            class="text-slate-600"
+                                        >
+                                            Produit supprimé
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- MONTANT -->
+
+                                <td class="px-5 py-5">
+
+                                    <p class="font-bold">
+                                        {{ order.total_price }} FCFA
+                                    </p>
+
+
+                                    {% if order.payment_status == "paid" %}
+
+                                        <span
+                                            class="inline-flex
+                                                   mt-2
+                                                   px-2.5 py-1
+                                                   rounded-full
+                                                   bg-emerald-500/10
+                                                   border
+                                                   border-emerald-500/20
+                                                   text-emerald-300
+                                                   text-xs"
+                                        >
+
+                                            ✓ Paiement confirmé
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span
+                                            class="inline-flex
+                                                   mt-2
+                                                   px-2.5 py-1
+                                                   rounded-full
+                                                   bg-amber-500/10
+                                                   border
+                                                   border-amber-500/20
+                                                   text-amber-300
+                                                   text-xs"
+                                        >
+
+                                            Paiement en attente
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- CONFIRMATIONS -->
+
+                                <td class="px-5 py-5">
+
+                                    <div class="space-y-2">
+
+
+                                        {% if order.seller_confirmed %}
+
+                                            <p
+                                                class="text-xs
+                                                       text-emerald-300"
+                                            >
+                                                ✓ Vendeur confirmé
+                                            </p>
+
+                                        {% else %}
+
+                                            <p
+                                                class="text-xs
+                                                       text-amber-300"
+                                            >
+                                                ○ Vendeur
+                                            </p>
+
+                                        {% endif %}
+
+
+                                        {% if order.customer_confirmed %}
+
+                                            <p
+                                                class="text-xs
+                                                       text-emerald-300"
+                                            >
+                                                ✓ Client confirmé
+                                            </p>
+
+                                        {% else %}
+
+                                            <p
+                                                class="text-xs
+                                                       text-amber-300"
+                                            >
+                                                ○ Client
+                                            </p>
+
+                                        {% endif %}
+
+
+                                        {% if order.admin_validated %}
+
+                                            <p
+                                                class="text-xs
+                                                       text-indigo-300"
+                                            >
+                                                ✓ Administrateur validé
+                                            </p>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td class="px-5 py-5">
+
+                                    <div
+                                        class="flex
+                                               justify-end
+                                               gap-2"
+                                    >
+
+
+                                        <a
+                                            href="{% url 'order_detail' order.id %}"
+                                            class="px-3 py-2
+                                                   rounded-lg
+                                                   bg-slate-800
+                                                   hover:bg-slate-700
+                                                   border border-slate-700
+                                                   text-sm
+                                                   font-semibold
+                                                   transition"
+                                        >
+
+                                            Voir
+
+                                        </a>
+
+
+                                        {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+
+                                            <form
+                                                method="POST"
+                                                action="{% url 'admin_validate_order' order.id %}"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="px-3 py-2
+                                                           rounded-lg
+                                                           bg-emerald-500
+                                                           hover:bg-emerald-400
+                                                           text-slate-950
+                                                           text-sm
+                                                           font-bold
+                                                           transition"
+                                                >
+
+                                                    ✓ Valider
+
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
+
+
+                                    </div>
+
+                                </td>
+
+
+                            </tr>
+
+
+                        {% empty %}
+
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="px-6 py-16
+                                           text-center"
+                                >
+
+                                    <div
+                                        class="w-16 h-16
+                                               mx-auto
+                                               rounded-2xl
+                                               bg-slate-800
+                                               flex items-center
+                                               justify-center
+                                               text-2xl"
+                                    >
+                                        📦
+                                    </div>
+
+                                    <p
+                                        class="text-slate-400
+                                               mt-4"
+                                    >
+                                        Aucune commande trouvée.
+                                    </p>
+
+                                </td>
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLE INTERMÉDIAIRE / MOBILE
+            ================================================= -->
+
+            <div class="xl:hidden">
+
+
+                {% for order in orders %}
+
+                    <article
+                        class="p-5
+                               border-b border-slate-800
+                               last:border-b-0"
+                    >
+
+
+                        <!-- TOP -->
+
+                        <div
+                            class="flex
+                                   items-start
+                                   justify-between
+                                   gap-4"
+                        >
+
+                            <div>
+
+                                <p class="font-bold text-lg">
+
+                                    Commande #{{ order.id }}
+
+                                </p>
+
+                                <p
+                                    class="text-xs
+                                           text-slate-500
+                                           mt-1"
+                                >
+
+                                    {{ order.created_at|date:"d/m/Y H:i" }}
+
+                                </p>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            {% if order.admin_validated %}
+
+                                <span
+                                    class="shrink-0
+                                           px-3 py-1.5
+                                           rounded-full
+                                           bg-emerald-500/10
+                                           border
+                                           border-emerald-500/20
+                                           text-emerald-300
+                                           text-xs"
+                                >
+                                    Terminée
+                                </span>
+
+
+                            {% elif order.seller_confirmed and order.customer_confirmed %}
+
+                                <span
+                                    class="shrink-0
+                                           px-3 py-1.5
+                                           rounded-full
+                                           bg-cyan-500/10
+                                           border
+                                           border-cyan-500/20
+                                           text-cyan-300
+                                           text-xs"
+                                >
+                                    À valider
+                                </span>
+
+
+                            {% elif order.seller_confirmed %}
+
+                                <span
+                                    class="shrink-0
+                                           px-3 py-1.5
+                                           rounded-full
+                                           bg-purple-500/10
+                                           border
+                                           border-purple-500/20
+                                           text-purple-300
+                                           text-xs"
+                                >
+                                    Livrée vendeur
+                                </span>
+
+
+                            {% else %}
+
+                                <span
+                                    class="shrink-0
+                                           px-3 py-1.5
+                                           rounded-full
+                                           bg-amber-500/10
+                                           border
+                                           border-amber-500/20
+                                           text-amber-300
+                                           text-xs"
+                                >
+                                    À livrer
+                                </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <!-- INFORMATION -->
+
+                        <div
+                            class="mt-5
+                                   grid
+                                   sm:grid-cols-2
+                                   gap-4"
+                        >
+
+
+                            <!-- CLIENT -->
+
+                            <div
+                                class="rounded-xl
+                                       bg-slate-950
+                                       border border-slate-800
+                                       p-4"
+                            >
+
+                                <p
+                                    class="text-[11px]
+                                           uppercase
+                                           tracking-wider
+                                           text-slate-600"
+                                >
+                                    Client
+                                </p>
+
+                                <p class="font-semibold mt-2">
+
+                                    {{ order.full_name }}
+
+                                </p>
+
+                                <p
+                                    class="text-sm
+                                           text-slate-500
+                                           mt-1"
+                                >
+
+                                    @{{ order.user.username }}
+
+                                </p>
+
+                                <p
+                                    class="text-xs
+                                           text-slate-600
+                                           mt-1"
+                                >
+
+                                    {{ order.phone_number }}
+
+                                </p>
+
+                            </div>
+
+
+                            <!-- VENDEUR -->
+
+                            <div
+                                class="rounded-xl
+                                       bg-slate-950
+                                       border border-slate-800
+                                       p-4"
+                            >
+
+                                <p
+                                    class="text-[11px]
+                                           uppercase
+                                           tracking-wider
+                                           text-slate-600"
+                                >
+                                    Vendeur
+                                </p>
+
+
+                                {% if order.seller %}
+
+                                    <p class="font-semibold mt-2">
+
+                                        {{ order.seller.username }}
+
+                                    </p>
+
+                                {% else %}
+
+                                    <p
+                                        class="text-slate-600
+                                               mt-2"
+                                    >
+                                        Aucun vendeur
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- PRODUIT -->
+
+                            <div
+                                class="rounded-xl
+                                       bg-slate-950
+                                       border border-slate-800
+                                       p-4"
+                            >
+
+                                <p
+                                    class="text-[11px]
+                                           uppercase
+                                           tracking-wider
+                                           text-slate-600"
+                                >
+                                    Produit
+                                </p>
+
+
+                                {% if order.product %}
+
+                                    <p class="font-semibold mt-2">
+
+                                        {{ order.product.name }}
+
+                                    </p>
+
+                                    <p
+                                        class="text-sm
+                                               text-slate-500
+                                               mt-1"
+                                    >
+
+                                        Quantité :
+                                        {{ order.quantity }}
+
+                                    </p>
+
+                                {% else %}
+
+                                    <p
+                                        class="text-slate-600
+                                               mt-2"
+                                    >
+                                        Produit supprimé
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- MONTANT -->
+
+                            <div
+                                class="rounded-xl
+                                       bg-slate-950
+                                       border border-slate-800
+                                       p-4"
+                            >
+
+                                <p
+                                    class="text-[11px]
+                                           uppercase
+                                           tracking-wider
+                                           text-slate-600"
+                                >
+                                    Montant
+                                </p>
+
+                                <p
+                                    class="font-bold
+                                           text-lg
+                                           mt-2"
+                                >
+
+                                    {{ order.total_price }} FCFA
+
+                                </p>
+
+
+                                {% if order.payment_status == "paid" %}
+
+                                    <p
+                                        class="text-xs
+                                               text-emerald-300
+                                               mt-1"
+                                    >
+                                        ✓ Paiement confirmé
+                                    </p>
+
+                                {% else %}
+
+                                    <p
+                                        class="text-xs
+                                               text-amber-300
+                                               mt-1"
+                                    >
+                                        Paiement en attente
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONFIRMATIONS -->
+
+                        <div
+                            class="mt-5
+                                   rounded-xl
+                                   bg-slate-950
+                                   border border-slate-800
+                                   p-4"
+                        >
+
+                            <p
+                                class="text-[11px]
+                                       uppercase
+                                       tracking-wider
+                                       text-slate-600
+                                       mb-3"
+                            >
+                                État des confirmations
+                            </p>
+
+
+                            <div
+                                class="grid
+                                       sm:grid-cols-3
+                                       gap-3"
+                            >
+
+
+                                <!-- VENDEUR -->
+
+                                {% if order.seller_confirmed %}
+
+                                    <div
+                                        class="rounded-lg
+                                               bg-emerald-500/10
+                                               border
+                                               border-emerald-500/20
+                                               px-3 py-2"
+                                    >
+
+                                        <p
+                                            class="text-xs
+                                                   text-emerald-300"
+                                        >
+                                            ✓ Vendeur
+                                        </p>
+
+                                        <p
+                                            class="text-[11px]
+                                                   text-slate-600
+                                                   mt-1"
+                                        >
+                                            Livraison confirmée
+                                        </p>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div
+                                        class="rounded-lg
+                                               bg-amber-500/10
+                                               border
+                                               border-amber-500/20
+                                               px-3 py-2"
+                                    >
+
+                                        <p
+                                            class="text-xs
+                                                   text-amber-300"
+                                        >
+                                            ○ Vendeur
+                                        </p>
+
+                                        <p
+                                            class="text-[11px]
+                                                   text-slate-600
+                                                   mt-1"
+                                        >
+                                            En attente
+                                        </p>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- CLIENT -->
+
+                                {% if order.customer_confirmed %}
+
+                                    <div
+                                        class="rounded-lg
+                                               bg-emerald-500/10
+                                               border
+                                               border-emerald-500/20
+                                               px-3 py-2"
+                                    >
+
+                                        <p
+                                            class="text-xs
+                                                   text-emerald-300"
+                                        >
+                                            ✓ Client
+                                        </p>
+
+                                        <p
+                                            class="text-[11px]
+                                                   text-slate-600
+                                                   mt-1"
+                                        >
+                                            Réception confirmée
+                                        </p>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div
+                                        class="rounded-lg
+                                               bg-amber-500/10
+                                               border
+                                               border-amber-500/20
+                                               px-3 py-2"
+                                    >
+
+                                        <p
+                                            class="text-xs
+                                                   text-amber-300"
+                                        >
+                                            ○ Client
+                                        </p>
+
+                                        <p
+                                            class="text-[11px]
+                                                   text-slate-600
+                                                   mt-1"
+                                        >
+                                            En attente
+                                        </p>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- ADMIN -->
+
+                                {% if order.admin_validated %}
+
+                                    <div
+                                        class="rounded-lg
+                                               bg-indigo-500/10
+                                               border
+                                               border-indigo-500/20
+                                               px-3 py-2"
+                                    >
+
+                                        <p
+                                            class="text-xs
+                                                   text-indigo-300"
+                                        >
+                                            ✓ Administrateur
+                                        </p>
+
+                                        <p
+                                            class="text-[11px]
+                                                   text-slate-600
+                                                   mt-1"
+                                        >
+                                            Validation terminée
+                                        </p>
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div
+                                        class="rounded-lg
+                                               bg-slate-800
+                                               border
+                                               border-slate-700
+                                               px-3 py-2"
+                                    >
+
+                                        <p
+                                            class="text-xs
+                                                   text-slate-500"
+                                        >
+                                            ○ Administrateur
+                                        </p>
+
+                                        <p
+                                            class="text-[11px]
+                                                   text-slate-600
+                                                   mt-1"
+                                        >
+                                            En attente
+                                        </p>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div
+                            class="flex
+                                   flex-col
+                                   sm:flex-row
+                                   gap-3
+                                   mt-5"
+                        >
+
+
+                            <a
+                                href="{% url 'order_detail' order.id %}"
+                                class="flex-1
+                                       text-center
+                                       px-4 py-3
+                                       rounded-xl
+                                       bg-slate-800
+                                       hover:bg-slate-700
+                                       border border-slate-700
+                                       font-semibold
+                                       transition"
+                            >
+
+                                Voir la commande
+
+                            </a>
+
+
+                            {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'admin_validate_order' order.id %}"
+                                    class="flex-1"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="w-full
+                                               px-4 py-3
+                                               rounded-xl
+                                               bg-emerald-500
+                                               hover:bg-emerald-400
+                                               text-slate-950
+                                               font-bold
+                                               transition"
+                                    >
+
+                                        ✓ Valider la commande
+
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    </article>
+
+
+                {% empty %}
+
+
+                    <div
+                        class="p-12
+                               text-center"
+                    >
+
+                        <div
+                            class="w-16 h-16
+                                   mx-auto
+                                   rounded-2xl
+                                   bg-slate-800
+                                   flex items-center
+                                   justify-center
+                                   text-2xl"
+                        >
+                            📦
+                        </div>
+
+                        <p
+                            class="text-slate-400
+                                   mt-4"
+                        >
+                            Aucune commande trouvée.
+                        </p>
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     MOBILE MENU JAVASCRIPT
+===================================================== -->
+
+<script>
+
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const menuButton = document.getElementById("menuButton");
+
+
+    function openMenu() {
+
+        sidebar.classList.remove("-translate-x-full");
+
+        overlay.classList.remove("hidden");
+
+    }
+
+
+    function closeMenu() {
+
+        sidebar.classList.add("-translate-x-full");
+
+        overlay.classList.add("hidden");
+
+    }
+
+
+    menuButton.addEventListener(
+        "click",
+        openMenu
+    );
+
+
+    overlay.addEventListener(
+        "click",
+        closeMenu
+    );
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -22,9 +22,15 @@
 
             {{ form.as_p }}
 
-            <button type="submit" class="btn-primary auth-button">
-                Se connecter
-            </button>
+            <div class="auth-actions">
+                <button type="submit" class="btn-primary auth-button">
+                    Se connecter
+                </button>
+
+                <a href="{% url 'password_reset' %}" class="password-reset-link">
+                    Mot de passe oublié ?
+                </a>
+            </div>
 
         </form>
 

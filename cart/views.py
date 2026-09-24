@@ -1,12 +1,15 @@
+from datetime import timedelta
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from .models import Cart, CartItem
 from products.models import Product
 from courses.models import Course
-from orders.models import Order
+from orders.models import Order, OrderNotification
 
 
 def get_or_create_cart(request):
@@ -44,7 +47,7 @@ def cart_detail(request):
         {
             "cart": cart,
             "items": items,
-            "total": total,
+            "total": total
         }
     )
 
@@ -157,19 +160,7 @@ def remove_from_cart(request, item_id):
     item.delete()
 
     return redirect("cart")
-@login_required
-def clear_cart(request):
 
-    cart = get_or_create_cart(request)
-
-    cart.items.all().delete()
-
-    messages.success(
-        request,
-        "Votre panier a été vidé."
-    )
-
-    return redirect("cart")
 
 @login_required
 @transaction.atomic
@@ -179,7 +170,10 @@ def create_order(request):
 
     product_items = cart.items.filter(
         product__isnull=False
-    ).select_related("product")
+    ).select_related(
+        "product",
+        "product__seller"
+    )
 
     if not product_items.exists():
 
@@ -192,31 +186,87 @@ def create_order(request):
 
     if request.method == "POST":
 
-        full_name = request.POST.get("full_name", "").strip()
-        phone_number = request.POST.get("phone_number", "").strip()
+        full_name = request.POST.get(
+            "full_name",
+            ""
+        ).strip()
+
+        phone_number = request.POST.get(
+            "phone_number",
+            ""
+        ).strip()
+
+        neighborhood = request.POST.get(
+            "neighborhood",
+            ""
+        ).strip()
+
         delivery_address = request.POST.get(
             "delivery_address",
             ""
         ).strip()
 
-        if not full_name or not phone_number or not delivery_address:
-
+        if not full_name:
             messages.error(
                 request,
-                "Veuillez remplir toutes les informations de livraison."
+                "Veuillez entrer votre nom complet."
             )
 
             return render(
                 request,
-                "orders/delivery.html",
-                {
-                    "items": product_items,
-                }
+                "cart/checkout.html"
             )
+
+        if not phone_number:
+            messages.error(
+                request,
+                "Veuillez entrer votre numéro de téléphone."
+            )
+
+            return render(
+                request,
+                "cart/checkout.html"
+            )
+
+        if not neighborhood:
+            messages.error(
+                request,
+                "Veuillez entrer votre quartier."
+            )
+
+            return render(
+                request,
+                "cart/checkout.html"
+            )
+
+        if not delivery_address:
+            messages.error(
+                request,
+                "Veuillez entrer votre adresse de livraison."
+            )
+
+            return render(
+                request,
+                "cart/checkout.html"
+            )
+
+        created_orders = 0
 
         for item in product_items:
 
             product = item.product
+
+            if not product.seller:
+
+                messages.error(
+                    request,
+                    f"Le produit « {product.name} » n'a pas de vendeur."
+                )
+
+                return render(
+                    request,
+                    "cart/checkout.html"
+                )
 
             if product.stock < item.quantity:
 
@@ -225,57 +275,126 @@ def create_order(request):
                     f"Stock insuffisant pour le produit : {product.name}"
                 )
 
-                return redirect("cart")
+                return render(
+                    request,
+                    "cart/checkout.html"
+                )
 
-        created_orders = []
+            total_price = (
+                product.price * item.quantity
+            )
 
-        for item in product_items:
-
-            product = item.product
-
-            total_price = product.price * item.quantity
+            deadline = (
+                timezone.now()
+                + timedelta(hours=24)
+            )
 
             order = Order.objects.create(
+
                 user=request.user,
+
+                seller=product.seller,
+
                 full_name=full_name,
+
                 phone_number=phone_number,
+
+                neighborhood=neighborhood,
+
                 delivery_address=delivery_address,
+
+                delivery_deadline=deadline,
+
                 product=product,
+
                 quantity=item.quantity,
+
                 total_price=total_price,
+
                 status="pending",
+
                 payment_status="pending",
+
+                seller_confirmed=False,
+
+                customer_confirmed=False,
+
+                admin_validated=False,
+
                 reward_given=False
             )
 
             product.stock -= item.quantity
-            product.save()
+
+            product.save(
+                update_fields=["stock"]
+            )
+
+            OrderNotification.objects.create(
+
+                recipient=product.seller,
+
+                order=order,
+
+                title="Nouvelle commande",
+
+                message=(
+                    f"Vous avez reçu une nouvelle commande "
+                    f"pour le produit « {product.name} ».\n\n"
+                    f"Client : {full_name}\n"
+                    f"Téléphone : {phone_number}\n"
+                    f"Quartier : {neighborhood}\n"
+                    f"Adresse : {delivery_address}\n"
+                    f"Quantité : {item.quantity}\n"
+                    f"Montant : {total_price} FCFA\n\n"
+                    f"Vous devez effectuer la livraison dans les "
+                    f"24 heures suivant la commande."
+                )
+            )
+
+            OrderNotification.objects.create(
+
+                recipient=request.user,
+
+                order=order,
+
+                title="Commande créée",
+
+                message=(
+                    f"Votre commande pour « {product.name} » "
+                    f"a été créée avec succès.\n\n"
+                    f"Le vendeur doit effectuer la livraison "
+                    f"dans les 24 heures."
+                )
+            )
 
             item.delete()
 
-            created_orders.append(order)
+            created_orders += 1
 
-        total_amount = sum(
-            order.total_price
-            for order in created_orders
-        )
-
-        return render(
+        messages.success(
             request,
-            "orders/order_success.html",
-            {
-                "orders": created_orders,
-                "total_amount": total_amount,
-                "full_name": full_name,
-                "phone_number": phone_number,
-                "delivery_address": delivery_address,
-            }
+            f"{created_orders} commande(s) créée(s) avec succès. "
+            f"Le paiement sera effectué à la livraison."
         )
+
+        return redirect("cart")
 
     return render(
         request,
-        "orders/delivery.html",
-        {
-            "items": product_items,
-        }
+        "cart/checkout.html"
     )
+@login_required
+def clear_cart(request):
+
+    cart = get_or_create_cart(request)
+
+    if request.method == "POST":
+        cart.items.all().delete()
+
+        messages.success(
+            request,
+            "Votre panier a été vidé."
+        )
+
+    return redirect("cart")

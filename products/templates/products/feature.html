@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+Mettre le produit en avant
+{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <h1>Mettre le produit en avant</h1>
+
+    <h2>{{ product.name }}</h2>
+
+    <p>
+        En tant que vendeur Premium, vous pouvez
+        mettre ce produit en avant.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label for="days">
+            Durée
+        </label>
+
+        <select name="days" id="days">
+
+            <option value="7">
+                7 jours
+            </option>
+
+            <option value="15">
+                15 jours
+            </option>
+
+            <option value="30">
+                30 jours
+            </option>
+
+        </select>
+
+        <button type="submit">
+            Mettre en avant
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'my_products' %}">
+        ← Retour à mes produits
+    </a>
+
+</section>
+
+{% endblock %}

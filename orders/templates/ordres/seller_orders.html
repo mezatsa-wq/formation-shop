@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}
+Commandes reçues - FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <h1>Commandes reçues</h1>
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+            <article>
+
+                <h2>
+                    Commande #{{ order.id }}
+                </h2>
+
+                {% if order.product %}
+
+                    <p>
+                        Produit :
+                        {{ order.product.name }}
+                    </p>
+
+                {% endif %}
+
+                <p>
+                    <strong>Client :</strong>
+                    {{ order.full_name }}
+                </p>
+
+                <p>
+                    <strong>Téléphone :</strong>
+                    {{ order.phone_number }}
+                </p>
+
+                <p>
+                    <strong>Quartier :</strong>
+                    {{ order.neighborhood }}
+                </p>
+
+                <p>
+                    <strong>Adresse :</strong>
+                    {{ order.delivery_address }}
+                </p>
+
+                <p>
+                    <strong>Quantité :</strong>
+                    {{ order.quantity }}
+                </p>
+
+                <p>
+                    <strong>Montant :</strong>
+                    {{ order.total_price }} FCFA
+                </p>
+
+                <p>
+                    <strong>Livraison avant :</strong>
+                    {% if order.delivery_deadline %}
+                        {{ order.delivery_deadline|date:"d/m/Y à H:i" }}
+                    {% else %}
+                        Non définie
+                    {% endif %}
+                </p>
+
+                <p>
+                    État :
+                    {{ order.get_status_display }}
+                </p>
+
+                {% if order.seller_confirmed %}
+
+                    <p>
+                        ✅ Vous avez confirmé la livraison.
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        ⏳ Vous devez livrer cette commande.
+                    </p>
+
+                {% endif %}
+
+                <a href="{% url 'order_detail' order.id %}">
+                    Gérer la commande
+                </a>
+
+            </article>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            Vous n'avez encore reçu aucune commande.
+        </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

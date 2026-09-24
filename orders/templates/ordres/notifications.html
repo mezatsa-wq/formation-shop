@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications - FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <h1>Mes notifications</h1>
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            <article>
+
+                <h2>
+                    {{ notification.title }}
+                </h2>
+
+                <p>
+                    {{ notification.message|linebreaksbr }}
+                </p>
+
+                <small>
+                    {{ notification.created_at|date:"d/m/Y à H:i" }}
+                </small>
+
+                <br>
+
+                <a href="{% url 'order_detail' notification.order.id %}">
+                    Voir la commande
+                </a>
+
+            </article>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            Vous n'avez aucune notification.
+        </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

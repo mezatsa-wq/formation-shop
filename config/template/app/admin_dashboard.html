@@ -1,23 +1,39 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Administration | FormaShop</title>
+    <title>Administration — FormaShop</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        night: "#070910",
+                        panel: "#0d111b",
+                        panel2: "#111725",
+                        purple: "#7c5cff",
+                        purple2: "#6240e8"
+                    },
+                    boxShadow: {
+                        premium:
+                            "0 25px 80px rgba(0,0,0,.35)"
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 
-<body class="bg-slate-100 text-slate-900">
+<body class="bg-night text-white min-h-screen">
 
 
 <!-- =====================================================
@@ -25,9 +41,8 @@
 ===================================================== -->
 
 <div
-    id="overlay"
-    class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"
-    onclick="closeSidebar()"
+    id="adminOverlay"
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden lg:hidden"
 ></div>
 
 
@@ -36,129 +51,366 @@
 ===================================================== -->
 
 <aside
-    id="sidebar"
-    class="fixed left-0 top-0 z-50
-           h-screen w-72
-           bg-white border-r border-slate-200
-           transform -translate-x-full
-           md:translate-x-0
-           transition-transform duration-300"
+    id="adminSidebar"
+    class="
+        fixed
+        top-0
+        left-0
+        z-50
+        h-screen
+        w-[280px]
+        bg-panel
+        border-r
+        border-white/10
+        flex
+        flex-col
+        transform
+        -translate-x-full
+        lg:translate-x-0
+        transition-transform
+        duration-300
+    "
 >
+
 
     <!-- LOGO -->
 
-    <div
-        class="h-20 px-6 flex items-center
-               border-b border-slate-200"
-    >
+    <div class="h-20 px-7 flex items-center border-b border-white/10">
 
-        <div>
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="text-2xl font-black tracking-tight"
+        >
+            Forma<span class="text-purple">Shop</span>
+        </a>
 
-            <h1 class="text-2xl font-black">
+    </div>
 
-                Forma
-                <span class="text-indigo-600">
-                    Shop
-                </span>
 
-            </h1>
+    <!-- ADMIN -->
 
-            <p class="text-xs text-slate-400">
-                Administration
-            </p>
+    <div class="px-6 py-5">
+
+        <div
+            class="
+                flex
+                items-center
+                gap-3
+                p-3
+                rounded-2xl
+                bg-white/[0.035]
+                border
+                border-white/[0.06]
+            "
+        >
+
+            <div
+                class="
+                    w-10
+                    h-10
+                    rounded-xl
+                    bg-gradient-to-br
+                    from-purple
+                    to-purple2
+                    flex
+                    items-center
+                    justify-center
+                    font-bold
+                    shadow-lg
+                    shadow-purple/20
+                "
+            >
+                {{ request.user.username|first|upper }}
+            </div>
+
+            <div class="min-w-0">
+
+                <p class="text-sm font-semibold truncate">
+                    {{ request.user.username }}
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    Administrateur
+                </p>
+
+            </div>
 
         </div>
 
     </div>
 
 
-    <!-- MENU -->
+    <!-- NAVIGATION -->
 
-    <nav class="p-4 space-y-2">
+    <nav class="flex-1 px-4 overflow-y-auto">
+
+        <p
+            class="
+                px-3
+                mb-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[.18em]
+                text-slate-600
+            "
+        >
+            Vue générale
+        </p>
+
 
         <a
             href="{% url 'admin_dashboard' %}"
-            class="flex items-center gap-3
-                   px-4 py-3 rounded-xl
-                   bg-indigo-50 text-indigo-700
-                   font-semibold"
+            class="
+                group
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                bg-purple/10
+                border
+                border-purple/20
+                text-white
+                mb-2
+            "
         >
-            📊
-            <span>Tableau de bord</span>
+
+            <span class="text-purple">▣</span>
+
+            <span class="text-sm font-medium">
+                Dashboard
+            </span>
+
         </a>
 
 
-        <!-- UTILISATEURS -->
-<a href="/admin/auth/user/"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    👥
-    <span>Utilisateurs</span>
-</a>
+        <a
+            href="{% url 'admin_orders' %}"
+            class="
+                group
+                flex
+                items-center
+                justify-between
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
 
-<!-- FORMATEURS -->
-<a href="{% url 'admin_trainers' %}"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    👨‍🏫
-    <span>Formateurs</span>
-</a>
+            <span class="flex items-center gap-3">
+                <span>◫</span>
+                <span class="text-sm">Commandes</span>
+            </span>
 
-<!-- FORMATIONS -->
-<a href="/admin/courses/course/"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    🎓
-    <span>Formations</span>
-</a>
+            {% if pending_orders %}
+                <span
+                    class="
+                        min-w-6
+                        h-6
+                        px-2
+                        rounded-full
+                        bg-amber-500/10
+                        text-amber-400
+                        text-xs
+                        flex
+                        items-center
+                        justify-center
+                    "
+                >
+                    {{ pending_orders }}
+                </span>
+            {% endif %}
 
-<!-- PRODUITS -->
-<a href="/admin/products/product/"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    🛒
-    <span>Produits</span>
-</a>
+        </a>
 
-<!-- COMMANDES -->
-<a href="/admin/orders/order/"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    📦
-    <span>Commandes</span>
-</a>
 
-<!-- PAIEMENTS -->
-<a href="/admin/orders/coursepayment/"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    💳
-    <span>Paiements</span>
-</a>
+        <p
+            class="
+                px-3
+                mt-7
+                mb-3
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[.18em]
+                text-slate-600
+            "
+        >
+            Gestion
+        </p>
 
-<!-- RETRAITS -->
-<a href="/admin/accounts/withdrawalrequest/"
-   class="flex items-center gap-3 px-4 py-3 rounded-xl
-          text-slate-600 hover:bg-slate-100">
-    💰
-    <span>Retraits</span>
-</a>
+
+        <a
+            href="/admin/auth/user/"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>♙</span>
+            <span class="text-sm">Utilisateurs</span>
+        </a>
+
+
+        <a
+            href="{% url 'admin_trainers' %}"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>◆</span>
+            <span class="text-sm">Formateurs</span>
+        </a>
+
+
+        <a
+            href="/admin/courses/course/"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>▤</span>
+            <span class="text-sm">Formations</span>
+        </a>
+
+
+        <a
+            href="/admin/products/product/"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>◇</span>
+            <span class="text-sm">Produits</span>
+        </a>
+
+
+        <a
+            href="{% url 'admin_orders' %}"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>◫</span>
+            <span class="text-sm">Commandes</span>
+        </a>
+
+
+        <a
+            href="/admin/orders/coursepayment/"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>◈</span>
+            <span class="text-sm">Paiements</span>
+        </a>
+
+
+        <a
+            href="/admin/accounts/withdrawalrequest/"
+            class="
+                flex
+                items-center
+                gap-3
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+            <span>↗</span>
+            <span class="text-sm">Retraits</span>
+        </a>
+
     </nav>
 
 
-    <!-- RETOUR SITE -->
+    <!-- FOOTER SIDEBAR -->
 
-    <div
-        class="absolute bottom-0 left-0 right-0
-               p-4 border-t border-slate-200"
-    >
+    <div class="p-4 border-t border-white/10">
 
         <a
             href="{% url 'home' %}"
-            class="flex items-center gap-3
-                   px-4 py-3 rounded-xl
-                   text-slate-600
-                   hover:bg-slate-100"
+            class="
+                flex
+                items-center
+                justify-center
+                gap-2
+                w-full
+                py-3
+                rounded-xl
+                bg-white/[0.035]
+                border
+                border-white/[0.07]
+                text-slate-400
+                hover:text-white
+                hover:border-white/15
+                transition
+                text-sm
+            "
         >
             ← Retour au site
         </a>
@@ -168,77 +420,91 @@
 </aside>
 
 
+
 <!-- =====================================================
      MAIN
 ===================================================== -->
 
-<main class="md:ml-72 min-h-screen">
+<main class="lg:ml-[280px] min-h-screen">
 
 
     <!-- HEADER -->
 
     <header
-        class="h-20 bg-white border-b
-               border-slate-200
-               flex items-center justify-between
-               px-5 md:px-8"
+        class="
+            h-20
+            px-5
+            sm:px-8
+            lg:px-10
+            flex
+            items-center
+            justify-between
+            border-b
+            border-white/[0.07]
+            bg-night/80
+            backdrop-blur-xl
+            sticky
+            top-0
+            z-30
+        "
     >
 
         <div class="flex items-center gap-4">
 
-            <!-- HAMBURGER -->
-
             <button
-                onclick="toggleSidebar()"
-                class="md:hidden
-                       w-10 h-10 rounded-xl
-                       bg-slate-100
-                       flex items-center justify-center
-                       text-xl"
+                id="adminMenuButton"
+                class="
+                    lg:hidden
+                    w-10
+                    h-10
+                    rounded-xl
+                    bg-white/[0.04]
+                    border
+                    border-white/[0.08]
+                    text-slate-300
+                "
             >
                 ☰
             </button>
 
-
             <div>
 
-                <h2 class="font-bold text-lg">
+                <p class="text-xs text-slate-500">
                     Administration
-                </h2>
-
-                <p class="text-xs text-slate-400">
-                    Gestion de FormaShop
                 </p>
+
+                <h1 class="text-lg sm:text-xl font-bold">
+                    Vue d'ensemble
+                </h1>
 
             </div>
 
         </div>
 
 
-        <!-- ADMIN -->
-
         <div class="flex items-center gap-3">
 
-            <div class="hidden sm:block text-right">
-
-                <p class="text-sm font-semibold">
-                    {{ request.user.username }}
-                </p>
-
-                <p class="text-xs text-slate-400">
-                    Administrateur
-                </p>
-
-            </div>
-
-
             <div
-                class="w-10 h-10 rounded-full
-                       bg-indigo-600 text-white
-                       flex items-center justify-center
-                       font-bold"
+                class="
+                    hidden
+                    sm:flex
+                    items-center
+                    gap-2
+                    px-4
+                    py-2
+                    rounded-full
+                    bg-emerald-500/10
+                    border
+                    border-emerald-500/20
+                    text-emerald-400
+                    text-xs
+                "
             >
-                {{ request.user.username|first|upper }}
+                <span
+                    class="w-2 h-2 rounded-full bg-emerald-400"
+                ></span>
+
+                Système actif
             </div>
 
         </div>
@@ -246,218 +512,347 @@
     </header>
 
 
+
     <!-- CONTENT -->
 
-    <div class="p-5 md:p-8">
+    <div class="p-5 sm:p-8 lg:p-10">
 
 
-        <!-- TITLE -->
+        <!-- INTRO -->
 
-        <div class="mb-8">
+        <section class="mb-8">
 
-            <p class="text-sm text-indigo-600 font-semibold">
-                Vue générale
-            </p>
-
-            <h1
-                class="text-3xl md:text-4xl
-                       font-black mt-1"
+            <p
+                class="
+                    text-xs
+                    uppercase
+                    tracking-[.18em]
+                    text-purple
+                    font-bold
+                    mb-3
+                "
             >
-                Tableau de bord
-            </h1>
-
-            <p class="text-slate-500 mt-2">
-                Gérez votre plateforme FormaShop
-                depuis cet espace.
+                FormaShop Control Center
             </p>
 
-        </div>
+            <h2
+                class="
+                    text-3xl
+                    sm:text-4xl
+                    lg:text-5xl
+                    font-black
+                    tracking-tight
+                "
+            >
+                Bonjour,
+                <span class="text-purple">
+                    {{ request.user.username }}
+                </span>
+            </h2>
+
+            <p class="mt-3 text-slate-500 max-w-2xl">
+                Gérez les utilisateurs, formations, produits,
+                commandes, paiements et activités de FormaShop
+                depuis un seul espace.
+            </p>
+
+        </section>
 
 
-        <!-- =================================================
-             STATISTICS
-        ================================================== -->
 
-        <div
-            class="grid grid-cols-2
-                   lg:grid-cols-4 gap-4 md:gap-6"
+        <!-- STATISTICS -->
+
+        <section
+            class="
+                grid
+                grid-cols-1
+                sm:grid-cols-2
+                xl:grid-cols-4
+                gap-4
+                mb-8
+            "
         >
 
 
             <!-- USERS -->
 
             <div
-                class="bg-white rounded-2xl
-                       p-5 md:p-6
-                       border border-slate-200"
+                class="
+                    group
+                    rounded-2xl
+                    p-5
+                    bg-panel
+                    border
+                    border-white/[0.07]
+                    hover:border-purple/30
+                    transition
+                    shadow-premium
+                "
             >
 
-                <div
-                    class="w-11 h-11 rounded-xl
-                           bg-indigo-50
-                           flex items-center justify-center
-                           text-xl mb-4"
-                >
-                    👥
+                <div class="flex justify-between items-start">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Utilisateurs
+                        </p>
+
+                        <p class="mt-2 text-3xl font-black">
+                            {{ total_users }}
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="
+                            w-11
+                            h-11
+                            rounded-xl
+                            bg-blue-500/10
+                            text-blue-400
+                            flex
+                            items-center
+                            justify-center
+                        "
+                    >
+                        ♙
+                    </div>
+
                 </div>
 
-                <p class="text-sm text-slate-500">
-                    Utilisateurs
-                </p>
-
-                <p
-                    class="text-3xl font-black
-                           mt-1"
-                >
-                    {{ total_users }}
+                <p class="mt-4 text-xs text-slate-600">
+                    Comptes enregistrés
                 </p>
 
             </div>
+
 
 
             <!-- TRAINERS -->
 
             <div
-                class="bg-white rounded-2xl
-                       p-5 md:p-6
-                       border border-slate-200"
+                class="
+                    group
+                    rounded-2xl
+                    p-5
+                    bg-panel
+                    border
+                    border-white/[0.07]
+                    hover:border-purple/30
+                    transition
+                    shadow-premium
+                "
             >
 
-                <div
-                    class="w-11 h-11 rounded-xl
-                           bg-purple-50
-                           flex items-center justify-center
-                           text-xl mb-4"
-                >
-                    👨‍🏫
+                <div class="flex justify-between items-start">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Formateurs
+                        </p>
+
+                        <p class="mt-2 text-3xl font-black">
+                            {{ total_trainers }}
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="
+                            w-11
+                            h-11
+                            rounded-xl
+                            bg-purple/10
+                            text-purple
+                            flex
+                            items-center
+                            justify-center
+                        "
+                    >
+                        ◆
+                    </div>
+
                 </div>
 
-                <p class="text-sm text-slate-500">
-                    Formateurs
-                </p>
-
-                <p
-                    class="text-3xl font-black
-                           mt-1"
-                >
-                    {{ total_trainers }}
+                <p class="mt-4 text-xs text-slate-600">
+                    Formateurs enregistrés
                 </p>
 
             </div>
+
 
 
             <!-- COURSES -->
 
             <div
-                class="bg-white rounded-2xl
-                       p-5 md:p-6
-                       border border-slate-200"
+                class="
+                    group
+                    rounded-2xl
+                    p-5
+                    bg-panel
+                    border
+                    border-white/[0.07]
+                    hover:border-purple/30
+                    transition
+                    shadow-premium
+                "
             >
 
-                <div
-                    class="w-11 h-11 rounded-xl
-                           bg-green-50
-                           flex items-center justify-center
-                           text-xl mb-4"
-                >
-                    🎓
+                <div class="flex justify-between items-start">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Formations
+                        </p>
+
+                        <p class="mt-2 text-3xl font-black">
+                            {{ total_courses }}
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="
+                            w-11
+                            h-11
+                            rounded-xl
+                            bg-emerald-500/10
+                            text-emerald-400
+                            flex
+                            items-center
+                            justify-center
+                        "
+                    >
+                        ▤
+                    </div>
+
                 </div>
 
-                <p class="text-sm text-slate-500">
-                    Formations
-                </p>
-
-                <p
-                    class="text-3xl font-black
-                           mt-1"
-                >
-                    {{ total_courses }}
+                <p class="mt-4 text-xs text-slate-600">
+                    Formations disponibles
                 </p>
 
             </div>
+
 
 
             <!-- PRODUCTS -->
 
             <div
-                class="bg-white rounded-2xl
-                       p-5 md:p-6
-                       border border-slate-200"
+                class="
+                    group
+                    rounded-2xl
+                    p-5
+                    bg-panel
+                    border
+                    border-white/[0.07]
+                    hover:border-purple/30
+                    transition
+                    shadow-premium
+                "
             >
 
-                <div
-                    class="w-11 h-11 rounded-xl
-                           bg-orange-50
-                           flex items-center justify-center
-                           text-xl mb-4"
-                >
-                    🛒
-                </div>
-
-                <p class="text-sm text-slate-500">
-                    Produits
-                </p>
-
-                <p
-                    class="text-3xl font-black
-                           mt-1"
-                >
-                    {{ total_products }}
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             ACTIONS / ALERTES
-        ================================================== -->
-
-        <div
-            class="grid grid-cols-1
-                   xl:grid-cols-2
-                   gap-6 mt-6"
-        >
-
-
-            <!-- CANDIDATURES -->
-
-            <div
-                class="bg-white rounded-2xl
-                       border border-slate-200
-                       overflow-hidden"
-            >
-
-                <div
-                    class="p-6 border-b
-                           border-slate-100
-                           flex items-center
-                           justify-between"
-                >
+                <div class="flex justify-between items-start">
 
                     <div>
 
-                        <h2 class="font-bold text-lg">
-                            Candidatures formateurs
-                        </h2>
+                        <p class="text-sm text-slate-500">
+                            Produits
+                        </p>
 
-                        <p
-                            class="text-sm
-                                   text-slate-400 mt-1"
-                        >
-                            Candidatures nécessitant
-                            votre attention
+                        <p class="mt-2 text-3xl font-black">
+                            {{ total_products }}
                         </p>
 
                     </div>
 
+                    <div
+                        class="
+                            w-11
+                            h-11
+                            rounded-xl
+                            bg-amber-500/10
+                            text-amber-400
+                            flex
+                            items-center
+                            justify-center
+                        "
+                    >
+                        ◇
+                    </div>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-600">
+                    Produits disponibles
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- TWO COLUMNS -->
+
+        <section
+            class="
+                grid
+                grid-cols-1
+                xl:grid-cols-3
+                gap-6
+            "
+        >
+
+
+            <!-- FORMATEUR APPLICATIONS -->
+
+            <div
+                class="
+                    xl:col-span-2
+                    rounded-2xl
+                    bg-panel
+                    border
+                    border-white/[0.07]
+                    overflow-hidden
+                "
+            >
+
+                <div
+                    class="
+                        px-6
+                        py-5
+                        border-b
+                        border-white/[0.07]
+                        flex
+                        items-center
+                        justify-between
+                    "
+                >
+
+                    <div>
+
+                        <p class="text-lg font-bold">
+                            Candidatures formateurs
+                        </p>
+
+                        <p class="text-xs text-slate-600 mt-1">
+                            Demandes nécessitant une décision
+                        </p>
+
+                    </div>
 
                     <a
                         href="{% url 'admin_trainers' %}"
-                        class="text-sm
-                               text-indigo-600
-                               font-semibold"
+                        class="
+                            text-xs
+                            text-purple
+                            hover:text-white
+                            transition
+                        "
                     >
                         Tout voir →
                     </a>
@@ -465,58 +860,131 @@
                 </div>
 
 
-                <div>
+                <div class="divide-y divide-white/[0.05]">
 
                     {% for application in pending_applications %}
 
                         <div
-                            class="p-5
-                                   border-b
-                                   border-slate-100
-                                   flex items-center
-                                   justify-between
-                                   gap-4"
+                            class="
+                                p-5
+                                flex
+                                flex-col
+                                sm:flex-row
+                                sm:items-center
+                                justify-between
+                                gap-4
+                                hover:bg-white/[0.02]
+                                transition
+                            "
                         >
 
-                            <div>
+                            <div class="flex items-center gap-4">
 
-                                <p class="font-semibold">
-                                    {{ application.full_name }}
-                                </p>
-
-                                <p
-                                    class="text-sm
-                                           text-slate-400"
+                                <div
+                                    class="
+                                        w-11
+                                        h-11
+                                        rounded-xl
+                                        bg-purple/10
+                                        border
+                                        border-purple/20
+                                        flex
+                                        items-center
+                                        justify-center
+                                        text-purple
+                                        font-bold
+                                    "
                                 >
-                                    {{ application.expertise }}
-                                </p>
+                                    {{ application.full_name|first|upper }}
+                                </div>
+
+                                <div>
+
+                                    <p class="font-semibold">
+                                        {{ application.full_name }}
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 mt-1">
+                                        {{ application.user.username }}
+                                    </p>
+
+                                </div>
 
                             </div>
 
 
-                            <a
-                                href="{% url 'admin_trainer_detail' application.id %}"
-                                class="px-4 py-2
-                                       rounded-lg
-                                       bg-indigo-50
-                                       text-indigo-700
-                                       text-sm
-                                       font-semibold"
-                            >
-                                Voir
-                            </a>
+                            <div class="flex items-center gap-3">
+
+                                <span
+                                    class="
+                                        px-3
+                                        py-1.5
+                                        rounded-full
+                                        bg-amber-500/10
+                                        border
+                                        border-amber-500/20
+                                        text-amber-400
+                                        text-[11px]
+                                        font-semibold
+                                    "
+                                >
+                                    En attente
+                                </span>
+
+
+                                <a
+                                    href="{% url 'admin_trainer_detail' application.id %}"
+                                    class="
+                                        px-4
+                                        py-2
+                                        rounded-xl
+                                        bg-white/[0.05]
+                                        border
+                                        border-white/[0.08]
+                                        text-xs
+                                        font-semibold
+                                        hover:bg-purple
+                                        hover:border-purple
+                                        transition
+                                    "
+                                >
+                                    Examiner
+                                </a>
+
+                            </div>
 
                         </div>
 
                     {% empty %}
 
-                        <div
-                            class="p-8
-                                   text-center
-                                   text-slate-400"
-                        >
-                            Aucune candidature
-                            en attente.
+                        <div class="p-10 text-center">
+
+                            <div
+                                class="
+                                    mx-auto
+                                    w-12
+                                    h-12
+                                    rounded-full
+                                    bg-emerald-500/10
+                                    flex
+                                    items-center
+                                    justify-center
+                                    text-emerald-400
+                                    text-xl
+                                    mb-4
+                                "
+                            >
+                                ✓
+                            </div>
+
+                            <p class="font-semibold">
+                                Aucune candidature en attente
+                            </p>
+
+                            <p class="text-sm text-slate-600 mt-2">
+                                Toutes les candidatures ont été traitées.
+                            </p>
+
                         </div>
 
                     {% endfor %}
@@ -526,128 +994,169 @@
             </div>
 
 
-            <!-- COMMANDES -->
+
+            <!-- ACTIVITY -->
 
             <div
-                class="bg-white rounded-2xl
-                       border border-slate-200
-                       p-6"
+                class="
+                    rounded-2xl
+                    bg-panel
+                    border
+                    border-white/[0.07]
+                    overflow-hidden
+                "
             >
 
-                <h2 class="font-bold text-lg">
-                    Activité
-                </h2>
+                <div class="px-6 py-5 border-b border-white/[0.07]">
 
-                <div class="mt-6 space-y-4">
+                    <p class="text-lg font-bold">
+                        Activité
+                    </p>
+
+                    <p class="text-xs text-slate-600 mt-1">
+                        État actuel de la plateforme
+                    </p>
+
+                </div>
 
 
-                    <div
-                        class="flex items-center
-                               justify-between
-                               p-4 rounded-xl
-                               bg-orange-50"
+                <div class="p-5 space-y-3">
+
+
+                    <a
+                        href="{% url 'admin_orders' %}"
+                        class="
+                            block
+                            p-4
+                            rounded-xl
+                            bg-white/[0.025]
+                            border
+                            border-white/[0.05]
+                            hover:border-amber-500/20
+                            hover:bg-amber-500/[0.03]
+                            transition
+                        "
                     >
 
-                        <div>
+                        <div class="flex justify-between">
 
-                            <p
-                                class="font-semibold
-                                       text-orange-800"
-                            >
+                            <span class="text-sm text-slate-400">
                                 Commandes en attente
-                            </p>
+                            </span>
 
-                            <p
-                                class="text-sm
-                                       text-orange-600"
-                            >
-                                Paiements à vérifier
-                            </p>
+                            <strong class="text-amber-400">
+                                {{ pending_orders }}
+                            </strong>
 
                         </div>
 
-                        <strong
-                            class="text-2xl
-                                   text-orange-700"
-                        >
-                            {{ pending_orders }}
-                        </strong>
+                        <p class="text-[11px] text-slate-600 mt-2">
+                            Commandes nécessitant une vérification
+                        </p>
 
-                    </div>
+                    </a>
 
 
-                    <div
-                        class="flex items-center
-                               justify-between
-                               p-4 rounded-xl
-                               bg-purple-50"
+                    <a
+                        href="/admin/orders/coursepayment/"
+                        class="
+                            block
+                            p-4
+                            rounded-xl
+                            bg-white/[0.025]
+                            border
+                            border-white/[0.05]
+                            hover:border-purple/20
+                            hover:bg-purple/[0.03]
+                            transition
+                        "
                     >
 
-                        <div>
+                        <div class="flex justify-between">
 
-                            <p
-                                class="font-semibold
-                                       text-purple-800"
-                            >
+                            <span class="text-sm text-slate-400">
                                 Paiements formations
-                            </p>
+                            </span>
 
-                            <p
-                                class="text-sm
-                                       text-purple-600"
-                            >
-                                À vérifier
-                            </p>
+                            <strong class="text-purple">
+                                {{ pending_course_payments }}
+                            </strong>
 
                         </div>
 
-                        <strong
-                            class="text-2xl
-                                   text-purple-700"
-                        >
-                            {{ pending_course_payments }}
-                        </strong>
+                        <p class="text-[11px] text-slate-600 mt-2">
+                            Paiements en attente de traitement
+                        </p>
 
-                    </div>
+                    </a>
 
 
-                    <div
-                        class="flex items-center
-                               justify-between
-                               p-4 rounded-xl
-                               bg-indigo-50"
+                    <a
+                        href="{% url 'admin_orders' %}"
+                        class="
+                            block
+                            p-4
+                            rounded-xl
+                            bg-white/[0.025]
+                            border
+                            border-white/[0.05]
+                            hover:border-emerald-500/20
+                            hover:bg-emerald-500/[0.03]
+                            transition
+                        "
                     >
 
-                        <div>
+                        <div class="flex justify-between">
 
-                            <p
-                                class="font-semibold
-                                       text-indigo-800"
-                            >
-                                Commandes totales
-                            </p>
+                            <span class="text-sm text-slate-400">
+                                Total commandes
+                            </span>
 
-                            <p
-                                class="text-sm
-                                       text-indigo-600"
-                            >
-                                Depuis le lancement
-                            </p>
+                            <strong class="text-emerald-400">
+                                {{ total_orders }}
+                            </strong>
 
                         </div>
 
-                        <strong
-                            class="text-2xl
-                                   text-indigo-700"
-                        >
-                            {{ total_orders }}
-                        </strong>
+                        <p class="text-[11px] text-slate-600 mt-2">
+                            Toutes les commandes enregistrées
+                        </p>
 
-                    </div>
+                    </a>
 
                 </div>
 
             </div>
+
+        </section>
+
+
+
+        <!-- FOOTER -->
+
+        <div
+            class="
+                mt-10
+                pt-6
+                border-t
+                border-white/[0.06]
+                flex
+                flex-col
+                sm:flex-row
+                justify-between
+                gap-3
+                text-xs
+                text-slate-600
+            "
+        >
+
+            <span>
+                FormaShop Administration
+            </span>
+
+            <span>
+                Espace sécurisé
+            </span>
 
         </div>
 
@@ -656,34 +1165,79 @@
 </main>
 
 
+
 <!-- =====================================================
-     JAVASCRIPT MENU MOBILE
+     MOBILE JAVASCRIPT
 ===================================================== -->
 
 <script>
 
-function toggleSidebar() {
+const menuButton =
+    document.getElementById("adminMenuButton");
 
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("overlay");
+const sidebar =
+    document.getElementById("adminSidebar");
 
-    sidebar.classList.toggle("-translate-x-full");
-    overlay.classList.toggle("hidden");
+const overlay =
+    document.getElementById("adminOverlay");
+
+
+function openAdminMenu() {
+
+    sidebar.classList.remove("-translate-x-full");
+
+    overlay.classList.remove("hidden");
+
 }
 
 
-function closeSidebar() {
-
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("overlay");
+function closeAdminMenu() {
 
     sidebar.classList.add("-translate-x-full");
+
     overlay.classList.add("hidden");
+
 }
+
+
+if (menuButton) {
+
+    menuButton.addEventListener(
+        "click",
+        openAdminMenu
+    );
+
+}
+
+
+if (overlay) {
+
+    overlay.addEventListener(
+        "click",
+        closeAdminMenu
+    );
+
+}
+
+
+window.addEventListener(
+    "resize",
+    function () {
+
+        if (window.innerWidth >= 1024) {
+
+            overlay.classList.add("hidden");
+
+            sidebar.classList.remove(
+                "-translate-x-full"
+            );
+
+        }
+
+    }
+);
 
 </script>
 
-
 </body>
-
 </html>

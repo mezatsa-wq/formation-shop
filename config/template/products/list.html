@@ -39,12 +39,62 @@
         </div>
 
     </div>
+<form method="GET">
 
+    <input
+        type="search"
+        name="search"
+        value="{{ search }}"
+        placeholder="Rechercher un produit..."
+    >
+
+    <button type="submit">
+        Rechercher
+    </button>
+
+    {% if search %}
+        <a href="{% url 'product_list' %}">
+            Effacer
+        </a>
+    {% endif %}
+
+</form>
 
     <div class="cards">
 
         {% for product in products %}
 
+
+    <article>
+
+        {% if product.is_featured %}
+            <span>⭐ Produit Premium</span>
+        {% endif %}
+
+        <h2>{{ product.name }}</h2>
+
+        <p>
+            {{ product.description }}
+        </p>
+
+        <strong>
+            {{ product.price|floatformat:0 }} FCFA
+        </strong>
+
+        <a href="{% url 'product_detail' product.id %}">
+            Voir le produit
+        </a>
+
+    </article>
+
+{% empty %}
+
+    <p>
+        Aucun produit trouvé.
+    </p>
+
+{% endfor %}
+{% for product in products %}
         <article class="product-card">
 
             {% if product.image %}

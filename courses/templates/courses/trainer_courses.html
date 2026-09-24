@@ -8,111 +8,264 @@
 
     <div class="trainer-container">
 
+        <!-- RETOUR -->
         <a href="{% url 'trainer_dashboard' %}" class="back-link">
-            ← Tableau de bord
+            <span>←</span>
+            Tableau de bord
         </a>
 
+
+        <!-- EN-TÊTE -->
         <div class="page-heading">
 
-            <span>ESPACE FORMATEUR</span>
+            <div class="heading-label">
+                <span class="label-dot"></span>
+                ESPACE FORMATEUR
+            </div>
 
-            <h1>Mes formations</h1>
+            <div class="heading-row">
 
-            <p>
-                Gérez les formations que vous avez créées.
-            </p>
+                <div>
+                    <h1>Mes formations</h1>
+
+                    <p>
+                        Gérez les formations que vous avez créées,
+                        consultez leurs statistiques et ajoutez du contenu.
+                    </p>
+                </div>
+
+                <a href="{% url 'create_course' %}" class="create-course-button">
+                    <span>＋</span>
+                    Nouvelle formation
+                </a>
+
+            </div>
 
         </div>
 
 
+        <!-- STATISTIQUES -->
         {% if courses %}
+
+            <div class="overview-stats">
+
+                <div class="overview-card">
+
+                    <div class="overview-icon purple">
+                        ◈
+                    </div>
+
+                    <div>
+                        <strong>{{ courses|length }}</strong>
+                        <span>Formation{{ courses|length|pluralize }} créée{{ courses|length|pluralize }}</span>
+                    </div>
+
+                </div>
+
+
+                <div class="overview-card">
+
+                    <div class="overview-icon blue">
+                        ◉
+                    </div>
+
+                    <div>
+                        <strong>
+                            {% with total_students=0 %}
+                                {% for course in courses %}
+                                    {{ course.students.count }}
+                                {% endfor %}
+                            {% endwith %}
+                        </strong>
+
+                        <span>Formations disponibles</span>
+                    </div>
+
+                </div>
+
+                <div class="overview-card">
+
+                    <div class="overview-icon green">
+                        ✓
+                    </div>
+
+                    <div>
+                        <strong>
+                            {{ courses|length }}
+                        </strong>
+
+                        <span>Vos formations</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LISTE DES FORMATIONS -->
+            <div class="section-title">
+
+                <div>
+                    <span>VOTRE CONTENU</span>
+                    <h2>Formations publiées</h2>
+                </div>
+
+                <span class="course-count">
+                    {{ courses|length }} formation{{ courses|length|pluralize }}
+                </span>
+
+            </div>
+
 
             <div class="courses-grid">
 
                 {% for course in courses %}
 
-                    <div class="course-card">
+                    <article class="course-card">
 
-                        {% if course.image %}
-                            <img
-                                src="{{ course.image.url }}"
-                                alt="{{ course.title }}"
-                            >
-                        {% else %}
-                            <div class="course-placeholder">
-                                FORMATION
-                            </div>
-                        {% endif %}
+                        <!-- IMAGE -->
+                        <div class="course-cover">
+
+                            {% if course.image %}
+
+                                <img
+                                    src="{{ course.image.url }}"
+                                    alt="{{ course.title }}"
+                                >
+
+                            {% else %}
+
+                                <div class="course-placeholder">
+
+                                    <div class="placeholder-icon">
+                                        ◈
+                                    </div>
+
+                                    <span>FORMATION</span>
+
+                                </div>
+
+                            {% endif %}
 
 
-                        <div class="course-body">
+                            <!-- STATUT -->
+                            <div class="course-status {% if course.is_published %}published{% else %}draft{% endif %}">
 
-                            <div class="course-status">
+                                <span class="status-dot"></span>
+
                                 {% if course.is_published %}
                                     Publiée
                                 {% else %}
                                     Brouillon
                                 {% endif %}
-                            </div>
-
-                            <h2>{{ course.title }}</h2>
-
-                            <div class="course-stats">
-
-                                <div>
-                                    <strong>
-                                        {{ course.students.count }}
-                                    </strong>
-                                    <span>Étudiants</span>
-                                </div>
-
-                                <div>
-                                    <strong>{{ course.price }}</strong>
-                                    <span>Prix</span>
-                                </div>
 
                             </div>
 
+                        </div>
 
+
+                        <!-- CONTENU -->
+                        <div class="course-body">
+
+                            <h2>
+                                {{ course.title }}
+                            </h2>
+
+
+                            <div class="course-meta">
+
+                                <div class="meta-item">
+
+                                    <span class="meta-icon">
+                                        ◉
+                                    </span>
+
+                                    <div>
+                                        <strong>
+                                            {{ course.students.count }}
+                                        </strong>
+
+                                        <small>
+                                            Étudiant{{ course.students.count|pluralize }}
+                                        </small>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="meta-item">
+
+                                    <span class="meta-icon price-icon">
+                                        FCFA
+                                    </span>
+
+                                    <div>
+                                        <strong>
+                                            {{ course.price }}
+                                        </strong>
+
+                                        <small>
+                                            Prix
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ACTIONS -->
                             <div class="course-actions">
 
                                 <a
                                     href="{% url 'course_detail' course.slug %}"
                                     class="view-button"
                                 >
-                                    Voir
+                                    <span>Voir</span>
+                                    <span>↗</span>
                                 </a>
 
                                 <a
                                     href="{% url 'manage_course' course.id %}"
                                     class="manage-button"
                                 >
-                                    Gérer
+                                    <span>Gérer</span>
+                                    <span>→</span>
                                 </a>
 
                             </div>
 
                         </div>
 
-                    </div>
+                    </article>
 
                 {% endfor %}
 
             </div>
 
+
         {% else %}
 
+            <!-- ÉTAT VIDE -->
             <div class="empty-state">
 
-                <div>📚</div>
+                <div class="empty-icon">
+                    ◈
+                </div>
 
-                <h2>Aucune formation</h2>
+                <div class="empty-label">
+                    ESPACE FORMATEUR
+                </div>
+
+                <h2>Aucune formation pour le moment</h2>
 
                 <p>
-                    Vous n'avez pas encore créé de formation.
+                    Commencez à partager votre expertise en créant
+                    votre première formation sur FormaShop.
                 </p>
 
-                <a href="{% url 'create_course' %}">
+                <a href="{% url 'create_course' %}" class="empty-button">
+                    <span>＋</span>
                     Créer ma première formation
                 </a>
 
@@ -127,190 +280,860 @@
 
 <style>
 
+/* =========================================================
+   PAGE
+========================================================= */
+
 .trainer-courses-page {
     min-height: 85vh;
-    padding: 45px 20px 80px;
-    background: #080b12;
-    color: white;
+    padding: 45px 20px 90px;
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(124, 92, 255, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 10% 70%,
+            rgba(52, 152, 219, 0.05),
+            transparent 28%
+        ),
+        #080b12;
+
+    color: #ffffff;
 }
+
 
 .trainer-container {
-    max-width: 1100px;
-    margin: auto;
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
 }
+
+
+/* =========================================================
+   RETOUR
+========================================================= */
 
 .back-link {
-    color: #9ca4b5;
-    text-decoration: none;
-}
-
-.page-heading {
-    margin: 35px 0;
-}
-
-.page-heading span {
-    color: #7c5cff;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.page-heading h1 {
-    font-size: 40px;
-    margin: 8px 0;
-}
-
-.page-heading p {
-    color: #8790a1;
-}
-
-
-.courses-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-
-.course-card {
-    background: #111622;
-    border: 1px solid #252b3a;
-    border-radius: 18px;
-    overflow: hidden;
-}
-
-
-.course-card img,
-.course-placeholder {
-    width: 100%;
-    height: 190px;
-    object-fit: cover;
-}
-
-
-.course-placeholder {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    background: #181e2b;
-    color: #7c5cff;
-    font-weight: 800;
-    letter-spacing: 2px;
+    gap: 8px;
+
+    color: #8e98aa;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.25s ease;
 }
 
 
-.course-body {
-    padding: 22px;
-}
-
-
-.course-status {
-    display: inline-block;
-    padding: 5px 9px;
-    border-radius: 20px;
-    background: rgba(124,92,255,.12);
-    color: #9c89ff;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-
-.course-body h2 {
-    margin: 14px 0 20px;
-    font-size: 20px;
-}
-
-
-.course-stats {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 22px;
-}
-
-
-.course-stats strong {
-    display: block;
+.back-link span {
     font-size: 18px;
 }
 
 
-.course-stats span {
-    color: #737d90;
+.back-link:hover {
+    color: #ffffff;
+    transform: translateX(-3px);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-heading {
+    margin: 35px 0 30px;
+}
+
+
+.heading-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #8d79ff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+.label-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #7c5cff;
+
+    box-shadow:
+        0 0 12px rgba(124, 92, 255, 0.8);
+}
+
+
+.heading-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-top: 8px;
+}
+
+
+.page-heading h1 {
+    margin: 0;
+
+    font-size: clamp(32px, 5vw, 46px);
+
+    line-height: 1.1;
+
+    letter-spacing: -1.5px;
+}
+
+
+.page-heading p {
+    max-width: 650px;
+
+    margin: 12px 0 0;
+
+    color: #858fa2;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   BOUTON NOUVELLE FORMATION
+========================================================= */
+
+.create-course-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-width: 190px;
+
+    padding: 13px 18px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #6242e8
+        );
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    box-shadow:
+        0 12px 30px rgba(124, 92, 255, 0.18);
+
+    transition: 0.25s ease;
+}
+
+
+.create-course-button span {
+    font-size: 19px;
+    line-height: 1;
+}
+
+
+.create-course-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 35px rgba(124, 92, 255, 0.28);
+}
+
+
+/* =========================================================
+   STATISTIQUES
+========================================================= */
+
+.overview-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 45px;
+}
+
+
+.overview-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 23, 35, 0.98),
+            rgba(13, 17, 27, 0.98)
+        );
+
+    border: 1px solid #252c3b;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.18);
+}
+
+
+.overview-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    font-weight: 800;
+
+    flex-shrink: 0;
+}
+
+
+.overview-icon.purple {
+    background: rgba(124, 92, 255, 0.13);
+    color: #9b88ff;
+}
+
+
+.overview-icon.blue {
+    background: rgba(66, 153, 225, 0.12);
+    color: #62aef0;
+}
+
+
+.overview-icon.green {
+    background: rgba(46, 204, 113, 0.11);
+    color: #55dc8a;
+}
+
+
+.overview-card strong {
+    display: block;
+
+    font-size: 21px;
+}
+
+
+.overview-card span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #727d91;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   TITRE SECTION
+========================================================= */
+
+.section-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+
+.section-title > div > span {
+    color: #7c5cff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+.section-title h2 {
+    margin: 5px 0 0;
+
+    font-size: 24px;
+}
+
+
+.course-count {
+    color: #707b8f;
+
     font-size: 12px;
 }
 
 
-.course-actions {
+/* =========================================================
+   GRILLE
+========================================================= */
+
+.courses-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+
+/* =========================================================
+   CARTE FORMATION
+========================================================= */
+
+.course-card {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #111622,
+            #0e131d
+        );
+
+    border: 1px solid #252c3b;
+
+    border-radius: 18px;
+
+    transition:
+        transform 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+
+.course-card:hover {
+    transform: translateY(-5px);
+
+    border-color: rgba(124, 92, 255, 0.45);
+
+    box-shadow:
+        0 22px 45px rgba(0, 0, 0, 0.3),
+        0 0 35px rgba(124, 92, 255, 0.05);
+}
+
+
+/* =========================================================
+   COUVERTURE
+========================================================= */
+
+.course-cover {
+    position: relative;
+
+    width: 100%;
+    height: 190px;
+
+    overflow: hidden;
+
+    background: #171d29;
+}
+
+
+.course-card img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition: transform 0.4s ease;
+}
+
+
+.course-card:hover img {
+    transform: scale(1.04);
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.course-placeholder {
+    width: 100%;
+    height: 100%;
+
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(124, 92, 255, 0.16),
+            transparent 60%
+        ),
+        #151b27;
+
+    color: #8f7cff;
+}
+
+
+.placeholder-icon {
+    font-size: 34px;
+
+    opacity: 0.8;
+}
+
+
+.course-placeholder span {
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   STATUT
+========================================================= */
+
+.course-status {
+    position: absolute;
+
+    top: 13px;
+    left: 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    backdrop-filter: blur(10px);
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+.course-status.published {
+    background: rgba(13, 24, 20, 0.88);
+
+    border: 1px solid rgba(63, 210, 129, 0.18);
+
+    color: #61dc91;
+}
+
+
+.course-status.draft {
+    background: rgba(35, 30, 18, 0.9);
+
+    border: 1px solid rgba(241, 190, 65, 0.2);
+
+    color: #e6c267;
+}
+
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+}
+
+
+/* =========================================================
+   CORPS
+========================================================= */
+
+.course-body {
+    padding: 21px;
+}
+
+
+.course-body h2 {
+    margin: 0 0 20px;
+
+    min-height: 48px;
+
+    font-size: 19px;
+
+    line-height: 1.35;
+
+    letter-spacing: -0.2px;
+}
+
+
+/* =========================================================
+   META
+========================================================= */
+
+.course-meta {
+    display: flex;
+
+    gap: 25px;
+
+    margin-bottom: 21px;
+
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid #222938;
+}
+
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+
+.meta-icon {
+    width: 31px;
+    height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: rgba(124, 92, 255, 0.1);
+
+    color: #9987ff;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+.price-icon {
+    font-size: 7px;
+    letter-spacing: -0.3px;
+}
+
+
+.meta-item strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 14px;
+}
+
+
+.meta-item small {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #687386;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.course-actions {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 9px;
 }
 
 
 .view-button,
 .manage-button {
-    flex: 1;
-    text-align: center;
-    padding: 11px;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 42px;
+
     border-radius: 9px;
+
     text-decoration: none;
-    font-weight: 700;
-    font-size: 13px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    transition: 0.25s ease;
 }
 
 
 .view-button {
-    background: #1b2230;
-    color: white;
+    background: #1a202d;
+
+    border: 1px solid #2a3140;
+
+    color: #d8dce4;
+}
+
+
+.view-button:hover {
+    background: #202736;
+
+    border-color: #394254;
 }
 
 
 .manage-button {
-    background: #7c5cff;
-    color: white;
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #6242e8
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 20px rgba(124, 92, 255, 0.13);
 }
 
 
+.manage-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 11px 25px rgba(124, 92, 255, 0.24);
+}
+
+
+/* =========================================================
+   ÉTAT VIDE
+========================================================= */
+
 .empty-state {
+    position: relative;
+
+    overflow: hidden;
+
     text-align: center;
-    padding: 80px 20px;
-    background: #111622;
-    border: 1px solid #252b3a;
+
+    padding: 85px 25px;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(124, 92, 255, 0.12),
+            transparent 38%
+        ),
+        #111622;
+
+    border: 1px solid #252c3b;
+
     border-radius: 20px;
 }
 
 
-.empty-state div {
-    font-size: 45px;
+.empty-icon {
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    border-radius: 20px;
+
+    background: rgba(124, 92, 255, 0.1);
+
+    color: #907cff;
+
+    font-size: 35px;
+
+    box-shadow:
+        0 0 35px rgba(124, 92, 255, 0.08);
+}
+
+
+.empty-label {
+    color: #806cff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+.empty-state h2 {
+    margin: 9px 0 8px;
+
+    font-size: 25px;
 }
 
 
 .empty-state p {
-    color: #858e9f;
+    max-width: 500px;
+
+    margin: 0 auto;
+
+    color: #7e899b;
+
+    font-size: 14px;
+
+    line-height: 1.7;
 }
 
 
-.empty-state a {
-    display: inline-block;
-    margin-top: 15px;
-    background: #7c5cff;
-    color: white;
-    padding: 12px 18px;
-    border-radius: 9px;
+.empty-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin-top: 24px;
+
+    padding: 13px 20px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #6242e8
+        );
+
+    color: #ffffff;
+
     text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    transition: 0.25s ease;
 }
 
 
-@media (max-width: 850px) {
+.empty-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 13px 30px rgba(124, 92, 255, 0.2);
+}
+
+
+.empty-button span {
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 950px) {
+
     .courses-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
+
+    .overview-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
 }
 
 
-@media (max-width: 550px) {
+@media (max-width: 700px) {
+
+    .heading-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .create-course-button {
+        width: 100%;
+    }
+
+    .overview-stats {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .trainer-courses-page {
+        padding: 30px 15px 60px;
+    }
+
+    .page-heading {
+        margin-top: 28px;
+    }
+
+    .page-heading h1 {
+        font-size: 34px;
+    }
+
     .courses-grid {
         grid-template-columns: 1fr;
     }
+
+    .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .course-meta {
+        gap: 15px;
+    }
+
+    .course-body {
+        padding: 17px;
+    }
+
 }
 
 </style>

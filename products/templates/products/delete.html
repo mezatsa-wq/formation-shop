@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer {{ product.name }} - FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <h1>Supprimer le produit</h1>
+
+</section>
+
+
+<section>
+
+    <p>
+        Voulez-vous vraiment supprimer :
+        <strong>{{ product.name }}</strong> ?
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Oui, supprimer
+        </button>
+
+        <a href="{% url 'my_products' %}">
+            Annuler
+        </a>
+
+    </form>
+
+</section>
+
+{% endblock %}

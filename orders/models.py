@@ -10,8 +10,9 @@ class CoursePayment(models.Model):
 
     STATUS_CHOICES = [
         ("pending", "En attente"),
-        ("confirmed", "Confirmé"),
-        ("rejected", "Refusé"),
+        ("seller_delivered", "Livrée par le vendeur"),
+        ("customer_received", "Réception confirmée"),
+        ("delivered", "Validée par l'administrateur"),
     ]
 
     user = models.ForeignKey(
@@ -64,6 +65,34 @@ class Order(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
+    seller = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="product_orders_received"
+    )
+
+    full_name = models.CharField(
+        max_length=200
+    )
+
+    phone_number = models.CharField(
+        max_length=30
+    )
+
+    neighborhood = models.CharField(
+        max_length=200,
+        blank=True,
+        default=""
+    )
+
+    delivery_address = models.TextField()
+
+    delivery_deadline = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     full_name = models.CharField(
         max_length=200
@@ -81,7 +110,13 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-
+    seller = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="product_orders_received"
+    )
     quantity = models.PositiveIntegerField(default=1)
 
     total_price = models.DecimalField(
@@ -100,7 +135,32 @@ class Order(models.Model):
         choices=PAYMENT_STATUS_CHOICES,
         default="pending"
     )
+    seller_confirmed = models.BooleanField(
+        default=False
+    )
 
+    customer_confirmed = models.BooleanField(
+        default=False
+    )
+
+    admin_validated = models.BooleanField(
+        default=False
+    )
+
+    seller_confirmed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    customer_confirmed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    admin_validated_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
     reward_given = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -111,3 +171,33 @@ class Order(models.Model):
             return f"Commande #{self.id} - {self.product.name}"
 
         return f"Commande #{self.id}"
+class OrderNotification(models.Model):
+
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="order_notifications"
+    )
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="notifications"
+    )
+
+    title = models.CharField(
+        max_length=200
+    )
+
+    message = models.TextField()
+
+    is_read = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.recipient.username} - {self.title}"

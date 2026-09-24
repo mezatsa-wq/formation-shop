@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}
+Commande #{{ order.id }} - FormaShop
+{% endblock %}
+
+{% block content %}
+
+<section>
+
+    <h1>Commande #{{ order.id }}</h1>
+
+    <h2>{{ order.product.name }}</h2>
+
+    <p>
+        Quantité :
+        {{ order.quantity }}
+    </p>
+
+    <p>
+        Montant :
+        {{ order.total_price }} FCFA
+    </p>
+
+
+    <h2>Informations de livraison</h2>
+
+    <p>
+        <strong>Nom :</strong>
+        {{ order.full_name }}
+    </p>
+
+    <p>
+        <strong>Téléphone :</strong>
+        {{ order.phone_number }}
+    </p>
+
+    <p>
+        <strong>Quartier :</strong>
+        {{ order.neighborhood }}
+    </p>
+
+    <p>
+        <strong>Adresse :</strong>
+        {{ order.delivery_address }}
+    </p>
+
+
+    <h2>État de la commande</h2>
+
+    <p>
+        {{ order.get_status_display }}
+    </p>
+
+
+    {% if order.delivery_deadline %}
+
+        <p>
+            <strong>Livraison avant :</strong>
+            {{ order.delivery_deadline|date:"d/m/Y à H:i" }}
+        </p>
+
+    {% endif %}
+
+
+    <hr>
+
+
+    <h3>Confirmations</h3>
+
+    <p>
+        {% if order.seller_confirmed %}
+            ✅ Livraison confirmée par le vendeur
+        {% else %}
+            ⏳ Livraison non confirmée par le vendeur
+        {% endif %}
+    </p>
+
+    <p>
+        {% if order.customer_confirmed %}
+            ✅ Réception confirmée par le client
+        {% else %}
+            ⏳ Réception non confirmée par le client
+        {% endif %}
+    </p>
+
+    <p>
+        {% if order.admin_validated %}
+            ✅ Commande validée par l'administrateur
+        {% else %}
+            ⏳ Validation administrative en attente
+        {% endif %}
+    </p>
+
+
+    <hr>
+
+
+    {% if request.user == order.seller and not order.seller_confirmed and not order.admin_validated %}
+
+        <h2>Action vendeur</h2>
+
+        <p>
+            Vous êtes responsable de la livraison de cette commande.
+        </p>
+
+        <form
+            method="POST"
+            action="{% url 'seller_confirm_delivery' order.id %}"
+        >
+
+            {% csrf_token %}
+
+            <button type="submit">
+                J'ai livré la commande
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    {% if request.user == order.user and order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
+
+        <h2>Confirmation client</h2>
+
+        <p>
+            Le vendeur a déclaré avoir livré votre commande.
+        </p>
+
+        <form
+            method="POST"
+            action="{% url 'customer_confirm_receipt' order.id %}"
+        >
+
+            {% csrf_token %}
+
+            <button type="submit">
+                J'ai reçu ma commande
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    {% if request.user.is_staff and order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+
+        <h2>Validation administrateur</h2>
+
+        <p>
+            Le vendeur et le client ont tous les deux confirmé.
+        </p>
+
+        <form
+            method="POST"
+            action="{% url 'admin_validate_order' order.id %}"
+        >
+
+            {% csrf_token %}
+
+            <button type="submit">
+                Valider définitivement la commande
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+</section>
+
+{% endblock %}

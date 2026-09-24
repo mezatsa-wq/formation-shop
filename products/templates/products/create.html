@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un produit - FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <h1>Ajouter un produit</h1>
+
+    <p>
+        Ajoutez un nouveau produit à votre boutique.
+    </p>
+
+</section>
+
+
+<section class="form-container">
+
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Ajouter le produit
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}
