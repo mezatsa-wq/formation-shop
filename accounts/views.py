@@ -188,7 +188,6 @@ def become_trainer(request):
         "accounts/become_trainer.html"
     )
 
-
 @login_required
 def trainer_dashboard(request):
 
@@ -196,37 +195,40 @@ def trainer_dashboard(request):
         user=request.user
     ).first()
 
-    if not trainer_profile:
+    trainer_wallet = None
+    notifications = []
+    unread_notifications = 0
+    earnings = []
+    trainer_courses = []
 
-        messages.error(
-            request,
-            "Vous n'êtes pas encore formateur."
+    if trainer_profile:
+        trainer_wallet, created = TrainerWallet.objects.get_or_create(
+            user=request.user
         )
 
-        return redirect("home")
+        notifications = TrainerNotification.objects.filter(
+            trainer=request.user
+        ).order_by("-created_at")
 
-    trainer_wallet, created = TrainerWallet.objects.get_or_create(
+        unread_notifications = notifications.filter(
+            is_read=False
+        ).count()
+
+        earnings = TrainerEarning.objects.filter(
+            trainer=request.user
+        ).order_by("-created_at")
+
+        trainer_courses = request.user.courses.all()
+
+    wallet, created = TokenWallet.objects.get_or_create(
         user=request.user
     )
-
-    notifications = TrainerNotification.objects.filter(
-        trainer=request.user
-    ).order_by("-created_at")
-
-    unread_notifications = notifications.filter(
-        is_read=False
-    ).count()
-
-    earnings = TrainerEarning.objects.filter(
-        trainer=request.user
-    ).order_by("-created_at")
-
-    trainer_courses = request.user.courses.all()
 
     return render(
         request,
         "accounts/trainer_dashboard.html",
         {
+            "wallet": wallet,
             "trainer_profile": trainer_profile,
             "trainer_wallet": trainer_wallet,
             "notifications": notifications,

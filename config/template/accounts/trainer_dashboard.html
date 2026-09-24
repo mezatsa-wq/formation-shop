@@ -12,12 +12,897 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Espace formateur</title>
+    <title>Mon espace | FormaShop</title>
 
-    <link
-        rel="stylesheet"
-        href="{% static 'accounts/css/trainer.css' %}"
-    >
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #0b1020 0%,
+                    #111827 100%
+                );
+
+            color: white;
+
+            padding: 28px 18px;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 0 10px;
+            margin-bottom: 42px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 13px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #2563eb
+                );
+
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .menu-title {
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 13px 14px;
+
+            border-radius: 12px;
+
+            color: #aeb7c8;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(124, 58, 237, 0.18);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            bottom: 25px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: #9ca3af;
+
+            padding: 13px 14px;
+            border-radius: 12px;
+
+            font-size: 14px;
+        }
+
+        .logout:hover {
+            background: rgba(255,255,255,.06);
+            color: white;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+
+            min-height: 100vh;
+
+            padding: 28px 35px 50px;
+        }
+
+        /* =========================
+           MOBILE HEADER
+        ========================= */
+
+        .mobile-header {
+            display: none;
+
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 22px;
+        }
+
+        .mobile-logo {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .menu-button {
+            border: none;
+            background: white;
+
+            width: 44px;
+            height: 44px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,.07);
+
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 32px;
+        }
+
+        .welcome h1 {
+            font-size: 29px;
+            font-weight: 800;
+
+            letter-spacing: -0.8px;
+        }
+
+        .welcome p {
+            color: #6b7280;
+            margin-top: 7px;
+            font-size: 14px;
+        }
+
+        .profile-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #2563eb
+                );
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 800;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .profile-role {
+            color: #7b8495;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid #edf0f5;
+
+            border-radius: 18px;
+
+            padding: 21px;
+
+            box-shadow:
+                0 8px 30px rgba(15, 23, 42, .04);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #f1edff;
+
+            color: #6d28d9;
+
+            font-size: 19px;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            color: #7b8495;
+            font-size: 13px;
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .content-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.55fr)
+                minmax(300px, .9fr);
+
+            gap: 22px;
+
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+
+            border: 1px solid #edf0f5;
+
+            border-radius: 20px;
+
+            padding: 24px;
+
+            box-shadow:
+                0 8px 30px rgba(15, 23, 42, .04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .card-link {
+            color: #6d28d9;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           PROFILE
+        ========================= */
+
+        .profile-box {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+
+            padding: 20px;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f7f3ff,
+                    #f2f7ff
+                );
+        }
+
+        .large-avatar {
+            width: 70px;
+            height: 70px;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #2563eb
+                );
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+            font-weight: 800;
+
+            flex-shrink: 0;
+        }
+
+        .profile-info h2 {
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .profile-info p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .role-badge {
+            display: inline-flex;
+
+            margin-top: 9px;
+
+            padding: 5px 10px;
+
+            border-radius: 30px;
+
+            background: #ede9fe;
+            color: #6d28d9;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           USER INFORMATION
+        ========================= */
+
+        .info-list {
+            display: grid;
+            gap: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+
+            padding-bottom: 13px;
+
+            border-bottom: 1px solid #f0f2f6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #7b8495;
+            font-size: 13px;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 700;
+
+            text-align: right;
+        }
+
+        /* =========================
+           TOKEN
+        ========================= */
+
+        .wallet {
+            background:
+                linear-gradient(
+                    135deg,
+                    #111827,
+                    #312e81
+                );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 23px;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet::after {
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,.07);
+
+            right: -50px;
+            top: -50px;
+        }
+
+        .wallet-label {
+            color: #c7d2fe;
+            font-size: 12px;
+        }
+
+        .wallet-number {
+            font-size: 32px;
+            font-weight: 900;
+
+            margin-top: 8px;
+        }
+
+        .wallet-description {
+            color: #c7d2fe;
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+        /* =========================
+           TRAINER
+        ========================= */
+
+        .trainer-section {
+            margin-top: 25px;
+        }
+
+        .trainer-banner {
+            background:
+                linear-gradient(
+                    135deg,
+                    #5b21b6,
+                    #2563eb
+                );
+
+            color: white;
+
+            border-radius: 20px;
+
+            padding: 25px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .trainer-banner h2 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .trainer-banner p {
+            color: #dbeafe;
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        .trainer-badge {
+            background: rgba(255,255,255,.15);
+
+            padding: 10px 15px;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+        .trainer-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 17px;
+
+            margin-top: 17px;
+        }
+
+        .trainer-stat {
+            background: white;
+
+            border: 1px solid #edf0f5;
+
+            border-radius: 17px;
+
+            padding: 20px;
+        }
+
+        .trainer-stat small {
+            color: #7b8495;
+            font-size: 12px;
+        }
+
+        .trainer-stat strong {
+            display: block;
+
+            font-size: 23px;
+
+            margin-top: 8px;
+        }
+
+        /* =========================
+           COURSES
+        ========================= */
+
+        .courses {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 15px;
+        }
+
+        .course-item {
+            padding: 17px;
+
+            border: 1px solid #edf0f5;
+
+            border-radius: 15px;
+
+            transition: .2s ease;
+        }
+
+        .course-item:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 25px rgba(0,0,0,.05);
+        }
+
+        .course-item h3 {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .course-item p {
+            color: #7b8495;
+
+            font-size: 12px;
+
+            margin-top: 6px;
+        }
+
+        /* =========================
+           NOTIFICATIONS
+        ========================= */
+
+        .notification {
+            padding: 14px 0;
+
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .notification:last-child {
+            border-bottom: none;
+        }
+
+        .notification-title {
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .notification-message {
+            color: #7b8495;
+            font-size: 12px;
+
+            margin-top: 4px;
+        }
+
+        .notification-date {
+            color: #9ca3af;
+            font-size: 10px;
+
+            margin-top: 5px;
+        }
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 25px 10px;
+
+            color: #9ca3af;
+
+            font-size: 13px;
+        }
+
+        /* =========================
+           OVERLAY MOBILE
+        ========================= */
+
+        .overlay {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0,0,0,.45);
+
+            z-index: 90;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+
+                transition: transform .25s ease;
+
+                width: 270px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .overlay.open {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+
+                width: 100%;
+
+                padding:
+                    18px
+                    15px
+                    40px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .topbar {
+                margin-bottom: 22px;
+            }
+
+            .welcome h1 {
+                font-size: 23px;
+            }
+
+            .welcome p {
+                font-size: 12px;
+            }
+
+            .profile-mini {
+                display: none;
+            }
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-number {
+                font-size: 21px;
+            }
+
+            .stat-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .trainer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .courses {
+                grid-template-columns: 1fr;
+            }
+
+            .trainer-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .profile-box {
+                align-items: flex-start;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .welcome h1 {
+                font-size: 21px;
+            }
+
+            .large-avatar {
+                width: 58px;
+                height: 58px;
+            }
+
+            .profile-info h2 {
+                font-size: 16px;
+            }
+
+            .wallet-number {
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -28,69 +913,58 @@
 <div class="dashboard">
 
 
-    <!-- SIDEBAR -->
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
 
-        <div class="brand">
-            <span class="brand-icon">F</span>
-            <span>Formation</span>
-        </div>
+        <div class="logo">
 
-
-        <div class="trainer-mini-profile">
-
-            <div class="avatar">
-                {{ request.user.username|first|upper }}
+            <div class="logo-icon">
+                F
             </div>
 
-            <div>
-
-                <strong>
-                    {{ request.user.username }}
-                </strong>
-
-                <span>
-                    Formateur
-                </span>
-
-            </div>
+            <span>FormaShop</span>
 
         </div>
 
 
-        <nav class="sidebar-nav">
+        <div class="menu-title">
+            Mon espace
+        </div>
+
+
+        <nav class="nav">
 
             <a
                 href="{% url 'trainer_dashboard' %}"
-                class="nav-link active"
+                class="active"
             >
-                <span>▣</span>
+                <span class="nav-icon">⌂</span>
                 Tableau de bord
             </a>
 
 
-            <a href="{% url 'trainer_courses' %}" class="nav-link">
-                <span>▤</span>
-                Mes formations
+            <a href="{% url 'profile' %}">
+                <span class="nav-icon">◉</span>
+                Mon profil
             </a>
 
 
-            <a href="#" class="nav-link">
-                <span>◫</span>
-                Mes documents
-            </a>
+            {% if trainer_profile %}
+
+                <a href="{% url 'trainer_dashboard' %}">
+                    <span class="nav-icon">🎓</span>
+                    Espace formateur
+                </a>
+
+            {% endif %}
 
 
-            <a href="#" class="nav-link">
-                <span>◉</span>
-                Mes gains
-            </a>
-
-
-            <a href="#" class="nav-link">
-                <span>↗️</span>
-                Retirer mes gains
+            <a href="{% url 'home' %}">
+                <span class="nav-icon">◀</span>
+                Retour au site
             </a>
 
         </nav>
@@ -99,10 +973,11 @@
         <div class="sidebar-bottom">
 
             <a
-                href="{% url 'home' %}"
-                class="home-link"
+                href="{% url 'logout' %}"
+                class="logout"
             >
-                ← Retour au site
+                <span>↪</span>
+                Déconnexion
             </a>
 
         </div>
@@ -110,164 +985,181 @@
     </aside>
 
 
+    <div
+        class="overlay"
+        id="overlay"
+        onclick="closeMenu()"
+    ></div>
 
-    <!-- MAIN -->
 
-    <main class="main-content">
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
 
 
-        <header class="topbar">
+        <!-- MOBILE HEADER -->
 
-            <div>
+        <div class="mobile-header">
 
-                <p class="welcome-small">
-                    ESPACE FORMATEUR
-                </p>
+            <div class="mobile-logo">
+                FormaShop
+            </div>
+
+            <button
+                class="menu-button"
+                onclick="openMenu()"
+            >
+                ☰
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             TOP BAR
+        ========================== -->
+
+        <div class="topbar">
+
+            <div class="welcome">
 
                 <h1>
                     Bonjour {{ request.user.username }} 👋
                 </h1>
 
-                <p class="subtitle">
-                    Gérez vos formations, vos documents et vos revenus.
+                <p>
+                    Bienvenue dans votre espace personnel FormaShop.
                 </p>
 
             </div>
 
 
-            <div class="notification-button">
+            <div class="profile-mini">
 
-                <span class="notification-icon">
-                    ♢
-                </span>
+                <div class="avatar">
 
-                {% if unread_notifications > 0 %}
+                    {{ request.user.username|first|upper }}
 
-                    <span class="notification-count">
-                        {{ unread_notifications }}
-                    </span>
+                </div>
 
-                {% endif %}
 
-            </div>
+                <div>
 
-        </header>
+                    <div class="profile-name">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
 
-    <div class="dashboard-action">
+                    <div class="profile-role">
 
-    <div>
-        <strong>
-            Prêt à partager vos connaissances ?
-        </strong>
+                        {% if trainer_profile %}
+                            Formateur
+                        {% else %}
+                            Apprenant
+                        {% endif %}
 
-        <span>
-            Créez votre prochaine formation.
-        </span>
-    </div>
+                    </div>
 
-    <a
-        href="{% url 'create_course' %}"
-        class="create-button"
-    >
-        + Ajouter une formation
-    </a>
-
-</div>
-
-        <!-- WALLET -->
-
-        <section class="wallet-card">
-
-            <div>
-
-                <p class="wallet-label">
-                    SOLDE DU PORTEFEUILLE
-                </p>
-
-                <h2>
-                    {{ trainer_wallet.balance }} FCFA
-                </h2>
-
-                <p class="wallet-info">
-                    Solde disponible pour vos retraits
-                </p>
+                </div>
 
             </div>
 
-
-            <div class="wallet-symbol">
-                FCFA
-            </div>
-
-        </section>
+        </div>
 
 
+        <!-- =========================
+             STATS
+        ========================== -->
 
-        <!-- STATISTICS -->
-
-        <section class="stats-grid">
+        <section class="stats">
 
 
             <div class="stat-card">
 
-                <div class="stat-icon blue">
-                    ◈
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        🪙
+                    </div>
+
                 </div>
 
-                <div>
+                <div class="stat-number">
+                    {{ wallet.balance }}
+                </div>
 
-                    <span>
+                <div class="stat-label">
+                    Jetons disponibles
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        📚
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ trainer_courses|length }}
+                </div>
+
+                <div class="stat-label">
+
+                    {% if trainer_profile %}
+                        Formations créées
+                    {% else %}
                         Formations
-                    </span>
-
-                    <strong>
-                        {{ trainer_courses|length }}
-                    </strong>
+                    {% endif %}
 
                 </div>
 
             </div>
 
 
-
             <div class="stat-card">
 
-                <div class="stat-icon purple">
-                         ◫
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        🔔
+                    </div>
+
                 </div>
 
-                <div>
+                <div class="stat-number">
+                    {{ unread_notifications }}
+                </div>
 
-                    <span>
-                        Documents
-                    </span>
-
-                    <strong>
-                        0
-                    </strong>
-
+                <div class="stat-label">
+                    Notifications
                 </div>
 
             </div>
 
 
-
             <div class="stat-card">
 
-                <div class="stat-icon green">
-                    +
+                <div class="stat-top">
+
+                    <div class="stat-icon">
+                        👤
+                    </div>
+
                 </div>
 
-                <div>
+                <div class="stat-number">
+                    1
+                </div>
 
-                    <span>
-                        Solde actuel
-                    </span>
-
-                    <strong>
-                        {{ trainer_wallet.balance }} FCFA
-                    </strong>
-
+                <div class="stat-label">
+                    Compte personnel
                 </div>
 
             </div>
@@ -276,265 +1168,458 @@
         </section>
 
 
-
-        <!-- PROFILE + NOTIFICATIONS -->
+        <!-- =========================
+             CONTENT
+        ========================== -->
 
         <section class="content-grid">
 
 
             <!-- PROFILE -->
 
-            <div class="panel">
+            <div class="card">
 
-                <div class="panel-header">
+                <div class="card-header">
 
-                    <div>
-
-                        <p class="panel-kicker">
-                            MON PROFIL
-                        </p>
-
-                        <h2>
-                            Informations du formateur
-                        </h2>
-
+                    <div class="card-title">
+                        Mon profil
                     </div>
 
-                    <span class="status-badge">
-                        ✓ Formateur accepté
-                    </span>
+                    <a
+                        href="{% url 'profile' %}"
+                        class="card-link"
+                    >
+                        Voir le profil
+                    </a>
 
                 </div>
 
 
-                <div class="profile-details">
+                <div class="profile-box">
 
+                    <div class="large-avatar">
 
-                    <div class="detail">
-
-                        <span>
-                            Nom complet
-                        </span>
-
-                        <strong>
-                            {{ trainer_profile.user.username }}
-                        </strong>
+                        {{ request.user.username|first|upper }}
 
                     </div>
 
 
-                    <div class="detail">
+                    <div class="profile-info">
 
-                        <span>
-                            Téléphone
-                        </span>
+                        <h2>
 
-                        <strong>
-                            {{ trainer_profile.phone|default:"Non renseigné" }}
-                        </strong>
+                            {{ request.user.get_full_name|default:request.user.username }}
 
-                    </div>
-
-
-                    <div class="detail">
-
-                        <span>
-                            Expertise
-                        </span>
-
-                        <strong>
-                            {{ trainer_profile.expertise|default:"Non renseignée" }}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="detail description">
-
-                        <span>
-                            Présentation
-                        </span>
+                        </h2>
 
                         <p>
-                            {{ trainer_profile.bio|default:"Aucune présentation pour le moment." }}
+                            {{ request.user.email }}
                         </p>
+
+
+                        {% if trainer_profile %}
+
+                            <span class="role-badge">
+                                🎓 FORMATEUR
+                            </span>
+
+                        {% else %}
+
+                            <span class="role-badge">
+                                👤 APPRENANT
+                            </span>
+
+                        {% endif %}
 
                     </div>
 
+                </div>
+
+
+                <br>
+
+
+                <div class="info-list">
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Nom d'utilisateur
+                        </span>
+
+                        <span class="info-value">
+                            {{ request.user.username }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Email
+                        </span>
+
+                        <span class="info-value">
+                            {{ request.user.email|default:"Non renseigné" }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span class="info-label">
+                            Statut
+                        </span>
+
+                        <span class="info-value">
+
+                            {% if trainer_profile %}
+                                Formateur
+                            {% else %}
+                                Utilisateur
+                            {% endif %}
+
+                        </span>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
+            <!-- WALLET -->
 
-            <!-- NOTIFICATIONS -->
+            <div class="card">
 
-            <div class="panel">
+                <div class="card-header">
 
-                <div class="panel-header">
+                    <div class="card-title">
+                        Mon portefeuille
+                    </div>
 
-                    <div>
+                </div>
 
-                        <p class="panel-kicker">
-                            NOTIFICATIONS
-                        </p>
 
-                        <h2>
-                            Activité récente
-                        </h2>
+                <div class="wallet">
+
+                    <div class="wallet-label">
+                        Solde de jetons
+                    </div>
+
+                    <div class="wallet-number">
+                        {{ wallet.balance }}
+                    </div>
+
+                    <div class="wallet-description">
+                        Jetons disponibles sur votre compte
+                    </div>
+
+                </div>
+
+
+                {% if trainer_profile %}
+
+                    <br>
+
+                    <div class="wallet">
+
+                        <div class="wallet-label">
+                            Revenus formateur
+                        </div>
+
+                        <div class="wallet-number">
+
+                            {{ trainer_wallet.balance }}
+
+                        </div>
+
+                        <div class="wallet-description">
+                            Solde généré par vos formations
+                        </div>
 
                     </div>
 
-                    {% if unread_notifications > 0 %}
+                {% endif %}
 
-                        <span class="notification-badge">
-                            {{ unread_notifications }} nouvelle(s)
-                        </span>
+            </div>
+
+
+        </section>
+
+
+        <!-- =========================
+             FORMATEUR
+        ========================== -->
+
+        {% if trainer_profile %}
+
+            <section class="trainer-section">
+
+
+                <div class="trainer-banner">
+
+                    <div>
+
+                        <h2>
+                            🎓 Votre espace formateur
+                        </h2>
+
+                        <p>
+
+                            Gérez vos formations,
+                            consultez vos revenus et
+                            suivez votre activité.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="trainer-badge">
+
+                        Formateur vérifié
+
+                    </div>
+
+                </div>
+
+
+                <div class="trainer-grid">
+
+
+                    <div class="trainer-stat">
+
+                        <small>
+                            Formations créées
+                        </small>
+
+                        <strong>
+                            {{ trainer_courses|length }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="trainer-stat">
+
+                        <small>
+                            Revenus
+                        </small>
+
+                        <strong>
+                            {{ trainer_wallet.balance }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="trainer-stat">
+
+                        <small>
+                            Notifications
+                        </small>
+
+                        <strong>
+                            {{ unread_notifications }}
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- FORMATIONS -->
+
+                <br>
+
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div class="card-title">
+                            Mes formations
+                        </div>
+
+                        <a
+                            href="{% url 'home' %}"
+                            class="card-link"
+                        >
+                            Voir le site
+                        </a>
+
+                    </div>
+
+
+                    {% if trainer_courses %}
+
+                        <div class="courses">
+
+                            {% for course in trainer_courses %}
+
+                                <div class="course-item">
+
+                                    <h3>
+                                        {{ course.title }}
+                                    </h3>
+
+                                    <p>
+
+                                        {{ course.price }}
+                                        FCFA
+
+                                    </p>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty">
+
+                            Vous n'avez encore créé aucune formation.
+
+                        </div>
 
                     {% endif %}
 
                 </div>
 
 
-                <div class="notifications-list">
+                <!-- NOTIFICATIONS -->
 
-                    {% for notification in notifications|slice:":5" %}
+                <br>
 
-                        <div
-                            class="notification-item
-                            {% if not notification.is_read %}
-                                unread
-                            {% endif %}"
-                        >
 
-                            <div class="notification-dot"></div>
+                <div class="card">
 
-                            <div>
+                    <div class="card-header">
 
-                                <strong>
+                        <div class="card-title">
+                            Notifications
+                        </div>
+
+                    </div>
+
+
+                    {% if notifications %}
+
+                        {% for notification in notifications|slice:":5" %}
+
+                            <div class="notification">
+
+                                <div class="notification-title">
                                     {{ notification.title }}
-                                </strong>
+                                </div>
 
-                                <p>
+                                <div class="notification-message">
                                     {{ notification.message }}
-                                </p>
+                                </div>
 
-                                <small>
-                                    {{ notification.created_at|date:"d/m/Y à H:i" }}
-                                </small>
+                                <div class="notification-date">
+                                    {{ notification.created_at|date:"d/m/Y H:i" }}
+                                </div>
 
                             </div>
 
-                        </div>
+                        {% endfor %}
 
-                    {% empty %}
+                    {% else %}
 
-                        <div class="empty-state">
+                        <div class="empty">
 
-                            <div class="empty-icon">
-                                ♢
-                            </div>
-
-                            <p>
-                                Aucune notification pour le moment.
-                            </p>
+                            Aucune notification.
 
                         </div>
 
-                    {% endfor %}
+                    {% endif %}
 
                 </div>
 
-            </div>
+            </section>
+
+        {% endif %}
 
 
-        </section>
+        <!-- =========================
+             APPRENANT
+        ========================== -->
+
+        {% if not trainer_profile %}
+
+            <section class="card">
+
+                <div class="card-header">
+
+                    <div class="card-title">
+                        Mon activité
+                    </div>
+
+                </div>
 
 
+                <div class="empty">
 
-        <!-- EARNINGS -->
-
-        <section class="panel earnings-panel">
-
-            <div class="panel-header">
-
-                <div>
-
-                    <p class="panel-kicker">
-                        REVENUS
+                    <p>
+                        Votre espace personnel est prêt.
                     </p>
 
-                    <h2>
-                        Historique de mes gains
-                    </h2>
+                    <p style="margin-top:8px;">
+                        Découvrez les formations disponibles
+                        sur FormaShop.
+                    </p>
 
                 </div>
 
-                <span class="earnings-total">
-                    {{ trainer_wallet.balance }} FCFA disponible
-                </span>
+            </section>
 
-            </div>
-
-
-            <div class="earnings-list">
-
-                {% for earning in earnings|slice:":5" %}
-
-                    <div class="earning-row">
-
-                        <div class="earning-info">
-
-                            <div class="earning-icon">
-                                +
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    {{ earning.description }}
-                                </strong>
-
-                                <span>
-                                    {{ earning.created_at|date:"d/m/Y à H:i" }}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                        <strong class="earning-amount">
-                            + {{ earning.amount }} FCFA
-                        </strong>
-
-                    </div>
-
-                {% empty %}
-
-                    <div class="empty-earnings">
-
-                        <p>
-                            Vous n'avez encore reçu aucun gain.
-                        </p>
-
-                        <span>
-                            Vos revenus apparaîtront ici lorsqu'une
-                            formation sera payée et confirmée.
-                        </span>
-
-                    </div>
-
-                {% endfor %}
-
-            </div>
-
-        </section>
+        {% endif %}
 
 
     </main>
 
 </div>
+
+
+<script>
+
+    function openMenu() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .add("open");
+
+        document
+            .getElementById("overlay")
+            .classList
+            .add("open");
+
+    }
+
+
+    function closeMenu() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .remove("open");
+
+        document
+            .getElementById("overlay")
+            .classList
+            .remove("open");
+
+    }
+
+</script>
 
 
 </body>
