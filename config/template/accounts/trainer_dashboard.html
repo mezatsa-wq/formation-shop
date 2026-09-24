@@ -1351,32 +1351,45 @@
             </div>
             <br>
             <!-- NOTIFICATIONS -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        Notifications
-                    </div>
-                </div>
-                {% if notifications %}
-                    {% for notification in notifications|slice:":5" %}
-                        <div class="notification">
-                            <div class="notification-title">
-                                {{ notification.title }}
-                            </div>
-                            <div class="notification-message">
-                                {{ notification.message }}
-                            </div>
-                            <div class="notification-date">
-                                {{ notification.created_at|date:"d/m/Y H:i" }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty">
-                        Aucune notification.
-                    </div>
+            <div class="notifications-section">
+
+    <h2>🔔 Notifications</h2>
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            <div class="notification-card
+                {% if not notification.is_read %}
+                    unread
                 {% endif %}
+            ">
+
+                <div class="notification-title">
+                    {{ notification.title }}
+                </div>
+
+                <p>
+                    {{ notification.message }}
+                </p>
+
+                <small>
+                    {{ notification.created_at|date:"d/m/Y H:i" }}
+                </small>
+
             </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            Aucune notification.
+        </p>
+
+    {% endif %}
+
+</div>
         </section>
     {% endif %}
     <!-- =====================================================

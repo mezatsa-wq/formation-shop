@@ -2,6 +2,11 @@ from django.contrib import admin
 
 from .models import CoursePayment, Order
 from courses.models import Enrollment
+from accounts.models import (
+    TrainerWallet,
+    TrainerEarning,
+    TrainerNotification,
+)
 
 
 # =========================================================
@@ -41,6 +46,9 @@ class CoursePaymentAdmin(admin.ModelAdmin):
     @admin.action(
         description="✅ Confirmer les paiements sélectionnés"
     )
+    @admin.action(
+        description="✅ Confirmer les paiements sélectionnés"
+    )
     def confirm_payments(self, request, queryset):
 
         confirmed = 0
@@ -50,15 +58,69 @@ class CoursePaymentAdmin(admin.ModelAdmin):
             if payment.status != "pending":
                 continue
 
+            # =========================================
+            # 1. CONFIRMER LE PAIEMENT
+            # =========================================
+
             payment.status = "confirmed"
 
             payment.save(
                 update_fields=["status"]
             )
 
+            # =========================================
+            # 2. INSCRIRE L'ÉTUDIANT À LA FORMATION
+            # =========================================
+
             Enrollment.objects.get_or_create(
                 user=payment.user,
                 course=payment.course
+            )
+
+            # =========================================
+            # 3. RÉCUPÉRER LE FORMATEUR
+            # =========================================
+
+            trainer = payment.course.instructor
+
+            # =========================================
+            # 4. AJOUTER L'ARGENT AU PORTEFEUILLE
+            # =========================================
+
+            trainer_wallet, created = TrainerWallet.objects.get_or_create(
+                user=trainer
+            )
+
+            trainer_wallet.balance += payment.amount
+
+            trainer_wallet.save()
+
+            # =========================================
+            # 5. CRÉER L'HISTORIQUE DU REVENU
+            # =========================================
+
+            TrainerEarning.objects.create(
+                trainer=trainer,
+                payment=payment,
+                amount=payment.amount,
+                description=(
+                    f"Gain provenant de la formation : "
+                    f"{payment.course.title}"
+                )
+            )
+
+            # =========================================
+            # 6. CRÉER UNE NOTIFICATION
+            # =========================================
+
+            TrainerNotification.objects.create(
+                trainer=trainer,
+                title="💰 Nouveau revenu",
+                message=(
+                    f"Vous avez reçu {payment.amount} FCFA "
+                    f"pour la vente de votre formation "
+                    f"« {payment.course.title} »."
+                )
             )
 
             confirmed += 1
@@ -67,10 +129,6 @@ class CoursePaymentAdmin(admin.ModelAdmin):
             request,
             f"{confirmed} paiement(s) confirmé(s)."
         )
-
-    @admin.action(
-        description="❌ Refuser les paiements sélectionnés"
-    )
     def reject_payments(self, request, queryset):
 
         rejected = 0
