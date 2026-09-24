@@ -1,170 +1,189 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{% block title %}FormaShop{% endblock %}</title>
-
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'accounts/css/account.css' %}">
 </head>
-
 <body>
-
 <header class="navbar">
-
     <!-- LOGO -->
     <a href="{% url 'home' %}" class="logo">
         Forma<span>Shop</span>
     </a>
-
-
+    <!-- BOUTON HAMBURGER MOBILE -->
+    <button class="mobile-menu-button"
+            id="mobileMenuButton"
+            type="button"
+            aria-label="Ouvrir le menu"
+            aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
     <!-- NAVIGATION -->
-    <nav>
-
+    <nav id="mainNavigation">
         <a href="{% url 'home' %}">
             Accueil
         </a>
-
         <a href="{% url 'course_list' %}">
             Formations
         </a>
-
         <a href="{% url 'product_list' %}">
             Produits
         </a>
-
-        <a href="/documents/">
+        <a href="{% url 'document_list' %}">
             Documents
         </a>
-
         {% if user.is_authenticated %}
-
             <a href="{% url 'my_courses' %}">
                 Mes formations
             </a>
-
             {% if user.trainer_profile %}
-
                 <a href="{% url 'trainer_dashboard' %}" class="dashboard-button">
                     Dashboard
                 </a>
-
             {% else %}
-
                 <a href="{% url 'become_trainer' %}">
                     Devenir formateur
                 </a>
-
             {% endif %}
-
         {% endif %}
-
     </nav>
-
-
     <!-- ACTIONS À DROITE -->
     <div class="nav-actions">
-
         <a href="{% url 'cart' %}" class="cart-button">
             🛒 Panier
         </a>
-
-
         {% if user.is_authenticated %}
-
-           <a href="{% url 'profile' %}" class="profile-button">
-    👤 Mon profil
-</a>
-
-<a href="{% url 'logout' %}">
-    Déconnexion
-</a>
-
+            <a href="{% url 'profile' %}" class="profile-button">
+                👤 Mon profil
+            </a>
+            <a href="{% url 'logout' %}">
+                Déconnexion
+            </a>
         {% else %}
-
             <a href="{% url 'login' %}" class="login">
                 Connexion
             </a>
-
             <a href="{% url 'register' %}" class="register">
                 Inscription
             </a>
-
         {% endif %}
-
     </div>
-
 </header>
-
-
+<!-- MENU MOBILE -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}">
+        🏠 Accueil
+    </a>
+    <a href="{% url 'course_list' %}">
+        🎓 Formations
+    </a>
+    <a href="{% url 'product_list' %}">
+        🛍️ Produits
+    </a>
+    <a href="{% url 'document_list' %}">
+        📄 Documents
+    </a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'my_courses' %}">
+            📚 Mes formations
+        </a>
+        {% if user.trainer_profile %}
+            <a href="{% url 'trainer_dashboard' %}">
+                📊 Dashboard
+            </a>
+        {% else %}
+            <a href="{% url 'become_trainer' %}">
+                👨‍🏫 Devenir formateur
+            </a>
+        {% endif %}
+        <a href="{% url 'cart' %}">
+            🛒 Panier
+        </a>
+        <a href="{% url 'profile' %}">
+            👤 Mon profil
+        </a>
+        <a href="{% url 'logout' %}" class="mobile-logout">
+            🚪 Déconnexion
+        </a>
+    {% else %}
+        <a href="{% url 'login' %}">
+            🔐 Connexion
+        </a>
+        <a href="{% url 'register' %}">
+            ✨ Inscription
+        </a>
+    {% endif %}
+</div>
 <main>
-
     {% block content %}
     {% endblock %}
-
 </main>
-
-
 <footer>
-
     <div>
-
         <h2>FormaShop</h2>
-
         <p>
             Formations, produits et connaissances
             accessibles en un seul endroit.
         </p>
-
     </div>
-
-
     <div>
-
         <h3>Navigation</h3>
-
         <a href="{% url 'home' %}">
             Accueil
         </a>
-
         <a href="{% url 'course_list' %}">
             Formations
         </a>
-
         <a href="{% url 'product_list' %}">
             Produits
         </a>
-
         <a href="{% url 'document_list' %}">
             Documents
         </a>
-
     </div>
-
-
     <div>
-
         <h3>Assistance</h3>
-
         <a href="#">
             Contact
         </a>
-
         <a href="#">
             FAQ
         </a>
-
         <a href="#">
             Conditions
         </a>
-
     </div>
-
 </footer>
-
+<!-- JAVASCRIPT MENU MOBILE -->
+<script>
+    const mobileMenuButton = document.getElementById("mobileMenuButton");
+    const mobileMenu = document.getElementById("mobileMenu");
+    mobileMenuButton.addEventListener("click", function () {
+        mobileMenu.classList.toggle("active");
+        mobileMenuButton.classList.toggle("active");
+        const isOpen = mobileMenu.classList.contains("active");
+        mobileMenuButton.setAttribute(
+            "aria-expanded",
+            isOpen
+        );
+    });
+    // Fermer automatiquement le menu après avoir choisi une page
+    document.querySelectorAll(".mobile-menu a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            mobileMenu.classList.remove("active");
+            mobileMenuButton.classList.remove("active");
+            mobileMenuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        });
+    });
+</script>
 </body>
 </html>

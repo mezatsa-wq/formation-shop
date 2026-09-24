@@ -2033,3 +2033,126 @@ footer a {
         font-size: 19px;
     }
 }
+/* =====================================================
+   MENU HAMBURGER MOBILE — FORMASHOP
+===================================================== */
+.mobile-menu-button {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+}
+.mobile-menu-button span {
+    display: block;
+    width: 21px;
+    height: 2px;
+    border-radius: 5px;
+    background: white;
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+/* Animation hamburger → X */
+.mobile-menu-button.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.mobile-menu-button.active span:nth-child(2) {
+    opacity: 0;
+}
+.mobile-menu-button.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+/* MENU MOBILE */
+.mobile-menu {
+    display: none;
+}
+/* =====================================================
+   RESPONSIVE MOBILE
+===================================================== */
+@media (max-width: 900px) {
+    .navbar {
+        height: 70px;
+        padding: 0 5%;
+        position: relative;
+    }
+    /* Afficher hamburger */
+    .mobile-menu-button {
+        display: flex;
+    }
+    /* Cacher navigation desktop */
+    .navbar nav {
+        display: none;
+    }
+    /* Actions desktop */
+    .navbar .nav-actions {
+        display: none;
+    }
+    /* Menu mobile */
+    .mobile-menu {
+        display: flex;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        padding: 15px 5% 20px;
+        flex-direction: column;
+        gap: 7px;
+        background: rgba(8, 11, 18, 0.98);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow:
+            0 20px 50px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(20px);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        pointer-events: none;
+        transition:
+            opacity 0.25s ease,
+            transform 0.25s ease,
+            visibility 0.25s ease;
+    }
+    /* Menu ouvert */
+    .mobile-menu.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    /* Liens */
+    .mobile-menu a {
+        display: flex;
+        align-items: center;
+        min-height: 50px;
+        padding: 12px 15px;
+        border-radius: 12px;
+        color: #c8ccd5;
+        background: rgba(255, 255, 255, 0.035);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease;
+    }
+    .mobile-menu a:hover {
+        background: rgba(124, 92, 255, 0.15);
+        color: white;
+        transform: translateX(4px);
+    }
+    .mobile-menu .mobile-logout {
+        margin-top: 5px;
+        color: #ff8585;
+    }
+    .mobile-menu .mobile-logout:hover {
+        background: rgba(255, 80, 80, 0.10);
+        color: #ffaaaa;
+    }
+}
