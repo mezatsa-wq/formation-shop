@@ -208,7 +208,7 @@ def trainer_dashboard(request):
 
         notifications = TrainerNotification.objects.filter(
             trainer=request.user
-        ).order_by("-created_at")
+        ).order_by("-created_at")[:5]
 
         unread_notifications = notifications.filter(
             is_read=False

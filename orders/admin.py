@@ -113,14 +113,24 @@ class CoursePaymentAdmin(admin.ModelAdmin):
             # 6. CRÉER UNE NOTIFICATION
             # =========================================
 
+            notification_title = "💰 Nouveau revenu"
+
+            notification_message = (
+                f"Vous avez reçu {payment.amount} FCFA "
+                f"pour la vente de votre formation "
+                f"« {payment.course.title} »."
+            )
+
+            TrainerNotification.objects.filter(
+                trainer=trainer,
+                title=notification_title,
+                message=notification_message
+            ).delete()
+
             TrainerNotification.objects.create(
                 trainer=trainer,
-                title="💰 Nouveau revenu",
-                message=(
-                    f"Vous avez reçu {payment.amount} FCFA "
-                    f"pour la vente de votre formation "
-                    f"« {payment.course.title} »."
-                )
+                title=notification_title,
+                message=notification_message
             )
 
             confirmed += 1
