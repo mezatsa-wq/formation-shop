@@ -13,11 +13,9 @@ from orders.models import Order, OrderNotification
 
 
 def get_or_create_cart(request):
-
     cart, created = Cart.objects.get_or_create(
         user=request.user
     )
-
     return cart
 
 
@@ -47,7 +45,7 @@ def cart_detail(request):
         {
             "cart": cart,
             "items": items,
-            "total": total
+            "total": total,
         }
     )
 
@@ -73,6 +71,12 @@ def add_product_to_cart(request, product_id):
 
         if item.quantity < product.stock:
             item.quantity += 1
+        else:
+            messages.warning(
+                request,
+                "Vous avez déjà atteint la quantité disponible pour ce produit."
+            )
+            return redirect("cart")
 
     item.save()
 
@@ -118,6 +122,11 @@ def increase_quantity(request, item_id):
         if item.quantity < item.product.stock:
             item.quantity += 1
             item.save()
+        else:
+            messages.warning(
+                request,
+                "La quantité maximale disponible est atteinte."
+            )
 
     else:
 
@@ -168,14 +177,16 @@ def create_order(request):
 
     cart = get_or_create_cart(request)
 
-    product_items = cart.items.filter(
-        product__isnull=False
-    ).select_related(
-        "product",
-        "product__seller"
+    product_items = list(
+        cart.items.filter(
+            product__isnull=False
+        ).select_related(
+            "product",
+            "product__seller"
+        )
     )
 
-    if not product_items.exists():
+    if not product_items:
 
         messages.error(
             request,
@@ -214,7 +225,11 @@ def create_order(request):
 
             return render(
                 request,
-                "cart/checkout.html"
+                "cart/checkout.html",
+                {
+                    "cart": cart,
+                    "items": product_items,
+                }
             )
 
         if not phone_number:
@@ -225,7 +240,11 @@ def create_order(request):
 
             return render(
                 request,
-                "cart/checkout.html"
+                "cart/checkout.html",
+                {
+                    "cart": cart,
+                    "items": product_items,
+                }
             )
 
         if not neighborhood:
@@ -236,7 +255,11 @@ def create_order(request):
 
             return render(
                 request,
-                "cart/checkout.html"
+                "cart/checkout.html",
+                {
+                    "cart": cart,
+                    "items": product_items,
+                }
             )
 
         if not delivery_address:
@@ -247,14 +270,22 @@ def create_order(request):
 
             return render(
                 request,
-                "cart/checkout.html"
+                "cart/checkout.html",
+                {
+                    "cart": cart,
+                    "items": product_items,
+                }
             )
 
         created_orders = 0
 
         for item in product_items:
 
-            product = item.product
+            product = Product.objects.select_for_update().select_related(
+                "seller"
+            ).get(
+                id=item.product.id
+            )
 
             if not product.seller:
 
@@ -265,24 +296,49 @@ def create_order(request):
 
                 return render(
                     request,
-                    "cart/checkout.html"
+                    "cart/checkout.html",
+                    {
+                        "cart": cart,
+                        "items": product_items,
+                    }
+                )
+
+            if product.stock <= 0:
+
+                messages.error(
+                    request,
+                    f"Le produit « {product.name} » n'est plus disponible."
+                )
+
+                return render(
+                    request,
+                    "cart/checkout.html",
+                    {
+                        "cart": cart,
+                        "items": product_items,
+                    }
                 )
 
             if product.stock < item.quantity:
 
                 messages.error(
                     request,
-                    f"Stock insuffisant pour le produit : {product.name}"
+                    (
+                        f"Stock insuffisant pour « {product.name} ». "
+                        f"Il reste seulement {product.stock} unité(s)."
+                    )
                 )
 
                 return render(
                     request,
-                    "cart/checkout.html"
+                    "cart/checkout.html",
+                    {
+                        "cart": cart,
+                        "items": product_items,
+                    }
                 )
 
-            total_price = (
-                product.price * item.quantity
-            )
+            total_price = product.price * item.quantity
 
             deadline = (
                 timezone.now()
@@ -324,6 +380,7 @@ def create_order(request):
                 reward_given=False
             )
 
+            # DIMINUTION RÉELLE DU STOCK
             product.stock -= item.quantity
 
             product.save(
@@ -374,22 +431,31 @@ def create_order(request):
 
         messages.success(
             request,
-            f"{created_orders} commande(s) créée(s) avec succès. "
-            f"Le paiement sera effectué à la livraison."
+            (
+                f"{created_orders} commande(s) créée(s) avec succès. "
+                f"Le paiement sera effectué à la livraison."
+            )
         )
 
-        return redirect("cart")
+        return redirect("my_orders")
 
     return render(
         request,
-        "cart/checkout.html"
+        "cart/checkout.html",
+        {
+            "cart": cart,
+            "items": product_items,
+        }
     )
+
+
 @login_required
 def clear_cart(request):
 
     cart = get_or_create_cart(request)
 
     if request.method == "POST":
+
         cart.items.all().delete()
 
         messages.success(

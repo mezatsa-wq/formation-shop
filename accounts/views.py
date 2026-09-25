@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.db.models import Q,Sum
-
+from django.db.models import Q, Sum
+from django.conf import settings
+from django.conf import settings
 from documents.models import DocumentPurchase
 
 from .models import (
@@ -192,8 +193,13 @@ def profile_view(request):
 # TABLEAU DE BORD PRINCIPAL
 # =========================================================
 
+# =========================================================
+# TABLEAU DE BORD PRINCIPAL
+# =========================================================
+
 @login_required
 def dashboard(request):
+
     user = request.user
 
     # =========================================================
@@ -222,50 +228,95 @@ def dashboard(request):
     )
 
     # =========================================================
-    # INFORMATIONS VENDEUR
+    # PROFIL VENDEUR
     # =========================================================
 
-    seller_profile = getattr(user, "seller_profile", None)
+    seller_profile = getattr(
+        user,
+        "seller_profile",
+        None
+    )
+
+    # =========================================================
+    # PRODUITS DU VENDEUR
+    # =========================================================
 
     seller_products = Product.objects.filter(
         seller=user
     ).order_by("-created_at")
 
+    # =========================================================
+    # COMMANDES DU VENDEUR
+    #
+    # On prend :
+    # 1. les commandes dont seller = utilisateur
+    # 2. OU les anciennes commandes dont le produit
+    #    appartient à l'utilisateur
+    # =========================================================
+
     seller_orders = Order.objects.filter(
-        Q(seller=user) | Q(product__seller=user)
+        Q(seller=user) |
+        Q(product__seller=user)
     ).select_related(
         "product",
         "user",
         "seller"
-    ).distinct().order_by("-created_at")
+    ).distinct().order_by(
+        "-created_at"
+    )
 
-    # Commandes en attente de livraison par le vendeur
+    # =========================================================
+    # STATISTIQUES COMMANDES VENDEUR
+    # =========================================================
+
     seller_pending_orders = seller_orders.filter(
         status="pending"
     )
 
-    # Commandes livrées par le vendeur,
-    # mais dont le client n'a pas encore confirmé la réception
     seller_delivered_orders = seller_orders.filter(
         status="seller_delivered"
     )
 
-    # Commandes complètement terminées
     seller_completed_orders = seller_orders.filter(
         status="delivered"
     )
 
-    # Commandes annulées par les clients
     seller_cancelled_orders = seller_orders.filter(
         status="cancelled"
     )
 
-    # Revenus du vendeur
+    # Commandes que le vendeur doit encore livrer
+    seller_orders_to_deliver = seller_orders.filter(
+        status="pending",
+        seller_confirmed=False,
+        admin_validated=False
+    )
+
+    # =========================================================
+    # COMMANDES EN RETARD
+    # =========================================================
+
+    seller_late_orders = seller_orders.filter(
+        delivery_deadline__isnull=False,
+        delivery_deadline__lt=timezone.now()
+    ).exclude(
+        status__in=[
+            "delivered",
+            "cancelled"
+        ]
+    )
+
+    # =========================================================
+    # REVENUS VENDEUR
+    # =========================================================
+
     seller_earnings = SellerEarning.objects.filter(
         seller=user
     ).select_related(
         "order"
-    ).order_by("-created_at")
+    ).order_by(
+        "-created_at"
+    )
 
     seller_revenue = seller_earnings.aggregate(
         total=Sum("amount")
@@ -277,26 +328,40 @@ def dashboard(request):
 
     seller_notifications = OrderNotification.objects.filter(
         recipient=user
-    ).order_by("-created_at")
+    ).order_by(
+        "-created_at"
+    )
 
     unread_seller_notifications = seller_notifications.filter(
         is_read=False
     )
 
     # =========================================================
+    # STATUT PREMIUM
+    # =========================================================
+
+    seller_is_premium = is_premium_seller(user)
+
+    # =========================================================
     # INFORMATIONS FORMATEUR
     # =========================================================
 
-    trainer_profile = getattr(user, "trainer_profile", None)
+    trainer_profile = getattr(
+        user,
+        "trainer_profile",
+        None
+    )
 
     # =========================================================
-    # CONTEXTE
+    # CONTEXTE FINAL
     # =========================================================
 
     context = {
+
         # -------------------------
-        # Client
+        # CLIENT
         # -------------------------
+
         "user_orders": user_orders,
         "total_orders": total_orders,
         "pending_orders": pending_orders,
@@ -304,27 +369,44 @@ def dashboard(request):
         "cancelled_orders": cancelled_orders,
 
         # -------------------------
-        # Vendeur
+        # VENDEUR
         # -------------------------
+
         "seller_profile": seller_profile,
         "seller_products": seller_products,
+
         "seller_orders": seller_orders,
+
         "seller_pending_orders": seller_pending_orders,
+
         "seller_delivered_orders": seller_delivered_orders,
+
         "seller_completed_orders": seller_completed_orders,
+
         "seller_cancelled_orders": seller_cancelled_orders,
+
+        "seller_orders_to_deliver": seller_orders_to_deliver,
+
+        "seller_late_orders": seller_late_orders,
+
         "seller_earnings": seller_earnings,
+
         "seller_revenue": seller_revenue,
 
+        "seller_is_premium": seller_is_premium,
+
         # -------------------------
-        # Notifications
+        # NOTIFICATIONS VENDEUR
         # -------------------------
+
         "seller_notifications": seller_notifications,
+
         "unread_seller_notifications": unread_seller_notifications,
 
         # -------------------------
-        # Formateur
+        # FORMATEUR
         # -------------------------
+
         "trainer_profile": trainer_profile,
     }
 
@@ -726,6 +808,14 @@ def upgrade_to_premium(request):
 
         return redirect("dashboard")
 
+    # Numéro officiel de dépôt configuré dans les variables
+    # d'environnement / settings.py.
+    premium_deposit_number = getattr(
+        settings,
+        "PREMIUM_DEPOSIT_NUMBER",
+        ""
+    )
+
     if request.method == "POST":
 
         payment_method = request.POST.get(
@@ -745,21 +835,38 @@ def upgrade_to_premium(request):
 
             messages.error(
                 request,
-                "Veuillez choisir un moyen de paiement."
+                "Veuillez choisir MTN Mobile Money ou Orange Money."
             )
 
-            return redirect("upgrade_to_premium")
+            return render(
+                request,
+                "accounts/upgrade_premium.html",
+                {
+                    "seller_profile": seller_profile,
+                    "premium_deposit_number": premium_deposit_number,
+                    "selected_method": payment_method,
+                    "payment_phone": payment_phone,
+                }
+            )
 
         if not payment_phone:
 
             messages.error(
                 request,
-                "Veuillez saisir votre numéro de paiement."
+                "Veuillez saisir le numéro utilisé pour effectuer le paiement."
             )
 
-            return redirect("upgrade_to_premium")
+            return render(
+                request,
+                "accounts/upgrade_premium.html",
+                {
+                    "seller_profile": seller_profile,
+                    "premium_deposit_number": premium_deposit_number,
+                    "selected_method": payment_method,
+                    "payment_phone": payment_phone,
+                }
+            )
 
-        # Une seule demande Premium en attente
         existing_pending = SellerSubscription.objects.filter(
             seller=request.user,
             status="pending"
@@ -795,5 +902,7 @@ def upgrade_to_premium(request):
         "accounts/upgrade_premium.html",
         {
             "seller_profile": seller_profile,
+            "premium_mtn_number": settings.PREMIUM_MTN_NUMBER,
+            "premium_orange_number": settings.PREMIUM_ORANGE_NUMBER,
         }
     )

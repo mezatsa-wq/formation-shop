@@ -33,6 +33,9 @@ def product_list(request):
 
     products = Product.objects.filter(
         stock__gt=0
+    ).select_related(
+        "seller",
+        "seller__profile"
     )
 
     if search:
@@ -61,7 +64,10 @@ def product_list(request):
 def product_detail(request, product_id):
 
     product = get_object_or_404(
-        Product,
+        Product.objects.select_related(
+            "seller",
+            "seller__profile"
+        ),
         id=product_id,
         stock__gt=0
     )
@@ -70,7 +76,7 @@ def product_detail(request, product_id):
         request,
         "products/detail.html",
         {
-            "product": product
+            "product": product,
         }
     )
 
@@ -124,7 +130,7 @@ def create_product(request):
         request,
         "products/create.html",
         {
-            "form": form
+            "form": form,
         }
     )
 
@@ -154,7 +160,7 @@ def my_products(request):
         request,
         "products/my_products.html",
         {
-            "products": products
+            "products": products,
         }
     )
 
@@ -172,7 +178,9 @@ def feature_product(request, product_id):
             "Vous devez être un vendeur approuvé."
         )
 
-        return redirect("home")
+        return redirect(
+            "my_products"
+        )
 
     from accounts.models import is_premium_seller
 
@@ -180,13 +188,13 @@ def feature_product(request, product_id):
         request.user
     ):
 
-        messages.error(
+        messages.warning(
             request,
-            "La mise en avant des produits est réservée aux vendeurs Premium."
+            "La mise en avant des produits est réservée aux vendeurs Premium. Passez Premium pour utiliser cette fonctionnalité."
         )
 
         return redirect(
-            "my_products"
+            "upgrade_to_premium"
         )
 
     product = get_object_or_404(
@@ -203,12 +211,18 @@ def feature_product(request, product_id):
         )
 
         try:
+
             days = int(days)
 
         except ValueError:
+
             days = 7
 
-        if days not in [7, 15, 30]:
+        if days not in [
+            7,
+            15,
+            30
+        ]:
 
             messages.error(
                 request,
@@ -238,7 +252,10 @@ def feature_product(request, product_id):
 
         messages.success(
             request,
-            f"Votre produit est maintenant mis en avant pendant {days} jours."
+            (
+                f"Votre produit est maintenant "
+                f"mis en avant pendant {days} jours."
+            )
         )
 
         return redirect(
@@ -249,7 +266,7 @@ def feature_product(request, product_id):
         request,
         "products/feature.html",
         {
-            "product": product
+            "product": product,
         }
     )
 
@@ -267,7 +284,9 @@ def edit_product(request, product_id):
             "Vous devez être un vendeur approuvé."
         )
 
-        return redirect("home")
+        return redirect(
+            "my_products"
+        )
 
     product = get_object_or_404(
         Product,
@@ -285,13 +304,7 @@ def edit_product(request, product_id):
 
         if form.is_valid():
 
-            product = form.save(
-                commit=False
-            )
-
-            product.seller = request.user
-
-            product.save()
+            form.save()
 
             messages.success(
                 request,
@@ -356,6 +369,6 @@ def delete_product(request, product_id):
         request,
         "products/delete.html",
         {
-            "product": product
+            "product": product,
         }
     )

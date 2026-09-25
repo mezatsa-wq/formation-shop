@@ -1,112 +1,585 @@
 {% extends "base.html" %}
 
 {% block title %}
-Finaliser la commande - FormaShop
+Finaliser ma commande — FormaShop
 {% endblock %}
 
 {% block content %}
 
-<section>
+<style>
 
-    <h1>Finaliser ma commande</h1>
+    .checkout-page {
+        width: 100%;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 45px 20px 70px;
+        box-sizing: border-box;
+    }
 
-    <p>
-        Entrez les informations nécessaires pour la livraison.
-    </p>
+    .checkout-header {
+        margin-bottom: 28px;
+    }
 
-    {% if messages %}
+    .checkout-label {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: rgba(124, 92, 255, 0.14);
+        border: 1px solid rgba(124, 92, 255, 0.28);
+        color: #aa9cff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
 
-        {% for message in messages %}
+    .checkout-header h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(34px, 6vw, 54px);
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: -1.8px;
+    }
 
-            <p>
-                {{ message }}
+    .checkout-header p {
+        margin: 14px 0 0;
+        color: #8d95ad;
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .checkout-card,
+    .checkout-summary {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: 22px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(25, 29, 49, 0.98),
+                rgba(12, 15, 28, 0.98)
+            );
+        box-shadow: 0 25px 65px rgba(0, 0, 0, 0.22);
+    }
+
+    .checkout-card {
+        padding: 30px;
+    }
+
+    .checkout-summary {
+        padding: 23px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .checkout-section-title {
+        margin: 0 0 7px;
+        color: #ffffff;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .checkout-section-text {
+        margin: 0 0 25px;
+        color: #8189a2;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .checkout-messages {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .checkout-message {
+        padding: 13px 15px;
+        border-radius: 12px;
+        background: rgba(124, 92, 255, 0.10);
+        border: 1px solid rgba(124, 92, 255, 0.25);
+        color: #dcd8ff;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .checkout-form {
+        display: grid;
+        gap: 19px;
+    }
+
+    .checkout-field {
+        display: grid;
+        gap: 8px;
+    }
+
+    .checkout-field label {
+        color: #e7e9f1;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .checkout-field input,
+    .checkout-field textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid rgba(148, 163, 184, 0.20);
+        border-radius: 13px;
+        background: #0e1220;
+        color: #ffffff;
+        padding: 14px 15px;
+        outline: none;
+        font-size: 15px;
+        transition: 0.2s ease;
+        font-family: inherit;
+    }
+
+    .checkout-field input {
+        min-height: 50px;
+    }
+
+    .checkout-field textarea {
+        min-height: 125px;
+        resize: vertical;
+    }
+
+    .checkout-field input::placeholder,
+    .checkout-field textarea::placeholder {
+        color: #626b84;
+    }
+
+    .checkout-field input:focus,
+    .checkout-field textarea:focus {
+        border-color: rgba(124, 92, 255, 0.75);
+        box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.10);
+    }
+
+    .checkout-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 5px;
+        flex-wrap: wrap;
+    }
+
+    .checkout-submit {
+        border: 0;
+        border-radius: 13px;
+        min-height: 50px;
+        padding: 0 22px;
+        background: linear-gradient(
+            135deg,
+            #6958f5,
+            #8f70ff
+        );
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(105, 88, 245, 0.22);
+        transition: 0.2s ease;
+    }
+
+    .checkout-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(105, 88, 245, 0.32);
+    }
+
+    .checkout-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 50px;
+        padding: 0 15px;
+        border-radius: 12px;
+        color: #9e96ff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .checkout-back:hover {
+        color: #ffffff;
+        background: rgba(124, 92, 255, 0.08);
+    }
+
+    /* =========================
+       RÉSUMÉ
+    ========================= */
+
+    .summary-title {
+        margin: 0 0 18px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .summary-item {
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+    }
+
+    .summary-item:last-child {
+        border-bottom: 0;
+    }
+
+    .summary-product {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .summary-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 6px;
+        color: #858da5;
+        font-size: 12px;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 17px;
+        padding-top: 17px;
+        border-top: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .summary-total span {
+        color: #9ba2b7;
+        font-size: 14px;
+    }
+
+    .summary-total strong {
+        color: #aa9cff;
+        font-size: 18px;
+    }
+
+    .delivery-note {
+        margin-top: 17px;
+        padding: 13px;
+        border-radius: 12px;
+        background: rgba(105, 88, 245, 0.08);
+        border: 1px solid rgba(105, 88, 245, 0.16);
+        color: #969eb5;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 820px) {
+
+        .checkout-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .checkout-summary {
+            position: static;
+            order: -1;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .checkout-page {
+            padding: 28px 13px 45px;
+        }
+
+        .checkout-header {
+            margin-bottom: 20px;
+        }
+
+        .checkout-header h1 {
+            font-size: 35px;
+            letter-spacing: -1.2px;
+        }
+
+        .checkout-header p {
+            font-size: 14px;
+        }
+
+        .checkout-card,
+        .checkout-summary {
+            padding: 19px;
+            border-radius: 18px;
+        }
+
+        .checkout-section-title {
+            font-size: 19px;
+        }
+
+        .checkout-field input,
+        .checkout-field textarea {
+            font-size: 16px;
+        }
+
+        .checkout-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .checkout-submit,
+        .checkout-back {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .checkout-submit {
+            min-height: 52px;
+        }
+
+        .summary-total strong {
+            font-size: 17px;
+        }
+    }
+
+</style>
+
+
+<section class="checkout-page">
+
+    <div class="checkout-header">
+
+        <span class="checkout-label">
+            🛒 COMMANDE
+        </span>
+
+        <h1>
+            Finaliser ma commande
+        </h1>
+
+        <p>
+            Vérifiez votre commande puis renseignez les informations
+            nécessaires à la livraison.
+        </p>
+
+    </div>
+
+
+    <div class="checkout-layout">
+
+        <!-- =========================
+             FORMULAIRE
+        ========================== -->
+
+        <div class="checkout-card">
+
+            {% if messages %}
+
+                <div class="checkout-messages">
+
+                    {% for message in messages %}
+
+                        <div class="checkout-message">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <h2 class="checkout-section-title">
+                Informations de livraison
+            </h2>
+
+            <p class="checkout-section-text">
+                Ces informations seront transmises au vendeur
+                afin qu'il puisse effectuer la livraison.
             </p>
 
-        {% endfor %}
 
-    {% endif %}
-
-
-    <form method="POST">
-
-        {% csrf_token %}
-
-        <div>
-
-            <label for="full_name">
-                Nom complet
-            </label>
-
-            <input
-                type="text"
-                id="full_name"
-                name="full_name"
-                required
+            <form
+                method="POST"
+                class="checkout-form"
             >
 
+                {% csrf_token %}
+
+
+                <div class="checkout-field">
+
+                    <label for="full_name">
+                        Nom complet
+                    </label>
+
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Votre nom complet"
+                        value="{{ request.POST.full_name|default:'' }}"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="checkout-field">
+
+                    <label for="phone_number">
+                        Numéro de téléphone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone_number"
+                        name="phone_number"
+                        placeholder="Ex. 6XXXXXXXX"
+                        value="{{ request.POST.phone_number|default:'' }}"
+                        autocomplete="tel"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="checkout-field">
+
+                    <label for="neighborhood">
+                        Quartier
+                    </label>
+
+                    <input
+                        type="text"
+                        id="neighborhood"
+                        name="neighborhood"
+                        placeholder="Votre quartier"
+                        value="{{ request.POST.neighborhood|default:'' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="checkout-field">
+
+                    <label for="delivery_address">
+                        Adresse de livraison
+                    </label>
+
+                    <textarea
+                        id="delivery_address"
+                        name="delivery_address"
+                        placeholder="Indiquez précisément où la commande doit être livrée..."
+                        required
+                    >{{ request.POST.delivery_address|default:'' }}</textarea>
+
+                </div>
+
+
+                <div class="checkout-actions">
+
+                    <button
+                        type="submit"
+                        class="checkout-submit"
+                    >
+                        ✓ Confirmer la commande
+                    </button>
+
+                    <a
+                        href="{% url 'cart' %}"
+                        class="checkout-back"
+                    >
+                        ← Retour au panier
+                    </a>
+
+                </div>
+
+            </form>
+
         </div>
 
 
-        <div>
+        <!-- =========================
+             RÉSUMÉ DE COMMANDE
+        ========================== -->
 
-            <label for="phone_number">
-                Numéro de téléphone
-            </label>
+        <aside class="checkout-summary">
 
-            <input
-                type="text"
-                id="phone_number"
-                name="phone_number"
-                required
-            >
+            <h2 class="summary-title">
+                Résumé de la commande
+            </h2>
 
-        </div>
+            {% for item in items %}
 
+                <div class="summary-item">
 
-        <div>
+                    <div class="summary-product">
 
-            <label for="neighborhood">
-                Quartier
-            </label>
+                        {% if item.product %}
+                            {{ item.product.name }}
+                        {% elif item.course %}
+                            {{ item.course.title }}
+                        {% endif %}
 
-            <input
-                type="text"
-                id="neighborhood"
-                name="neighborhood"
-                required
-            >
+                    </div>
 
-        </div>
+                    <div class="summary-meta">
 
+                        <span>
+                            × {{ item.quantity }}
+                        </span>
 
-        <div>
+                        <span>
 
-            <label for="delivery_address">
-                Adresse de livraison
-            </label>
+                            {% if item.product %}
+                                {{ item.product.price }} FCFA
+                            {% elif item.course %}
+                                {{ item.course.price }} FCFA
+                            {% endif %}
 
-            <textarea
-                id="delivery_address"
-                name="delivery_address"
-                rows="5"
-                required
-            ></textarea>
+                        </span>
 
-        </div>
+                    </div>
 
+                </div>
 
-        <button type="submit">
-            Confirmer la commande
-        </button>
+            {% empty %}
 
-    </form>
+                <div class="summary-item">
+                    <div class="summary-product">
+                        Aucun article
+                    </div>
+                </div>
+
+            {% endfor %}
 
 
-    <br>
+            <div class="summary-total">
 
-    <a href="{% url 'cart' %}">
-        ← Retour au panier
-    </a>
+                <span>
+                    Total
+                </span>
+
+                <strong>
+                    {{ cart.total_price|default:total|default:"0" }} FCFA
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-note">
+                🚚 Le paiement sera effectué à la livraison.
+                Le vendeur dispose de 24 heures pour effectuer
+                la livraison après création de la commande.
+            </div>
+
+        </aside>
+
+    </div>
 
 </section>
 

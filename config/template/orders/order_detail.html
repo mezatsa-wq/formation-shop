@@ -1,664 +1,588 @@
 {% extends "base.html" %}
 
-{% block title %}
-Commande #{{ order.id }} - FormaShop
-{% endblock %}
-
 {% block content %}
 
 <style>
-
-.order-detail-page {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px 60px;
-}
-
-.order-header {
-    margin-bottom: 30px;
-}
-
-.order-header h1 {
-    font-size: 32px;
-    margin-bottom: 8px;
-}
-
-.order-header p {
-    color: #94a3b8;
-}
-
-.order-card {
-    background: rgba(15, 23, 42, 0.78);
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 22px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
-}
-
-.order-card h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-.order-info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 15px;
-}
-
-.info-item {
-    background: rgba(255,255,255,0.035);
-    border-radius: 14px;
-    padding: 15px;
-}
-
-.info-item span {
-    display: block;
-    color: #94a3b8;
-    font-size: 13px;
-    margin-bottom: 6px;
-}
-
-.info-item strong {
-    color: #f8fafc;
-}
-
-.status-box {
-    padding: 18px;
-    border-radius: 16px;
-    background: linear-gradient(
-        135deg,
-        rgba(99,102,241,.14),
-        rgba(124,58,237,.12)
-    );
-    border: 1px solid rgba(99,102,241,.25);
-}
-
-.confirmation {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(255,255,255,.06);
-}
-
-.confirmation:last-child {
-    border-bottom: none;
-}
-
-.confirmation-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(148,163,184,.1);
-}
-
-.confirmed .confirmation-icon {
-    background: rgba(34,197,94,.15);
-}
-
-.action-box {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 16px;
-    background: rgba(99,102,241,.08);
-    border: 1px solid rgba(99,102,241,.20);
-}
-
-.order-btn {
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 700;
-    color: white;
-    background: linear-gradient(135deg,#6366f1,#7c3aed);
-    text-decoration: none;
-    transition: .2s ease;
-}
-
-.order-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(99,102,241,.25);
-}
-
-.order-btn.danger {
-    background: linear-gradient(135deg,#ef4444,#dc2626);
-}
-
-.order-btn.success {
-    background: linear-gradient(135deg,#22c55e,#16a34a);
-}
-
-.order-btn.secondary {
-    background: rgba(255,255,255,.08);
-}
-
-.warning {
-    color: #fbbf24;
-}
-
-.success-text {
-    color: #4ade80;
-}
-
-.danger-text {
-    color: #f87171;
-}
-
-@media (max-width: 700px) {
-
     .order-detail-page {
-        margin-top: 25px;
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 18px 60px;
+        color: #f5f3ff;
     }
 
-    .order-info-grid {
-        grid-template-columns: 1fr;
+    .order-header {
+        background: linear-gradient(135deg, #171a31, #111522);
+        border: 1px solid rgba(143, 112, 255, .25);
+        border-radius: 24px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,.25);
     }
 
-    .order-card {
-        padding: 20px;
+    .order-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
     }
 
     .order-header h1 {
-        font-size: 26px;
+        margin: 0 0 8px;
+        font-size: 28px;
     }
 
-    .order-btn {
-        width: 100%;
-        text-align: center;
-        margin-top: 8px;
+    .order-number {
+        color: #aaa5c7;
+        font-size: 14px;
     }
-}
 
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13px;
+        background: rgba(143,112,255,.15);
+        color: #b8aaff;
+        border: 1px solid rgba(143,112,255,.3);
+        white-space: nowrap;
+    }
+
+    .status-cancelled {
+        background: rgba(255,70,100,.12);
+        color: #ff8298;
+        border-color: rgba(255,70,100,.3);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .detail-card {
+        background: #111522;
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 22px;
+        padding: 24px;
+    }
+
+    .detail-card h2 {
+        margin: 0 0 20px;
+        font-size: 19px;
+        color: #ffffff;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .info-row:last-child {
+        border-bottom: 0;
+    }
+
+    .info-label {
+        color: #9995b2;
+    }
+
+    .info-value {
+        text-align: right;
+        font-weight: 600;
+        color: #f4f2ff;
+    }
+
+    .progress-card {
+        margin-top: 20px;
+        background: #111522;
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 22px;
+        padding: 25px;
+    }
+
+    .progress-card h2 {
+        margin-top: 0;
+    }
+
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .step {
+        padding: 18px;
+        border-radius: 16px;
+        background: #171a31;
+        border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .step.done {
+        border-color: rgba(105,88,245,.5);
+        background: rgba(105,88,245,.10);
+    }
+
+    .step-icon {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .step-title {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .step-text {
+        color: #9995b2;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .actions-card {
+        margin-top: 20px;
+        background: linear-gradient(135deg, #171a31, #121526);
+        border: 1px solid rgba(143,112,255,.22);
+        border-radius: 22px;
+        padding: 25px;
+    }
+
+    .actions-card h2 {
+        margin-top: 0;
+        margin-bottom: 8px;
+    }
+
+    .actions-description {
+        color: #9995b2;
+        margin-bottom: 20px;
+    }
+
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .action-btn {
+        border: 0;
+        text-decoration: none;
+        cursor: pointer;
+        padding: 13px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: .2s ease;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .primary-btn {
+        background: linear-gradient(135deg, #6958f5, #8f70ff);
+        color: white;
+        box-shadow: 0 8px 22px rgba(105,88,245,.25);
+    }
+
+    .success-btn {
+        background: linear-gradient(135deg, #18a878, #24c998);
+        color: white;
+    }
+
+    .danger-btn {
+        background: rgba(255,70,100,.12);
+        color: #ff8298;
+        border: 1px solid rgba(255,70,100,.25);
+    }
+
+    .secondary-btn {
+        background: #20243a;
+        color: #ddd9f5;
+        border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .notice {
+        padding: 15px 17px;
+        border-radius: 14px;
+        margin-top: 15px;
+        background: rgba(105,88,245,.10);
+        border: 1px solid rgba(105,88,245,.2);
+        color: #c9c3ef;
+        line-height: 1.5;
+    }
+
+    .cancelled-box {
+        background: rgba(255,70,100,.08);
+        border: 1px solid rgba(255,70,100,.25);
+        color: #ff9aac;
+        padding: 18px;
+        border-radius: 16px;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 700px) {
+        .order-detail-page {
+            margin: 20px auto;
+            padding: 0 12px 40px;
+        }
+
+        .order-header {
+            padding: 20px;
+            border-radius: 18px;
+        }
+
+        .order-header-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .order-header h1 {
+            font-size: 23px;
+        }
+
+        .status-badge {
+            width: 100%;
+        }
+
+        .detail-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .detail-card,
+        .progress-card,
+        .actions-card {
+            padding: 18px;
+            border-radius: 18px;
+        }
+
+        .info-row {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-value {
+            text-align: left;
+        }
+
+        .steps {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            width: 100%;
+            min-height: 48px;
+        }
+    }
 </style>
-
 
 <div class="order-detail-page">
 
     <div class="order-header">
+        <div class="order-header-top">
+            <div>
+                <h1>📦 Détails de la commande</h1>
+                <div class="order-number">
+                    Commande #{{ order.id }}
+                </div>
+            </div>
 
-        <h1>
-            Commande #{{ order.id }}
-        </h1>
-
-        <p>
-            Consultez l'état détaillé de votre commande.
-        </p>
-
+            {% if order.status == "cancelled" %}
+                <span class="status-badge status-cancelled">
+                    ❌ Commande annulée
+                </span>
+            {% elif order.status == "pending" %}
+                <span class="status-badge">
+                    ⏳ En attente du vendeur
+                </span>
+            {% elif order.status == "seller_delivered" %}
+                <span class="status-badge">
+                    🚚 Livrée par le vendeur
+                </span>
+            {% elif order.status == "customer_received" %}
+                <span class="status-badge">
+                    ✅ Réception confirmée
+                </span>
+            {% elif order.status == "delivered" %}
+                <span class="status-badge">
+                    🎉 Commande terminée
+                </span>
+            {% endif %}
+        </div>
     </div>
 
+    <div class="detail-grid">
 
-    <div class="order-card">
+        <div class="detail-card">
+            <h2>🛍️ Produit</h2>
 
-        <h2>
-            Informations de la commande
-        </h2>
-
-        <div class="order-info-grid">
-
-            <div class="info-item">
-
-                <span>Produit</span>
-
-                <strong>
+            <div class="info-row">
+                <span class="info-label">Produit</span>
+                <span class="info-value">
                     {% if order.product %}
                         {{ order.product.name }}
                     {% else %}
                         Produit supprimé
                     {% endif %}
-                </strong>
-
+                </span>
             </div>
 
-
-            <div class="info-item">
-
-                <span>Quantité</span>
-
-                <strong>
+            <div class="info-row">
+                <span class="info-label">Quantité</span>
+                <span class="info-value">
                     {{ order.quantity }}
-                </strong>
-
+                </span>
             </div>
 
-
-            <div class="info-item">
-
-                <span>Montant total</span>
-
-                <strong>
+            <div class="info-row">
+                <span class="info-label">Montant</span>
+                <span class="info-value">
                     {{ order.total_price }} FCFA
-                </strong>
-
+                </span>
             </div>
 
-
-            <div class="info-item">
-
-                <span>Paiement</span>
-
-                <strong>
-                    {{ order.get_payment_status_display }}
-                </strong>
-
+            <div class="info-row">
+                <span class="info-label">Date</span>
+                <span class="info-value">
+                    {{ order.created_at|date:"d/m/Y H:i" }}
+                </span>
             </div>
-
         </div>
 
-    </div>
+        <div class="detail-card">
+            <h2>🚚 Livraison</h2>
 
-
-    <div class="order-card">
-
-        <h2>
-            Informations de livraison
-        </h2>
-
-        <div class="order-info-grid">
-
-            <div class="info-item">
-
-                <span>Nom</span>
-
-                <strong>
+            <div class="info-row">
+                <span class="info-label">Nom</span>
+                <span class="info-value">
                     {{ order.full_name }}
-                </strong>
-
+                </span>
             </div>
 
-
-            <div class="info-item">
-
-                <span>Téléphone</span>
-
-                <strong>
+            <div class="info-row">
+                <span class="info-label">Téléphone</span>
+                <span class="info-value">
                     {{ order.phone_number }}
-                </strong>
-
+                </span>
             </div>
 
-
-            <div class="info-item">
-
-                <span>Quartier</span>
-
-                <strong>
-                    {{ order.neighborhood|default:"Non précisé" }}
-                </strong>
-
+            <div class="info-row">
+                <span class="info-label">Quartier</span>
+                <span class="info-value">
+                    {{ order.neighborhood|default:"—" }}
+                </span>
             </div>
 
-
-            <div class="info-item">
-
-                <span>Adresse</span>
-
-                <strong>
+            <div class="info-row">
+                <span class="info-label">Adresse</span>
+                <span class="info-value">
                     {{ order.delivery_address }}
-                </strong>
-
+                </span>
             </div>
 
-        </div>
-
-
-        {% if order.delivery_deadline %}
-
-            <p style="margin-top:20px;">
-
-                <strong>
-                    Livraison avant :
-                </strong>
-
-                {{ order.delivery_deadline|date:"d/m/Y à H:i" }}
-
-            </p>
-
-        {% endif %}
-
-    </div>
-
-
-    <div class="order-card">
-
-        <h2>
-            État de la commande
-        </h2>
-
-        <div class="status-box">
-
-            <strong>
-
-                {% if order.status == "pending" %}
-                    ⏳ Commande en attente de livraison
-
-                {% elif order.status == "seller_delivered" %}
-                    📦 Livraison confirmée par le vendeur
-
-                {% elif order.status == "customer_received" %}
-                    ✅ Réception confirmée par le client
-
-                {% elif order.status == "delivered" %}
-                    🎉 Commande terminée
-
-                {% elif order.status == "cancelled" %}
-                    ❌ Commande annulée
-
-                {% else %}
-                    {{ order.get_status_display }}
-                {% endif %}
-
-            </strong>
-
+            {% if order.delivery_deadline %}
+            <div class="info-row">
+                <span class="info-label">Date limite</span>
+                <span class="info-value">
+                    {{ order.delivery_deadline|date:"d/m/Y H:i" }}
+                </span>
+            </div>
+            {% endif %}
         </div>
 
     </div>
 
+    <div class="progress-card">
+        <h2>📊 Progression de la commande</h2>
 
-    <div class="order-card">
+        <div class="steps">
 
-        <h2>
-            Progression
-        </h2>
+            <div class="step {% if order.seller_confirmed %}done{% endif %}">
+                <div class="step-icon">
+                    {% if order.seller_confirmed %}✅{% else %}🚚{% endif %}
+                </div>
 
-
-        <div class="confirmation {% if order.seller_confirmed %}confirmed{% endif %}">
-
-            <div class="confirmation-icon">
-                {% if order.seller_confirmed %}
-                    ✓
-                {% else %}
-                    1
-                {% endif %}
-            </div>
-
-            <div>
-
-                <strong>
+                <div class="step-title">
                     Livraison vendeur
-                </strong>
+                </div>
 
-                <div>
-
+                <div class="step-text">
                     {% if order.seller_confirmed %}
-
-                        <span class="success-text">
-                            Livraison confirmée
-                        </span>
-
+                        Le vendeur a confirmé la livraison.
                         {% if order.seller_confirmed_at %}
-                            <small>
-                                — {{ order.seller_confirmed_at|date:"d/m/Y H:i" }}
-                            </small>
+                            {{ order.seller_confirmed_at|date:"d/m/Y H:i" }}
                         {% endif %}
-
                     {% else %}
-
-                        <span class="warning">
-                            En attente
-
-                        </span>
-
+                        En attente de la confirmation du vendeur.
                     {% endif %}
+                </div>
+            </div>
 
+            <div class="step {% if order.customer_confirmed %}done{% endif %}">
+                <div class="step-icon">
+                    {% if order.customer_confirmed %}✅{% else %}📦{% endif %}
                 </div>
 
-            </div>
-
-        </div>
-
-
-        <div class="confirmation {% if order.customer_confirmed %}confirmed{% endif %}">
-
-            <div class="confirmation-icon">
-                {% if order.customer_confirmed %}
-                    ✓
-                {% else %}
-                    2
-                {% endif %}
-            </div>
-
-            <div>
-
-                <strong>
+                <div class="step-title">
                     Réception client
-                </strong>
+                </div>
 
-                <div>
-
+                <div class="step-text">
                     {% if order.customer_confirmed %}
-
-                        <span class="success-text">
-                            Réception confirmée
-                        </span>
-
+                        Le client a confirmé avoir reçu la commande.
                         {% if order.customer_confirmed_at %}
-                            <small>
-                                — {{ order.customer_confirmed_at|date:"d/m/Y H:i" }}
-                            </small>
+                            {{ order.customer_confirmed_at|date:"d/m/Y H:i" }}
                         {% endif %}
-
                     {% else %}
-
-                        <span class="warning">
-                            En attente
-                        </span>
-
+                        En attente de la confirmation du client.
                     {% endif %}
+                </div>
+            </div>
 
+            <div class="step {% if order.admin_validated %}done{% endif %}">
+                <div class="step-icon">
+                    {% if order.admin_validated %}✅{% else %}🛡️{% endif %}
                 </div>
 
-            </div>
+                <div class="step-title">
+                    Validation finale
+                </div>
 
-        </div>
-
-
-        <div class="confirmation {% if order.admin_validated %}confirmed{% endif %}">
-
-            <div class="confirmation-icon">
-                {% if order.admin_validated %}
-                    ✓
-                {% else %}
-                    3
-                {% endif %}
-            </div>
-
-            <div>
-
-                <strong>
-                    Validation administrative
-                </strong>
-
-                <div>
-
+                <div class="step-text">
                     {% if order.admin_validated %}
-
-                        <span class="success-text">
-                            Commande validée définitivement
-                        </span>
-
+                        La commande a été définitivement validée.
                     {% else %}
-
-                        <span class="warning">
-                            En attente
-                        </span>
-
+                        En attente de la validation finale de l'administration.
                     {% endif %}
-
                 </div>
-
             </div>
 
         </div>
-
     </div>
 
+    {% if order.status == "cancelled" %}
 
-    {% if order.status != "cancelled" %}
-
-        {% if request.user == order.seller or request.user == order.product.seller %}
-
-            {% if not order.seller_confirmed and not order.admin_validated %}
-
-                <div class="order-card action-box">
-
-                    <h2>
-                        Action vendeur
-                    </h2>
-
-                    <p>
-                        Vous êtes responsable de la livraison de cette commande.
-                    </p>
-
-                    <form
-                        method="POST"
-                        action="{% url 'seller_confirm_delivery' order.id %}"
-                    >
-
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="order-btn success"
-                        >
-                            ✓ J'ai livré la commande
-                        </button>
-
-                    </form>
-
-                </div>
-
-            {% endif %}
-
-        {% endif %}
-
-
-        {% if request.user == order.user %}
-
-            {% if order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
-
-                <div class="order-card action-box">
-
-                    <h2>
-                        Confirmation client
-                    </h2>
-
-                    <p>
-                        Le vendeur a déclaré avoir livré votre commande.
-                    </p>
-
-                    <form
-                        method="POST"
-                        action="{% url 'customer_confirm_receipt' order.id %}"
-                    >
-
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="order-btn success"
-                        >
-                            ✓ J'ai reçu ma commande
-                        </button>
-
-                    </form>
-
-                </div>
-
-            {% endif %}
-
-
-            {% if not order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
-
-                <div class="order-card action-box">
-
-                    <h2>
-                        Annuler la commande
-                    </h2>
-
-                    <p>
-                        Vous pouvez encore annuler cette commande
-                        tant que le vendeur n'a pas confirmé la livraison.
-                    </p>
-
-                    <form
-                        method="POST"
-                        action="{% url 'cancel_order' order.id %}"
-                    >
-
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="order-btn danger"
-                            onclick="return confirm('Voulez-vous vraiment annuler cette commande ?');"
-                        >
-                            Annuler la commande
-                        </button>
-
-                    </form>
-
-                </div>
-
-            {% endif %}
-
-        {% endif %}
-
-
-        {% if request.user.is_staff and order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
-
-            <div class="order-card action-box">
-
-                <h2>
-                    Validation administrateur
-                </h2>
-
-                <p>
-                    Le vendeur et le client ont tous les deux confirmé.
-                </p>
-
-                <form
-                    method="POST"
-                    action="{% url 'admin_validate_order' order.id %}"
-                >
-
-                    {% csrf_token %}
-
-                    <button
-                        type="submit"
-                        class="order-btn"
-                    >
-                        Valider définitivement la commande
-                    </button>
-
-                </form>
-
-            </div>
-
-        {% endif %}
+        <div class="cancelled-box">
+            <strong>❌ Cette commande a été annulée.</strong><br>
+            Aucune nouvelle action ne peut être effectuée sur cette commande.
+        </div>
 
     {% else %}
 
-        <div class="order-card">
+        <div class="actions-card">
+            <h2>⚡ Actions disponibles</h2>
 
-            <h2 class="danger-text">
-                Commande annulée
-            </h2>
+            <div class="actions-description">
+                Les actions affichées dépendent de votre rôle et de l'état actuel de la commande.
+            </div>
 
-            <p>
-                Cette commande a été annulée par le client.
-            </p>
+            <div class="actions">
+
+                {# VENDEUR : confirmer la livraison #}
+                {% if request.user == order.seller or order.product and request.user == order.product.seller %}
+                    {% if not order.seller_confirmed and not order.admin_validated %}
+                        <form method="post"
+                              action="{% url 'seller_confirm_delivery' order.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn success-btn">
+                                🚚 Confirmer la livraison
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+
+                {# CLIENT : confirmer la réception #}
+                {% if request.user == order.user %}
+                    {% if order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
+                        <form method="post"
+                              action="{% url 'customer_confirm_receipt' order.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn success-btn">
+                                📦 Confirmer la réception
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+
+                {# CLIENT : annuler avant confirmation #}
+                {% if request.user == order.user %}
+                    {% if not order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
+                        <form method="post"
+                              action="{% url 'cancel_order' order.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn danger-btn">
+                                ❌ Annuler la commande
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+
+                {# ADMIN : validation finale #}
+                {% if request.user.is_staff %}
+                    {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+                        <form method="post"
+                              action="{% url 'admin_validate_order' order.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="action-btn primary-btn">
+                                🛡️ Valider définitivement
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+
+            {% if order.status == "pending" and not order.seller_confirmed %}
+                <div class="notice">
+                    ⏳ Le vendeur doit d'abord confirmer que la commande a été livrée.
+                </div>
+            {% elif order.seller_confirmed and not order.customer_confirmed %}
+                <div class="notice">
+                    📦 La livraison est confirmée. Le client doit maintenant confirmer la réception.
+                </div>
+            {% elif order.customer_confirmed and not order.admin_validated %}
+                <div class="notice">
+                    🛡️ Les deux confirmations sont terminées. La commande attend la validation finale de l'administration.
+                </div>
+            {% elif order.admin_validated %}
+                <div class="notice">
+                    🎉 Cette commande est complètement terminée.
+                </div>
+            {% endif %}
 
         </div>
 
     {% endif %}
 
+    <div class="actions" style="margin-top:20px;">
+        <a href="{% url 'my_orders' %}"
+           class="action-btn secondary-btn">
+            ← Mes commandes
+        </a>
+
+        {% if request.user == order.seller or order.product and request.user == order.product.seller %}
+            <a href="{% url 'seller_orders' %}"
+               class="action-btn secondary-btn">
+                📦 Commandes vendeur
+            </a>
+        {% endif %}
+    </div>
 
 </div>
 

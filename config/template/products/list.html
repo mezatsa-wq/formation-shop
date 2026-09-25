@@ -4,166 +4,801 @@
 
 {% block content %}
 
-<section class="listing-hero">
+<style>
+    .products-page {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 55px 24px 80px;
+        overflow: hidden;
+    }
 
-    <div>
+    .products-hero {
+        margin-bottom: 42px;
+    }
 
-        <span class="section-label">
-            BOUTIQUE
+    .products-label {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: rgba(124, 92, 255, 0.14);
+        border: 1px solid rgba(124, 92, 255, 0.28);
+        color: #a99aff;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
+
+    .products-hero h1 {
+        margin: 0;
+        font-size: clamp(38px, 5vw, 64px);
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: -2px;
+        color: #ffffff;
+    }
+
+    .products-hero p {
+        max-width: 680px;
+        margin: 18px 0 0;
+        color: #9199b3;
+        font-size: 17px;
+        line-height: 1.7;
+    }
+
+    .products-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 25px;
+        margin-bottom: 28px;
+    }
+
+    .products-toolbar h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .products-count {
+        display: block;
+        margin-top: 7px;
+        color: #8e96af;
+        font-size: 14px;
+    }
+
+    .products-search {
+        position: relative;
+        width: min(430px, 100%);
+    }
+
+    .products-search input {
+        width: 100%;
+        height: 52px;
+        box-sizing: border-box;
+        padding: 0 82px 0 18px;
+        border-radius: 15px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: #111522;
+        color: #ffffff;
+        outline: none;
+        font-size: 15px;
+        transition: 0.2s ease;
+    }
+
+    .products-search input::placeholder {
+        color: #737b93;
+    }
+
+    .products-search input:focus {
+        border-color: rgba(124, 92, 255, 0.75);
+        box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.10);
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9f91ff;
+        font-size: 19px;
+        pointer-events: none;
+    }
+
+    .search-clear {
+        position: absolute;
+        right: 45px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: #8d94aa;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+    }
+
+    .search-clear:hover {
+        background: rgba(255,255,255,.07);
+        color: #ffffff;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .product-card {
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.13);
+        border-radius: 22px;
+        background: linear-gradient(
+            145deg,
+            rgba(25, 29, 49, 0.98),
+            rgba(12, 15, 28, 0.98)
+        );
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.20);
+        transition:
+            transform 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(124, 92, 255, 0.42);
+    }
+
+    .product-image {
+        position: relative;
+        height: 235px;
+        overflow: hidden;
+        background:
+            radial-gradient(
+                circle at 50% 30%,
+                rgba(124, 92, 255, 0.28),
+                transparent 60%
+            ),
+            #171a31;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .product-placeholder {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 54px;
+        color: #a89cff;
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(8, 10, 20, 0.82);
+        border: 1px solid rgba(166, 150, 255, 0.35);
+        color: #b8adff;
+        font-size: 11px;
+        font-weight: 800;
+        backdrop-filter: blur(10px);
+    }
+
+    .product-body {
+        padding: 22px;
+    }
+
+    .seller-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 17px;
+    }
+
+    .seller-avatar {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+            135deg,
+            #6d5dfc,
+            #9c7cff
+        );
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 14px;
+    }
+
+    .seller-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .seller-info {
+        min-width: 0;
+    }
+
+    .seller-label {
+        display: block;
+        color: #717990;
+        font-size: 11px;
+        margin-bottom: 2px;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+    }
+
+    .seller-name {
+        display: block;
+        color: #dfe3f0;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .product-name {
+        margin: 0 0 9px;
+        color: #ffffff;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .product-description {
+        min-height: 47px;
+        margin: 0 0 21px;
+        color: #8c94ab;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .product-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .product-price {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 900;
+    }
+
+    .product-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 11px;
+        background: rgba(124, 92, 255, 0.14);
+        border: 1px solid rgba(124, 92, 255, 0.25);
+        color: #a99aff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+        transition: 0.2s ease;
+    }
+
+    .product-link:hover {
+        background: rgba(124, 92, 255, 0.24);
+        color: #ffffff;
+    }
+
+    .empty-products {
+        grid-column: 1 / -1;
+        padding: 65px 25px;
+        text-align: center;
+        border: 1px dashed rgba(148, 163, 184, 0.20);
+        border-radius: 22px;
+        background: rgba(17, 21, 34, 0.65);
+    }
+
+    .empty-products-icon {
+        font-size: 44px;
+        margin-bottom: 15px;
+    }
+
+    .empty-products h3 {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 22px;
+    }
+
+    .empty-products p {
+        margin: 0;
+        color: #858da5;
+    }
+
+    @media (max-width: 900px) {
+
+        .products-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .products-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .products-search {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .products-page {
+            padding: 32px 14px 55px;
+        }
+
+        .products-hero {
+            margin-bottom: 32px;
+        }
+
+        .products-hero h1 {
+            font-size: 40px;
+            letter-spacing: -1.5px;
+        }
+
+        .products-hero p {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .products-toolbar {
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .products-toolbar h2 {
+            font-size: 23px;
+        }
+
+        .products-grid {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .product-card {
+            border-radius: 19px;
+        }
+
+        .product-card:hover {
+            transform: none;
+        }
+
+        .product-image {
+            height: 220px;
+        }
+
+        .product-body {
+            padding: 19px;
+        }
+
+        .product-name {
+            font-size: 20px;
+        }
+
+        .product-description {
+            min-height: auto;
+            margin-bottom: 19px;
+        }
+
+        .product-bottom {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .product-price {
+            font-size: 19px;
+        }
+
+        .product-link {
+            width: 100%;
+            min-height: 46px;
+            box-sizing: border-box;
+        }
+
+        .empty-products {
+            padding: 45px 18px;
+        }
+    }
+</style>
+
+<section class="products-page">
+
+    <div class="products-hero">
+
+        <span class="products-label">
+            BOUTIQUE FOR MASHOP
         </span>
 
-        <h1>Nos produits</h1>
+        <h1>
+            Nos produits
+        </h1>
 
         <p>
-            Découvrez notre sélection de produits
-            disponibles sur FormaShop.
+            Découvrez les produits proposés par les vendeurs
+            de FormaShop et trouvez rapidement ce dont vous avez besoin.
         </p>
 
     </div>
 
-</section>
 
-
-<section class="section">
-
-    <div class="listing-header">
+    <div class="products-toolbar">
 
         <div>
 
-            <h2>Tous les produits</h2>
+            <h2>
+                Tous les produits
+            </h2>
 
-            <span>
-                {{ products|length }} produit{{ products|length|pluralize }}
+            <span
+                class="products-count"
+                id="products-count"
+            >
+                {{ products|length }}
+                produit{{ products|length|pluralize }}
             </span>
 
         </div>
 
+
+        <form
+            method="GET"
+            class="products-search"
+            id="product-search-form"
+        >
+
+            <input
+                type="search"
+                id="product-search"
+                name="search"
+                value="{{ search }}"
+                placeholder="Rechercher un produit..."
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                class="search-clear"
+                id="search-clear"
+                aria-label="Effacer la recherche"
+            >
+                ×
+            </button>
+
+            <span class="search-icon">
+                ⌕
+            </span>
+
+        </form>
+
     </div>
-<form method="GET">
 
-    <input
-        type="search"
-        name="search"
-        value="{{ search }}"
-        placeholder="Rechercher un produit..."
+
+    <div
+        class="products-grid"
+        id="products-grid"
     >
-
-    <button type="submit">
-        Rechercher
-    </button>
-
-    {% if search %}
-        <a href="{% url 'product_list' %}">
-            Effacer
-        </a>
-    {% endif %}
-
-</form>
-
-    <div class="cards">
 
         {% for product in products %}
 
+            <article class="product-card">
 
-    <article>
+                <div class="product-image">
 
-        {% if product.is_featured %}
-            <span>⭐ Produit Premium</span>
-        {% endif %}
+                    {% if product.image %}
 
-        <h2>{{ product.name }}</h2>
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                            loading="lazy"
+                        >
 
-        <p>
-            {{ product.description }}
-        </p>
+                    {% else %}
 
-        <strong>
-            {{ product.price|floatformat:0 }} FCFA
-        </strong>
+                        <div class="product-placeholder">
+                            🛍️
+                        </div>
 
-        <a href="{% url 'product_detail' product.id %}">
-            Voir le produit
-        </a>
-
-    </article>
-
-{% empty %}
-
-    <p>
-        Aucun produit trouvé.
-    </p>
-
-{% endfor %}
-{% for product in products %}
-        <article class="product-card">
-
-            {% if product.image %}
-
-                <img
-                    src="{{ product.image.url }}"
-                    alt="{{ product.name }}"
-                >
-
-            {% else %}
-
-                <div class="placeholder-image">
-                    🛍️
-                </div>
-
-            {% endif %}
+                    {% endif %}
 
 
-            <div class="card-content">
+                    {% if product.is_featured %}
 
-                <span class="category">
-                    {{ product.category.name }}
-                </span>
+                        <span class="featured-badge">
+                            ⭐ Produit Premium
+                        </span>
 
-                <h3>
-                    {{ product.name }}
-                </h3>
-
-                <p>
-                    {{ product.description|truncatewords:20 }}
-                </p>
-
-
-                <div class="card-bottom">
-
-                    <strong>
-                        {{ product.price|floatformat:0 }} FCFA
-                    </strong>
-
-                    <a
-                        href="{% url 'product_detail' product.id %}"
-                    >
-                        Découvrir →
-                    </a>
+                    {% endif %}
 
                 </div>
 
-            </div>
 
-        </article>
+                <div class="product-body">
+
+                    {% if product.seller %}
+
+                        <div class="seller-row">
+
+                            <div class="seller-avatar">
+
+                                {% if product.seller.profile.photo %}
+
+                                    <img
+                                        src="{{ product.seller.profile.photo.url }}"
+                                        alt="{{ product.seller.username }}"
+                                    >
+
+                                {% else %}
+
+                                    {{ product.seller.username|first|upper }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="seller-info">
+
+                                <span class="seller-label">
+                                    Vendeur
+                                </span>
+
+                                <span class="seller-name">
+                                    {{ product.seller.username }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <h3 class="product-name">
+                        {{ product.name }}
+                    </h3>
+
+
+                    <p class="product-description">
+                        {{ product.description|truncatewords:20 }}
+                    </p>
+
+
+                    <div class="product-bottom">
+
+                        <strong class="product-price">
+                            {{ product.price|floatformat:0 }} FCFA
+                        </strong>
+
+                        <a
+                            href="{% url 'product_detail' product.id %}"
+                            class="product-link"
+                        >
+                            Découvrir →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
 
         {% empty %}
 
-        <div class="empty-state">
+            <div class="empty-products">
 
-            <div>🛍️</div>
+                <div class="empty-products-icon">
+                    🛍️
+                </div>
 
-            <h3>Aucun produit disponible</h3>
+                <h3>
+                    Aucun produit disponible
+                </h3>
 
-            <p>
-                Les produits seront bientôt disponibles.
-            </p>
+                <p>
+                    Aucun produit ne correspond à votre recherche.
+                </p>
 
-        </div>
+            </div>
 
         {% endfor %}
 
     </div>
 
 </section>
+
+
+<script>
+(function () {
+
+    const input = document.getElementById("product-search");
+    const grid = document.getElementById("products-grid");
+    const count = document.getElementById("products-count");
+    const clearButton = document.getElementById("search-clear");
+
+    if (!input || !grid) {
+        return;
+    }
+
+    let timer = null;
+    let controller = null;
+
+
+    function updateClearButton() {
+
+        if (!clearButton) {
+            return;
+        }
+
+        if (input.value.trim()) {
+            clearButton.style.display = "flex";
+        } else {
+            clearButton.style.display = "none";
+        }
+    }
+
+
+    function updateProducts() {
+
+        const value = input.value.trim();
+
+        if (controller) {
+            controller.abort();
+        }
+
+        controller = new AbortController();
+
+        const url = new URL(
+            window.location.href
+        );
+
+        if (value) {
+            url.searchParams.set(
+                "search",
+                value
+            );
+        } else {
+            url.searchParams.delete(
+                "search"
+            );
+        }
+
+
+        fetch(
+            url.toString(),
+            {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                signal: controller.signal
+            }
+        )
+        .then(function (response) {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Erreur lors de la recherche."
+                );
+            }
+
+            return response.text();
+
+        })
+        .then(function (html) {
+
+            const parser = new DOMParser();
+
+            const page =
+                parser.parseFromString(
+                    html,
+                    "text/html"
+                );
+
+            const newGrid =
+                page.querySelector(
+                    "#products-grid"
+                );
+
+            const newCount =
+                page.querySelector(
+                    "#products-count"
+                );
+
+            if (newGrid) {
+                grid.innerHTML =
+                    newGrid.innerHTML;
+            }
+
+            if (newCount && count) {
+                count.textContent =
+                    newCount.textContent;
+            }
+
+            window.history.replaceState(
+                {},
+                "",
+                url.toString()
+            );
+
+            updateClearButton();
+
+        })
+        .catch(function (error) {
+
+            if (error.name !== "AbortError") {
+                console.error(error);
+            }
+
+        });
+
+    }
+
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            updateClearButton();
+
+            clearTimeout(timer);
+
+            timer = setTimeout(
+                updateProducts,
+                300
+            );
+
+        }
+    );
+
+
+    if (clearButton) {
+
+        clearButton.addEventListener(
+            "click",
+            function () {
+
+                input.value = "";
+
+                updateClearButton();
+
+                input.focus();
+
+                updateProducts();
+
+            }
+        );
+
+    }
+
+
+    updateClearButton();
+
+})();
+</script>
 
 {% endblock %}

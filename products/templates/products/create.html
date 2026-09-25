@@ -4,30 +4,242 @@
 
 {% block content %}
 
-<section class="page-header">
+<style>
+    .product-form-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 55px 20px 80px;
+    }
 
-    <h1>Ajouter un produit</h1>
+    .product-form-header {
+        margin-bottom: 30px;
+    }
 
-    <p>
-        Ajoutez un nouveau produit à votre boutique.
-    </p>
+    .product-form-label {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: rgba(124, 92, 255, 0.14);
+        border: 1px solid rgba(124, 92, 255, 0.28);
+        color: #aa9cff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
 
-</section>
+    .product-form-header h1 {
+        margin: 0;
+        color: #fff;
+        font-size: clamp(36px, 6vw, 54px);
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: -1.8px;
+    }
 
+    .product-form-header p {
+        margin: 15px 0 0;
+        color: #8d95ad;
+        font-size: 16px;
+        line-height: 1.7;
+    }
 
-<section class="form-container">
+    .product-form-card {
+        padding: 30px;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: 24px;
+        background: linear-gradient(
+            145deg,
+            rgba(25, 29, 49, 0.98),
+            rgba(12, 15, 28, 0.98)
+        );
+        box-shadow: 0 25px 65px rgba(0, 0, 0, 0.22);
+    }
 
-    <form method="post" enctype="multipart/form-data">
+    .product-form-card form {
+        display: grid;
+        gap: 20px;
+    }
 
-        {% csrf_token %}
+    .product-form-card p {
+        margin: 0;
+        display: grid;
+        gap: 8px;
+    }
 
-        {{ form.as_p }}
+    .product-form-card label {
+        color: #e7e9f1;
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-        <button type="submit">
-            Ajouter le produit
-        </button>
+    .product-form-card input,
+    .product-form-card textarea,
+    .product-form-card select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 15px;
+        border: 1px solid rgba(148, 163, 184, 0.20);
+        border-radius: 13px;
+        background: #0e1220;
+        color: #fff;
+        outline: none;
+        font-size: 15px;
+        transition: 0.2s ease;
+    }
 
-    </form>
+    .product-form-card input {
+        min-height: 50px;
+    }
+
+    .product-form-card textarea {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    .product-form-card input:focus,
+    .product-form-card textarea:focus,
+    .product-form-card select:focus {
+        border-color: rgba(124, 92, 255, 0.75);
+        box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.10);
+    }
+
+    .product-form-card input[type="file"] {
+        padding: 11px;
+    }
+
+    .product-form-card input[type="checkbox"] {
+        width: auto;
+        min-height: auto;
+        accent-color: #6958f5;
+        box-shadow: none;
+    }
+
+    .product-form-card .helptext {
+        color: #6f7890;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .product-form-card ul.errorlist {
+        margin: 0;
+        padding: 10px 13px;
+        list-style: none;
+        border-radius: 10px;
+        background: rgba(239, 68, 68, 0.10);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #ff9b9b;
+        font-size: 13px;
+    }
+
+    .product-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 5px;
+        flex-wrap: wrap;
+    }
+
+    .product-form-submit {
+        border: 0;
+        border-radius: 13px;
+        padding: 14px 23px;
+        background: linear-gradient(135deg, #6958f5, #8f70ff);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(105, 88, 245, 0.22);
+        transition: 0.2s ease;
+    }
+
+    .product-form-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(105, 88, 245, 0.32);
+    }
+
+    .product-form-back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 46px;
+        padding: 0 15px;
+        border-radius: 12px;
+        color: #9e96ff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .product-form-back:hover {
+        color: #fff;
+        background: rgba(124, 92, 255, 0.08);
+    }
+
+    @media (max-width: 600px) {
+        .product-form-page {
+            padding: 32px 15px 55px;
+        }
+
+        .product-form-card {
+            padding: 20px;
+            border-radius: 19px;
+        }
+
+        .product-form-header h1 {
+            font-size: 38px;
+        }
+
+        .product-form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .product-form-submit,
+        .product-form-back {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<section class="product-form-page">
+
+    <div class="product-form-header">
+        <span class="product-form-label">BOUTIQUE</span>
+
+        <h1>Ajouter un produit</h1>
+
+        <p>
+            Ajoutez un nouveau produit à votre boutique et
+            commencez à le proposer aux clients de FormaShop.
+        </p>
+    </div>
+
+    <div class="product-form-card">
+
+        <form method="post" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div class="product-form-actions">
+
+                <button type="submit" class="product-form-submit">
+                    Ajouter le produit
+                </button>
+
+                <a href="{% url 'my_products' %}" class="product-form-back">
+                    ← Retour à mes produits
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </section>
 

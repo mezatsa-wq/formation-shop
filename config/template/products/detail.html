@@ -4,61 +4,517 @@
 
 {% block content %}
 
+<style>
+    .detail-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 55px 24px 80px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+        gap: 55px;
+        align-items: start;
+    }
+
+    .detail-image {
+        position: relative;
+        height: 560px;
+        overflow: hidden;
+        border-radius: 28px;
+        background:
+            radial-gradient(
+                circle at 50% 30%,
+                rgba(124, 92, 255, .28),
+                transparent 60%
+            ),
+            #171a31;
+        border: 1px solid rgba(148, 163, 184, .14);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, .25);
+    }
+
+    .detail-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .detail-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 90px;
+        color: #a89cff;
+    }
+
+    .detail-content {
+        padding-top: 8px;
+    }
+
+    .detail-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 17px;
+        padding: 7px 13px;
+        border-radius: 999px;
+        background: rgba(124, 92, 255, .13);
+        border: 1px solid rgba(124, 92, 255, .28);
+        color: #a99aff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .detail-content h1 {
+        margin: 0 0 18px;
+        color: #ffffff;
+        font-size: clamp(34px, 4vw, 52px);
+        line-height: 1.08;
+        font-weight: 900;
+        letter-spacing: -1.5px;
+    }
+
+    .detail-description {
+        margin: 0 0 28px;
+        color: #929ab3;
+        font-size: 16px;
+        line-height: 1.8;
+        white-space: pre-line;
+    }
+
+    /* VENDEUR */
+
+    .seller-detail-card {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-bottom: 28px;
+        padding: 15px;
+        border-radius: 17px;
+        background: rgba(17, 21, 34, .85);
+        border: 1px solid rgba(148, 163, 184, .12);
+    }
+
+    .seller-detail-avatar {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+        overflow: hidden;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+            135deg,
+            #6d5dfc,
+            #9c7cff
+        );
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 900;
+        border: 2px solid rgba(166, 150, 255, .25);
+    }
+
+    .seller-detail-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .seller-detail-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .seller-detail-label {
+        display: block;
+        margin-bottom: 3px;
+        color: #717990;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .seller-detail-name {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .premium-seller-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 7px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(255, 193, 7, .10);
+        border: 1px solid rgba(255, 193, 7, .28);
+        color: #ffd86b;
+        font-size: 10px;
+        font-weight: 800;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    /* INFORMATIONS */
+
+    .detail-info {
+        margin-bottom: 25px;
+        padding: 18px;
+        border-radius: 17px;
+        background: #111522;
+        border: 1px solid rgba(148, 163, 184, .10);
+    }
+
+    .detail-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .detail-info-row span {
+        color: #777f98;
+        font-size: 13px;
+    }
+
+    .detail-info-row strong {
+        color: #dfe3f0;
+        font-size: 14px;
+    }
+
+    .stock-available {
+        color: #5ee0b1 !important;
+    }
+
+    .stock-empty {
+        color: #ff8298 !important;
+    }
+
+    .detail-price {
+        margin-bottom: 25px;
+        color: #ffffff;
+        font-size: 31px;
+        font-weight: 900;
+    }
+
+    .btn-primary,
+    .btn-disabled {
+        width: 100%;
+        min-height: 54px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(
+            135deg,
+            #6958f5,
+            #8f70ff
+        );
+        color: #ffffff;
+        box-shadow: 0 12px 28px rgba(105, 88, 245, .25);
+        transition: .2s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 35px rgba(105, 88, 245, .35);
+    }
+
+    .btn-disabled {
+        background: #20243a;
+        border: 1px solid rgba(255, 255, 255, .07);
+        color: #777f98;
+        cursor: not-allowed;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 18px;
+        color: #9690bd;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: .2s ease;
+    }
+
+    .back-link:hover {
+        color: #ffffff;
+    }
+
+    @media (max-width: 850px) {
+
+        .detail-page {
+            grid-template-columns: 1fr;
+            gap: 30px;
+            padding: 35px 18px 60px;
+        }
+
+        .detail-image {
+            height: 440px;
+            border-radius: 23px;
+        }
+
+        .detail-content {
+            padding-top: 0;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .detail-page {
+            padding: 25px 14px 50px;
+            gap: 25px;
+        }
+
+        .detail-image {
+            height: 300px;
+            border-radius: 20px;
+        }
+
+        .detail-placeholder {
+            font-size: 65px;
+        }
+
+        .detail-content h1 {
+            font-size: 34px;
+            letter-spacing: -1px;
+        }
+
+        .detail-description {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .seller-detail-card {
+            padding: 13px;
+        }
+
+        .seller-detail-avatar {
+            width: 46px;
+            height: 46px;
+            flex-basis: 46px;
+        }
+
+        .premium-seller-badge {
+            margin-left: 3px;
+            margin-top: 5px;
+        }
+
+        .seller-detail-name {
+            font-size: 14px;
+        }
+
+        .detail-info {
+            padding: 16px;
+        }
+
+        .detail-price {
+            font-size: 28px;
+        }
+
+        .btn-primary,
+        .btn-disabled {
+            min-height: 52px;
+        }
+    }
+</style>
+
+
 <section class="detail-page">
+
+    <!-- ============================= -->
+    <!-- IMAGE PRODUIT -->
+    <!-- ============================= -->
 
     <div class="detail-image">
 
         {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+
+            <img
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+            >
+
         {% else %}
-            <div class="detail-placeholder">🛍️</div>
+
+            <div class="detail-placeholder">
+                🛍️
+            </div>
+
         {% endif %}
 
     </div>
 
+
+    <!-- ============================= -->
+    <!-- INFORMATIONS PRODUIT -->
+    <!-- ============================= -->
+
     <div class="detail-content">
 
-        <span class="category">
-            {{ product.category.name }}
-        </span>
+        {% if product.is_featured %}
 
-        <h1>{{ product.name }}</h1>
+            <span class="detail-badge">
+                ⭐ Produit Premium
+            </span>
+
+        {% endif %}
+
+
+        <h1>
+            {{ product.name }}
+        </h1>
+
+
+        <!-- ============================= -->
+        <!-- VENDEUR -->
+        <!-- ============================= -->
+
+        {% if product.seller %}
+
+            <div class="seller-detail-card">
+
+                <div class="seller-detail-avatar">
+
+                    {% if product.seller.profile.photo %}
+
+                        <img
+                            src="{{ product.seller.profile.photo.url }}"
+                            alt="{{ product.seller.username }}"
+                        >
+
+                    {% else %}
+
+                        {{ product.seller.username|first|upper }}
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="seller-detail-info">
+
+                    <span class="seller-detail-label">
+                        Vendu par
+                    </span>
+
+                    <span class="seller-detail-name">
+
+                        {{ product.seller.username }}
+
+                        {% if product.seller.seller_profile.plan == "premium" %}
+
+                            <span class="premium-seller-badge">
+                                ⭐ Premium
+                            </span>
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- ============================= -->
+        <!-- DESCRIPTION -->
+        <!-- ============================= -->
 
         <p class="detail-description">
             {{ product.description }}
         </p>
 
+
+        <!-- ============================= -->
+        <!-- STOCK -->
+        <!-- ============================= -->
+
         <div class="detail-info">
 
-            <div>
-                <span>Disponibilité</span>
+            <div class="detail-info-row">
+
+                <span>
+                    Disponibilité
+                </span>
 
                 {% if product.stock > 0 %}
-                    <strong>{{ product.stock }} disponible(s)</strong>
+
+                    <strong class="stock-available">
+                        {{ product.stock }} disponible(s)
+                    </strong>
+
                 {% else %}
-                    <strong>Rupture de stock</strong>
+
+                    <strong class="stock-empty">
+                        Rupture de stock
+                    </strong>
+
                 {% endif %}
+
             </div>
 
         </div>
+
+
+        <!-- ============================= -->
+        <!-- PRIX -->
+        <!-- ============================= -->
 
         <div class="detail-price">
             {{ product.price|floatformat:0 }} FCFA
         </div>
 
+
+        <!-- ============================= -->
+        <!-- ACTION -->
+        <!-- ============================= -->
+
         {% if product.stock > 0 %}
 
-            <a href="{% url 'add_product_to_cart' product.id %}" class="btn-primary">
-                Ajouter au panier
+            <a
+                href="{% url 'add_product_to_cart' product.id %}"
+                class="btn-primary"
+            >
+                🛒 Ajouter au panier
             </a>
 
         {% else %}
 
-            <button class="btn-disabled" disabled>
+            <button
+                class="btn-disabled"
+                disabled
+            >
                 Produit indisponible
             </button>
 
         {% endif %}
+
+
+        <a
+            href="{% url 'product_list' %}"
+            class="back-link"
+        >
+            ← Retour aux produits
+        </a>
 
     </div>
 

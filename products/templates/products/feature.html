@@ -1,57 +1,272 @@
 {% extends "base.html" %}
 
-{% block title %}
-Mettre le produit en avant
-{% endblock %}
+{% block title %}Mettre {{ product.name }} en avant - FormaShop{% endblock %}
 
 {% block content %}
 
-<section>
+<style>
+    .feature-page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 60px 20px 80px;
+    }
 
-    <h1>Mettre le produit en avant</h1>
+    .feature-card {
+        padding: 35px;
+        border-radius: 26px;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(124, 92, 255, 0.16),
+                transparent 38%
+            ),
+            linear-gradient(
+                145deg,
+                rgba(25, 29, 49, 0.98),
+                rgba(12, 15, 28, 0.98)
+            );
+        box-shadow: 0 25px 65px rgba(0, 0, 0, 0.25);
+    }
 
-    <h2>{{ product.name }}</h2>
+    .feature-label {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: rgba(124, 92, 255, 0.14);
+        border: 1px solid rgba(124, 92, 255, 0.28);
+        color: #aa9cff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
 
-    <p>
-        En tant que vendeur Premium, vous pouvez
-        mettre ce produit en avant.
-    </p>
+    .feature-card h1 {
+        margin: 20px 0 8px;
+        color: #fff;
+        font-size: clamp(34px, 6vw, 50px);
+        line-height: 1.08;
+        font-weight: 900;
+        letter-spacing: -1.5px;
+    }
 
-    <form method="POST">
+    .feature-product {
+        margin: 0 0 22px;
+        color: #9e96ff;
+        font-size: 19px;
+        font-weight: 800;
+    }
 
-        {% csrf_token %}
+    .feature-description {
+        margin: 0;
+        color: #8d95ad;
+        font-size: 15px;
+        line-height: 1.75;
+    }
 
-        <label for="days">
-            Durée
-        </label>
+    .feature-info {
+        margin: 28px 0;
+        padding: 20px;
+        border-radius: 17px;
+        border: 1px solid rgba(124, 92, 255, 0.16);
+        background: rgba(124, 92, 255, 0.07);
+    }
 
-        <select name="days" id="days">
+    .feature-info-title {
+        margin: 0 0 7px;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+    }
 
-            <option value="7">
-                7 jours
-            </option>
+    .feature-info-text {
+        margin: 0;
+        color: #8d95ad;
+        font-size: 13px;
+        line-height: 1.6;
+    }
 
-            <option value="15">
-                15 jours
-            </option>
+    .feature-form {
+        display: grid;
+        gap: 18px;
+    }
 
-            <option value="30">
-                30 jours
-            </option>
+    .feature-field {
+        display: grid;
+        gap: 8px;
+    }
 
-        </select>
+    .feature-field label {
+        color: #e7e9f1;
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-        <button type="submit">
-            Mettre en avant
-        </button>
+    .feature-field select {
+        width: 100%;
+        min-height: 52px;
+        box-sizing: border-box;
+        padding: 0 15px;
+        border: 1px solid rgba(148, 163, 184, 0.20);
+        border-radius: 13px;
+        background: #0e1220;
+        color: #fff;
+        font-size: 15px;
+        outline: none;
+        cursor: pointer;
+    }
 
-    </form>
+    .feature-field select:focus {
+        border-color: rgba(124, 92, 255, 0.75);
+        box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.10);
+    }
 
-    <br>
+    .feature-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 5px;
+    }
 
-    <a href="{% url 'my_products' %}">
-        ← Retour à mes produits
-    </a>
+    .feature-submit {
+        border: 0;
+        border-radius: 13px;
+        padding: 14px 23px;
+        background: linear-gradient(135deg, #6958f5, #8f70ff);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(105, 88, 245, 0.22);
+        transition: 0.2s ease;
+    }
+
+    .feature-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(105, 88, 245, 0.32);
+    }
+
+    .feature-back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 46px;
+        padding: 0 15px;
+        border-radius: 12px;
+        color: #9e96ff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .feature-back:hover {
+        color: #fff;
+        background: rgba(124, 92, 255, 0.08);
+    }
+
+    @media (max-width: 600px) {
+        .feature-page {
+            padding: 32px 15px 55px;
+        }
+
+        .feature-card {
+            padding: 23px;
+            border-radius: 20px;
+        }
+
+        .feature-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .feature-submit,
+        .feature-back {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<section class="feature-page">
+
+    <div class="feature-card">
+
+        <span class="feature-label">
+            VENDEUR PREMIUM
+        </span>
+
+        <h1>
+            Mettre le produit en avant
+        </h1>
+
+        <p class="feature-product">
+            {{ product.name }}
+        </p>
+
+        <p class="feature-description">
+            En tant que vendeur Premium, vous pouvez augmenter
+            la visibilité de ce produit sur FormaShop.
+        </p>
+
+        <div class="feature-info">
+
+            <p class="feature-info-title">
+                Mise en avant du produit
+            </p>
+
+            <p class="feature-info-text">
+                Choisissez la durée pendant laquelle votre produit
+                restera mis en avant.
+            </p>
+
+        </div>
+
+        <form method="POST" class="feature-form">
+
+            {% csrf_token %}
+
+            <div class="feature-field">
+
+                <label for="days">
+                    Durée de la mise en avant
+                </label>
+
+                <select name="days" id="days">
+
+                    <option value="7">
+                        7 jours
+                    </option>
+
+                    <option value="15">
+                        15 jours
+                    </option>
+
+                    <option value="30">
+                        30 jours
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="feature-actions">
+
+                <button type="submit" class="feature-submit">
+                    Mettre le produit en avant
+                </button>
+
+                <a href="{% url 'my_products' %}" class="feature-back">
+                    ← Retour à mes produits
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </section>
 

@@ -5,7 +5,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
-
+from django.contrib.auth.models import User
+from products.models import Product
 from courses.models import Course, Enrollment
 
 from accounts.models import (
@@ -373,105 +374,134 @@ def customer_confirm_receipt(request, order_id):
 def cancel_order(request, order_id):
 
     if request.method != "POST":
-        return redirect(
-            "order_detail",
-            order_id=order_id
-        )
+        return redirect("order_detail", order_id=order_id)
 
     order = get_object_or_404(
-        Order.objects.select_for_update().select_related(
+        Order.objects.select_related(
             "product",
-            "seller",
-            "user"
+            "seller"
         ),
-        id=order_id,
-        user=request.user
+        id=order_id
     )
 
+    # Seul le client propriétaire peut annuler
+    if order.user != request.user:
+        messages.error(
+            request,
+            "Vous n'êtes pas autorisé à annuler cette commande."
+        )
+        return redirect("order_detail", order_id=order.id)
+
+    # Une commande déjà livrée ou validée ne peut plus être annulée
     if order.status == "cancelled":
         messages.info(
             request,
             "Cette commande est déjà annulée."
         )
-        return redirect(
-            "order_detail",
-            order_id=order.id
-        )
+        return redirect("order_detail", order_id=order.id)
 
     if order.seller_confirmed:
         messages.error(
             request,
             "Cette commande ne peut plus être annulée car le vendeur a déjà confirmé la livraison."
         )
-        return redirect(
-            "order_detail",
-            order_id=order.id
-        )
+        return redirect("order_detail", order_id=order.id)
 
-    if order.customer_confirmed or order.admin_validated:
+    if order.customer_confirmed:
         messages.error(
             request,
             "Cette commande ne peut plus être annulée."
         )
-        return redirect(
-            "order_detail",
-            order_id=order.id
-        )
+        return redirect("order_detail", order_id=order.id)
 
+    if order.admin_validated:
+        messages.error(
+            request,
+            "Cette commande est déjà finalisée."
+        )
+        return redirect("order_detail", order_id=order.id)
+
+    # Récupération du vendeur si nécessaire
     seller = order.seller
 
-    # Récupération du vendeur via le produit
-    # pour les anciennes commandes.
-    if seller is None and order.product:
+    if not seller and order.product:
         seller = order.product.seller
 
-    if seller is not None:
-        order.seller = seller
+        if seller:
+            order.seller = seller
 
+    # RESTITUTION DU STOCK
+    if order.product:
+
+        product = Product.objects.select_for_update().get(
+            id=order.product.id
+        )
+
+        product.stock += order.quantity
+
+        product.save(
+            update_fields=["stock"]
+        )
+
+    # Annulation réelle de la commande
     order.status = "cancelled"
 
     order.save(
         update_fields=[
-            "seller",
             "status",
+            "seller",
         ]
     )
 
+    # Notification du vendeur
     if seller:
 
         OrderNotification.objects.create(
+
             recipient=seller,
+
             order=order,
+
             title="Commande annulée",
+
             message=(
-                f"Le client {request.user.username} a annulé "
+                f"Le client {order.full_name} a annulé "
                 f"la commande #{order.id}.\n\n"
-                f"Cette commande ne nécessite plus de livraison."
+                f"Produit : {order.product.name if order.product else 'Produit'}\n"
+                f"Quantité : {order.quantity}\n"
+                f"Le stock a automatiquement été rétabli."
             )
         )
 
-    for admin in request.user.__class__.objects.filter(
+    # Notification de l'administration
+    for admin_user in User.objects.filter(
         is_staff=True,
         is_active=True
     ):
+
         OrderNotification.objects.create(
-            recipient=admin,
+
+            recipient=admin_user,
+
             order=order,
+
             title="Commande annulée",
+
             message=(
-                f"Le client {request.user.username} a annulé "
-                f"la commande #{order.id}."
+                f"La commande #{order.id} a été annulée "
+                f"par le client {order.full_name}."
             )
         )
 
     messages.success(
         request,
-        f"La commande #{order.id} a été annulée."
+        (
+            f"La commande #{order.id} a été annulée. "
+            f"Le stock du produit a été automatiquement rétabli."
+        )
     )
 
-    return redirect(
-        "my_orders"
-    )
+    return redirect("order_detail", order_id=order.id)
 
 
 @staff_member_required
