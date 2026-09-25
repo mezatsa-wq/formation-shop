@@ -211,7 +211,7 @@ USE_TZ = True
 # FICHIERS STATIQUES
 # =========================================================
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
