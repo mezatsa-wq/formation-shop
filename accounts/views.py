@@ -204,8 +204,12 @@ def dashboard(request):
     user = request.user
 
     # =====================================================
-    # COMMANDES DU CLIENT
+    # CLIENT
     # =====================================================
+
+    wallet, created = TokenWallet.objects.get_or_create(
+        user=user
+    )
 
     user_orders = (
         Order.objects
@@ -214,18 +218,12 @@ def dashboard(request):
         .order_by("-created_at")
     )
 
+    my_orders = user_orders
+
     total_orders = user_orders.count()
 
     pending_orders = user_orders.filter(
         status="pending"
-    )
-
-    seller_delivered_user_orders = user_orders.filter(
-        status="seller_delivered"
-    )
-
-    customer_received_orders = user_orders.filter(
-        status="customer_received"
     )
 
     completed_orders = user_orders.filter(
@@ -236,11 +234,21 @@ def dashboard(request):
         status="cancelled"
     )
 
+    unread_order_notifications = OrderNotification.objects.filter(
+        recipient=user,
+        is_read=False
+    ).count()
+
+
     # =====================================================
     # VENDEUR
     # =====================================================
 
-    seller_profile = getattr(user, "seller_profile", None)
+    seller_profile = getattr(
+        user,
+        "seller_profile",
+        None
+    )
 
     seller_products = (
         Product.objects
@@ -285,23 +293,12 @@ def dashboard(request):
         admin_validated=False
     )
 
-    seller_late_orders = (
-        seller_orders
-        .filter(
-            delivery_deadline__isnull=False,
-            delivery_deadline__lt=timezone.now()
-        )
-        .exclude(
-            status__in=[
-                "delivered",
-                "cancelled"
-            ]
-        )
+    seller_late_orders = seller_orders.filter(
+        delivery_deadline__isnull=False,
+        delivery_deadline__lt=timezone.now()
+    ).exclude(
+        status__in=["delivered", "cancelled"]
     )
-
-    # =====================================================
-    # REVENUS VENDEUR
-    # =====================================================
 
     seller_earnings = (
         SellerEarning.objects
@@ -316,10 +313,6 @@ def dashboard(request):
         )["total"] or 0
     )
 
-    # =====================================================
-    # NOTIFICATIONS VENDEUR
-    # =====================================================
-
     seller_notifications = (
         OrderNotification.objects
         .filter(recipient=user)
@@ -329,24 +322,22 @@ def dashboard(request):
     unread_seller_notifications = (
         seller_notifications
         .filter(is_read=False)
-        .count()
     )
 
-    # =====================================================
-    # PREMIUM VENDEUR
-    # =====================================================
+    seller_unread_notifications = (
+        unread_seller_notifications.count()
+    )
 
     seller_is_premium = is_premium_seller(user)
+
 
     # =====================================================
     # FORMATEUR
     # =====================================================
 
-    trainer_profile = getattr(
-        user,
-        "trainer_profile",
-        None
-    )
+    trainer_profile = TrainerProfile.objects.filter(
+        user=user
+    ).first()
 
     trainer_courses = []
 
@@ -358,16 +349,16 @@ def dashboard(request):
 
     if trainer_profile:
 
-        trainer_courses = (
-            Course.objects
-            .filter(instructor=user)
-            .order_by("-id")
+        trainer_wallet, created = (
+            TrainerWallet.objects.get_or_create(
+                user=user
+            )
         )
 
-        trainer_wallet = (
-            TrainerWallet.objects
-            .filter(user=user)
-            .first()
+        trainer_courses = (
+            user.courses
+            .all()
+            .order_by("-created_at")
         )
 
         trainer_earnings = (
@@ -376,20 +367,23 @@ def dashboard(request):
             .order_by("-created_at")
         )
 
-        trainer_revenue = (
-            trainer_earnings.aggregate(
-                total=Sum("amount")
-            )["total"] or 0
+        trainer_revenue = sum(
+            earning.amount
+            for earning in trainer_earnings
+        )
+
+        trainer_notifications = (
+            TrainerNotification.objects
+            .filter(trainer=user)
+            .order_by("-created_at")
         )
 
         trainer_unread_notifications = (
-            TrainerNotification.objects
-            .filter(
-                trainer=user,
-                is_read=False
-            )
+            trainer_notifications
+            .filter(is_read=False)
             .count()
         )
+
 
     # =====================================================
     # CONTEXTE
@@ -397,43 +391,24 @@ def dashboard(request):
 
     context = {
 
-        # -------------------------
         # CLIENT
-        # -------------------------
-
+        "wallet": wallet,
         "user_orders": user_orders,
-
-        # Compatibilité avec ton ancien template
-        "my_orders": user_orders,
+        "my_orders": my_orders,
 
         "total_orders": total_orders,
-
         "pending_orders": pending_orders,
+        "completed_orders": completed_orders,
+        "cancelled_orders": cancelled_orders,
 
-        "seller_delivered_user_orders":
-            seller_delivered_user_orders,
+        "unread_order_notifications":
+            unread_order_notifications,
 
-        "customer_received_orders":
-            customer_received_orders,
 
-        "completed_orders":
-            completed_orders,
-
-        "cancelled_orders":
-            cancelled_orders,
-
-        # -------------------------
         # VENDEUR
-        # -------------------------
-
-        "seller_profile":
-            seller_profile,
-
-        "seller_products":
-            seller_products,
-
-        "seller_orders":
-            seller_orders,
+        "seller_profile": seller_profile,
+        "seller_products": seller_products,
+        "seller_orders": seller_orders,
 
         "seller_pending_orders":
             seller_pending_orders,
@@ -459,23 +434,20 @@ def dashboard(request):
         "seller_revenue":
             seller_revenue,
 
-        "seller_is_premium":
-            seller_is_premium,
-
         "seller_notifications":
             seller_notifications,
 
         "unread_seller_notifications":
             unread_seller_notifications,
 
-        # Compatibilité avec ton template actuel
         "seller_unread_notifications":
-            unread_seller_notifications,
+            seller_unread_notifications,
 
-        # -------------------------
+        "seller_is_premium":
+            seller_is_premium,
+
+
         # FORMATEUR
-        # -------------------------
-
         "trainer_profile":
             trainer_profile,
 

@@ -8,54 +8,76 @@
 
     <div class="profile-card">
 
+        <!-- =========================
+             EN-TÊTE DU PROFIL
+        ========================== -->
         <div class="profile-header">
 
-           <div class="profile-avatar">
-    {% if profile.photo %}
-        <img
-            src="{{ profile.photo.url }}"
-            alt="Photo de profil de {{ user.username }}"
-        >
-    {% else %}
-        {{ user.username|first|upper }}
-    {% endif %}
-</div>
+            <div class="profile-avatar">
 
-<form
-    method="post"
-    enctype="multipart/form-data"
-    class="profile-photo-form"
->
-    {% csrf_token %}
+                {% if profile and profile.photo %}
+                    <img
+                        src="{{ profile.photo.url }}"
+                        alt="Photo de profil de {{ user.username }}"
+                    >
+                {% else %}
+                    <span class="profile-avatar-letter">
+                        {{ user.username|first|upper }}
+                    </span>
+                {% endif %}
 
-    <label for="profile-photo" class="photo-upload-button">
-        📷 Ajouter une photo
-    </label>
+            </div>
 
-    <input
-        type="file"
-        id="profile-photo"
-        name="photo"
-        accept="image/*"
-        hidden
-        onchange="this.form.submit()"
-    >
-</form>
+            <div class="profile-header-content">
 
-            <div>
                 <h1>{{ user.username }}</h1>
+
                 <p>{{ user.email }}</p>
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="profile-photo-form"
+                >
+                    {% csrf_token %}
+
+                    <label
+                        for="profile-photo"
+                        class="photo-upload-button"
+                    >
+                        📷
+                        {% if profile and profile.photo %}
+                            Changer la photo
+                        {% else %}
+                            Ajouter une photo
+                        {% endif %}
+                    </label>
+
+                    <input
+                        type="file"
+                        id="profile-photo"
+                        name="photo"
+                        accept="image/*"
+                        hidden
+                        onchange="this.form.submit()"
+                    >
+                </form>
+
             </div>
 
         </div>
 
 
+        <!-- =========================
+             INFORMATIONS
+        ========================== -->
         <div class="profile-info">
 
             <div class="info-box">
                 <span>Nom d'utilisateur</span>
                 <strong>{{ user.username }}</strong>
             </div>
+
 
             <div class="info-box">
                 <span>Email</span>
@@ -64,18 +86,23 @@
 
 
             <div class="info-box">
+
                 <span>Statut</span>
 
                 <strong>
 
                     {% if user.is_superuser %}
+
                         Administrateur
 
                     {% elif user.trainer_profile %}
+
                         Formateur
 
                     {% else %}
+
                         Client
+
                     {% endif %}
 
                 </strong>
@@ -84,30 +111,45 @@
 
 
             <div class="info-box">
+
                 <span>Mes jetons</span>
 
                 <strong>
-                    🪙 {{ wallet.balance }}
+                    🪙 {{ wallet.balance|default:"0" }}
                 </strong>
+
             </div>
 
         </div>
 
 
+        <!-- =========================
+             ACTIONS
+        ========================== -->
         <div class="profile-actions">
 
-            <a href="{% url 'my_courses' %}" class="profile-button">
+            <a
+                href="{% url 'my_courses' %}"
+                class="profile-button"
+            >
                 📚 Mes formations
             </a>
 
 
             {% if user.is_superuser or user.trainer_profile %}
 
-                <a href="{% url 'create_course' %}" class="profile-button">
+                <a
+                    href="{% url 'create_course' %}"
+                    class="profile-button"
+                >
                     ➕ Ajouter une formation
                 </a>
 
-                <a href="{% url 'trainer_courses' %}" class="profile-button">
+
+                <a
+                    href="{% url 'trainer_courses' %}"
+                    class="profile-button"
+                >
                     🎓 Mes formations créées
                 </a>
 
@@ -116,108 +158,133 @@
 
             {% if user.is_superuser %}
 
-                <a href="{% url 'admin_dashboard' %}" class="profile-button">
+                <a
+                    href="{% url 'admin_dashboard' %}"
+                    class="profile-button"
+                >
                     ⚙️ Administration
                 </a>
 
             {% elif user.trainer_profile %}
 
-                <a href="{% url 'trainer_dashboard' %}" class="profile-button">
+                <a
+                    href="{% url 'trainer_dashboard' %}"
+                    class="profile-button"
+                >
                     📊 Espace formateur
                 </a>
 
             {% else %}
 
-                <a href="{% url 'become_trainer' %}" class="profile-button">
+                <a
+                    href="{% url 'become_trainer' %}"
+                    class="profile-button"
+                >
                     👨‍🏫 Devenir formateur
                 </a>
 
             {% endif %}
 
         </div>
-<div class="documents-section">
-
-    <div class="documents-header">
-
-        <h2>📚 Mes documents</h2>
-
-        <p>
-            Retrouvez ici les documents que vous avez achetés.
-        </p>
-
-    </div>
 
 
-    {% if document_purchases %}
+        <!-- =========================
+             DOCUMENTS ACHETÉS
+        ========================== -->
+        <div class="documents-section">
 
-        <div class="documents-grid">
+            <div class="documents-header">
 
-            {% for purchase in document_purchases %}
+                <h2>📚 Mes documents</h2>
 
-                <article class="document-card">
+                <p>
+                    Retrouvez ici les documents que vous avez achetés.
+                </p>
 
-                    <div class="document-icon">
-                        📄
-                    </div>
-
-                    <div class="document-content">
-
-                        <h3>
-                            {{ purchase.document.title }}
-                        </h3>
-
-                        <p class="document-description">
-                            {{ purchase.document.description|truncatewords:20 }}
-                        </p>
-
-                        <p class="document-date">
-                            Acheté le
-                            {{ purchase.purchased_at|date:"d/m/Y" }}
-                        </p>
-
-                    </div>
-
-                    <a
-                        href="{% url 'download_document' purchase.document.id %}"
-                        class="download-button"
-                    >
-                        ⬇️ Télécharger
-                    </a>
-
-                </article>
-
-            {% endfor %}
-
-        </div>
-
-    {% else %}
-
-        <div class="no-documents">
-
-            <div class="no-documents-icon">
-                📚
             </div>
 
-            <h3>
-                Aucun document acheté
-            </h3>
 
-            <p>
-                Les documents que vous achetez apparaîtront ici.
-            </p>
+            {% if document_purchases %}
 
-            <a
-                href="{% url 'document_list' %}"
-                class="profile-button"
-            >
-                📚 Voir les documents
-            </a>
+                <div class="documents-grid">
+
+                    {% for purchase in document_purchases %}
+
+                        <article class="document-card">
+
+                            <div class="document-icon">
+                                📄
+                            </div>
+
+
+                            <div class="document-content">
+
+                                <h3>
+                                    {{ purchase.document.title }}
+                                </h3>
+
+
+                                <p class="document-description">
+                                    {{ purchase.document.description|truncatewords:20 }}
+                                </p>
+
+
+                                <p class="document-date">
+
+                                    Acheté le
+                                    {{ purchase.purchased_at|date:"d/m/Y" }}
+
+                                </p>
+
+                            </div>
+
+
+                            <a
+                                href="{% url 'download_document' purchase.document.id %}"
+                                class="download-button"
+                            >
+                                ⬇️ Télécharger
+                            </a>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="no-documents">
+
+                    <div class="no-documents-icon">
+                        📚
+                    </div>
+
+
+                    <h3>
+                        Aucun document acheté
+                    </h3>
+
+
+                    <p>
+                        Les documents que vous achetez apparaîtront ici.
+                    </p>
+
+
+                    <a
+                        href="{% url 'document_list' %}"
+                        class="profile-button"
+                    >
+                        📚 Voir les documents
+                    </a>
+
+                </div>
+
+            {% endif %}
 
         </div>
 
-    {% endif %}
-
-</div>
     </div>
 
 </div>
@@ -225,166 +292,387 @@
 
 <style>
 
+/* =========================================================
+   PROFIL FORMASHOP
+   ========================================================= */
+
 .profile-page {
     min-height: 80vh;
     padding: 60px 20px;
-    background: #080b12;
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(124, 92, 255, 0.10),
+            transparent 35%
+        ),
+        #080b12;
 }
 
+
+/* =========================
+   CARTE PRINCIPALE
+========================= */
+
 .profile-card {
+    width: 100%;
     max-width: 900px;
-    margin: auto;
-    background: #111622;
+    margin: 0 auto;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 22, 34, 0.98),
+            rgba(12, 16, 26, 0.98)
+        );
+
     border: 1px solid #252b3a;
-    border-radius: 20px;
+    border-radius: 22px;
+
     padding: 35px;
+
     color: white;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.35);
 }
+
+
+/* =========================
+   HEADER
+========================= */
 
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 22px;
+
     margin-bottom: 35px;
 }
 
+
+/* =========================
+   PHOTO
+========================= */
+
 .profile-avatar {
-    width: 75px;
-    height: 75px;
+    width: 110px;
+    height: 110px;
+
+    min-width: 110px;
+
     border-radius: 50%;
-    background: #7c5cff;
+
+    overflow: hidden;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    font-weight: bold;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #2563eb
+        );
+
+    border: 3px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 12px 35px rgba(124, 92, 255, 0.30);
 }
+
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+
+.profile-avatar-letter {
+    color: white;
+
+    font-size: 42px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================
+   INFOS HEADER
+========================= */
+
+.profile-header-content {
+    min-width: 0;
+}
+
 
 .profile-header h1 {
     margin: 0;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    color: white;
 }
 
+
 .profile-header p {
-    margin-top: 5px;
+    margin: 6px 0 14px;
+
     color: #9ca3af;
+
+    word-break: break-word;
 }
+
+
+/* =========================
+   UPLOAD PHOTO
+========================= */
+
+.profile-photo-form {
+    margin: 0;
+}
+
+
+.photo-upload-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 9px 14px;
+
+    border-radius: 9px;
+
+    background: rgba(124, 92, 255, 0.14);
+
+    border: 1px solid rgba(124, 92, 255, 0.35);
+
+    color: #c4b5fd;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.photo-upload-button:hover {
+    background: rgba(124, 92, 255, 0.24);
+
+    border-color: #7c5cff;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   INFORMATIONS
+========================= */
 
 .profile-info {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
     gap: 15px;
 }
 
+
 .info-box {
     background: #181e2b;
+
     border: 1px solid #292f3d;
+
     border-radius: 12px;
+
     padding: 20px;
 }
 
+
 .info-box span {
     display: block;
+
     color: #8d96a8;
+
     font-size: 14px;
+
     margin-bottom: 8px;
 }
 
+
 .info-box strong {
+    color: white;
+
     font-size: 17px;
+
+    word-break: break-word;
 }
+
+
+/* =========================
+   ACTIONS
+========================= */
 
 .profile-actions {
     display: flex;
+
     flex-wrap: wrap;
+
     gap: 12px;
+
     margin-top: 30px;
 }
 
+
 .profile-button {
-    display: inline-block;
-    padding: 13px 18px;
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 12px 18px;
+
     border-radius: 10px;
-    background: #7c5cff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #5b45d9
+        );
+
+    border: 1px solid rgba(255,255,255,0.06);
+
     color: white;
+
     text-decoration: none;
-    font-weight: 600;
+
+    font-weight: 700;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
 }
+
 
 .profile-button:hover {
-    opacity: .85;
+    opacity: 0.95;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(124, 92, 255, 0.22);
 }
 
-@media (max-width: 700px) {
 
-    .profile-info {
-        grid-template-columns: 1fr;
-    }
+/* =========================================================
+   DOCUMENTS
+   ========================================================= */
 
-    .profile-header {
-        align-items: flex-start;
-    }
-
-}
 .documents-section {
     margin-top: 40px;
+
     padding-top: 30px;
+
     border-top: 1px solid #292f3d;
 }
+
 
 .documents-header {
     margin-bottom: 25px;
 }
 
+
 .documents-header h2 {
     margin: 0 0 8px;
+
     font-size: 24px;
+
+    color: white;
 }
+
 
 .documents-header p {
     margin: 0;
+
     color: #8d96a8;
 }
 
 
-/* GRILLE DES DOCUMENTS */
+/* =========================
+   GRILLE
+========================= */
 
 .documents-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
     gap: 20px;
 }
 
 
-/* CARTE */
+/* =========================
+   CARTE DOCUMENT
+========================= */
 
 .document-card {
     background: #181e2b;
+
     border: 1px solid #292f3d;
+
     border-radius: 16px;
+
     padding: 22px;
 
     display: flex;
+
     flex-direction: column;
 
-    transition: transform 0.2s ease,
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
 
 .document-card:hover {
     transform: translateY(-4px);
+
     border-color: #7c5cff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 
-/* ICÔNE */
+/* =========================
+   ICÔNE
+========================= */
 
 .document-icon {
     width: 52px;
     height: 52px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -398,36 +686,47 @@
 }
 
 
-/* CONTENU */
+/* =========================
+   CONTENU
+========================= */
 
 .document-content {
     flex: 1;
 }
 
+
 .document-content h3 {
     margin: 0 0 10px;
 
     font-size: 19px;
+
     color: white;
 }
+
 
 .document-description {
     margin: 0 0 15px;
 
     color: #a7afbf;
+
     line-height: 1.5;
+
     font-size: 14px;
 }
+
 
 .document-date {
     margin: 0;
 
     color: #737d91;
+
     font-size: 13px;
 }
 
 
-/* BOUTON TÉLÉCHARGEMENT */
+/* =========================
+   DOWNLOAD
+========================= */
 
 .download-button {
     display: block;
@@ -438,7 +737,12 @@
 
     border-radius: 10px;
 
-    background: #7c5cff;
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #5b45d9
+        );
 
     color: white;
 
@@ -446,17 +750,25 @@
 
     text-decoration: none;
 
-    font-weight: 600;
+    font-weight: 700;
 
-    transition: background 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
 
 .download-button:hover {
-    background: #6948e8;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(124, 92, 255, 0.22);
 }
 
 
-/* AUCUN DOCUMENT */
+/* =========================
+   AUCUN DOCUMENT
+========================= */
 
 .no-documents {
     background: #181e2b;
@@ -470,24 +782,82 @@
     text-align: center;
 }
 
+
 .no-documents-icon {
     font-size: 40px;
+
     margin-bottom: 15px;
 }
 
+
 .no-documents h3 {
     margin: 0 0 10px;
+
+    color: white;
 }
+
 
 .no-documents p {
     color: #8d96a8;
+
     margin-bottom: 20px;
 }
 
 
-/* MOBILE */
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 700px) {
+
+    .profile-page {
+        padding: 30px 14px;
+    }
+
+
+    .profile-card {
+        padding: 22px 16px;
+
+        border-radius: 18px;
+    }
+
+
+    .profile-header {
+        flex-direction: column;
+
+        align-items: center;
+
+        text-align: center;
+    }
+
+
+    .profile-header h1 {
+        font-size: 25px;
+    }
+
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+
+        min-width: 100px;
+    }
+
+
+    .profile-info {
+        grid-template-columns: 1fr;
+    }
+
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+
+    .profile-button {
+        width: 100%;
+    }
+
 
     .documents-grid {
         grid-template-columns: 1fr;
