@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 
@@ -88,26 +89,31 @@ def course_payment(request, course_id):
 def order_detail(request, order_id):
 
     order = get_object_or_404(
-        Order,
+        Order.objects.select_related(
+            "product",
+            "seller",
+            "user"
+        ),
         id=order_id
     )
 
-    # Seul le client concerné, le vendeur concerné
-    # ou un administrateur peut voir cette commande.
+    product_seller = None
+
+    if order.product:
+        product_seller = order.product.seller
 
     allowed = (
         request.user.is_staff
         or order.user == request.user
         or order.seller == request.user
+        or product_seller == request.user
     )
 
     if not allowed:
-
         messages.error(
             request,
             "Vous n'êtes pas autorisé à consulter cette commande."
         )
-
         return redirect("home")
 
     return render(
@@ -124,54 +130,73 @@ def order_detail(request, order_id):
 def seller_confirm_delivery(request, order_id):
 
     if request.method != "POST":
-
         return redirect(
             "order_detail",
             order_id=order_id
         )
 
     order = get_object_or_404(
-        Order.objects.select_for_update(),
+        Order.objects.select_for_update().select_related(
+            "product",
+            "seller",
+            "user"
+        ),
         id=order_id
     )
 
-    # Vérification du vendeur
+    product_seller = None
 
-    if order.seller != request.user:
+    if order.product:
+        product_seller = order.product.seller
 
+    is_seller = (
+        order.seller == request.user
+        or product_seller == request.user
+    )
+
+    if not is_seller:
         messages.error(
             request,
             "Cette commande ne vous appartient pas."
         )
+        return redirect(
+            "order_detail",
+            order_id=order.id
+        )
 
+    if order.status == "cancelled":
+        messages.error(
+            request,
+            "Cette commande a été annulée par le client."
+        )
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
     if order.admin_validated:
-
         messages.error(
             request,
             "Cette commande a déjà été validée par l'administrateur."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
     if order.seller_confirmed:
-
         messages.info(
             request,
             "Vous avez déjà confirmé la livraison."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
+
+    # Synchronisation des anciennes commandes
+    if order.seller != request.user:
+        order.seller = request.user
 
     order.seller_confirmed = True
     order.seller_confirmed_at = timezone.now()
@@ -179,13 +204,18 @@ def seller_confirm_delivery(request, order_id):
 
     order.save(
         update_fields=[
+            "seller",
             "seller_confirmed",
             "seller_confirmed_at",
             "status",
         ]
     )
 
-    # Notification du client
+    product_name = (
+        order.product.name
+        if order.product
+        else "votre produit"
+    )
 
     OrderNotification.objects.create(
         recipient=order.user,
@@ -193,24 +223,21 @@ def seller_confirm_delivery(request, order_id):
         title="Commande livrée",
         message=(
             f"Le vendeur vous informe que votre commande "
-            f"pour « {order.product.name} » a été livrée.\n\n"
+            f"pour « {product_name} » a été livrée.\n\n"
             f"Veuillez confirmer la réception de votre commande."
         )
     )
-
-    # Notification des administrateurs
 
     for admin in request.user.__class__.objects.filter(
         is_staff=True,
         is_active=True
     ):
-
         OrderNotification.objects.create(
             recipient=admin,
             order=order,
             title="Livraison confirmée par le vendeur",
             message=(
-                f"Le vendeur {order.seller.username} a confirmé "
+                f"Le vendeur {request.user.username} a confirmé "
                 f"la livraison de la commande #{order.id}."
             )
         )
@@ -231,61 +258,61 @@ def seller_confirm_delivery(request, order_id):
 def customer_confirm_receipt(request, order_id):
 
     if request.method != "POST":
-
         return redirect(
             "order_detail",
             order_id=order_id
         )
 
     order = get_object_or_404(
-        Order.objects.select_for_update(),
+        Order.objects.select_for_update().select_related(
+            "product",
+            "seller"
+        ),
         id=order_id
     )
 
-    # Vérification du client
-
     if order.user != request.user:
-
         messages.error(
             request,
             "Cette commande ne vous appartient pas."
         )
+        return redirect("home")
 
+    if order.status == "cancelled":
+        messages.error(
+            request,
+            "Cette commande a été annulée."
+        )
         return redirect(
-            "home"
+            "order_detail",
+            order_id=order.id
         )
 
     if order.admin_validated:
-
         messages.error(
             request,
             "Cette commande a déjà été validée."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
     if not order.seller_confirmed:
-
         messages.error(
             request,
             "Le vendeur n'a pas encore confirmé la livraison."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
     if order.customer_confirmed:
-
         messages.info(
             request,
             "Vous avez déjà confirmé la réception."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
@@ -303,8 +330,6 @@ def customer_confirm_receipt(request, order_id):
         ]
     )
 
-    # Notification du vendeur
-
     if order.seller:
 
         OrderNotification.objects.create(
@@ -317,13 +342,10 @@ def customer_confirm_receipt(request, order_id):
             )
         )
 
-    # Notification des administrateurs
-
     for admin in request.user.__class__.objects.filter(
         is_staff=True,
         is_active=True
     ):
-
         OrderNotification.objects.create(
             recipient=admin,
             order=order,
@@ -346,70 +368,179 @@ def customer_confirm_receipt(request, order_id):
     )
 
 
-@staff_member_required
+@login_required
 @transaction.atomic
-def admin_validate_order(request, order_id):
+def cancel_order(request, order_id):
 
     if request.method != "POST":
-
         return redirect(
             "order_detail",
             order_id=order_id
         )
 
     order = get_object_or_404(
-        Order.objects.select_for_update(),
-        id=order_id
+        Order.objects.select_for_update().select_related(
+            "product",
+            "seller",
+            "user"
+        ),
+        id=order_id,
+        user=request.user
     )
 
-    if order.admin_validated:
-
+    if order.status == "cancelled":
         messages.info(
             request,
-            "Cette commande est déjà validée."
+            "Cette commande est déjà annulée."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
-    # Les deux confirmations sont obligatoires.
+    if order.seller_confirmed:
+        messages.error(
+            request,
+            "Cette commande ne peut plus être annulée car le vendeur a déjà confirmé la livraison."
+        )
+        return redirect(
+            "order_detail",
+            order_id=order.id
+        )
+
+    if order.customer_confirmed or order.admin_validated:
+        messages.error(
+            request,
+            "Cette commande ne peut plus être annulée."
+        )
+        return redirect(
+            "order_detail",
+            order_id=order.id
+        )
+
+    seller = order.seller
+
+    # Récupération du vendeur via le produit
+    # pour les anciennes commandes.
+    if seller is None and order.product:
+        seller = order.product.seller
+
+    if seller is not None:
+        order.seller = seller
+
+    order.status = "cancelled"
+
+    order.save(
+        update_fields=[
+            "seller",
+            "status",
+        ]
+    )
+
+    if seller:
+
+        OrderNotification.objects.create(
+            recipient=seller,
+            order=order,
+            title="Commande annulée",
+            message=(
+                f"Le client {request.user.username} a annulé "
+                f"la commande #{order.id}.\n\n"
+                f"Cette commande ne nécessite plus de livraison."
+            )
+        )
+
+    for admin in request.user.__class__.objects.filter(
+        is_staff=True,
+        is_active=True
+    ):
+        OrderNotification.objects.create(
+            recipient=admin,
+            order=order,
+            title="Commande annulée",
+            message=(
+                f"Le client {request.user.username} a annulé "
+                f"la commande #{order.id}."
+            )
+        )
+
+    messages.success(
+        request,
+        f"La commande #{order.id} a été annulée."
+    )
+
+    return redirect(
+        "my_orders"
+    )
+
+
+@staff_member_required
+@transaction.atomic
+def admin_validate_order(request, order_id):
+
+    if request.method != "POST":
+        return redirect(
+            "order_detail",
+            order_id=order_id
+        )
+
+    order = get_object_or_404(
+        Order.objects.select_for_update().select_related(
+            "product",
+            "seller",
+            "user"
+        ),
+        id=order_id
+    )
+
+    if order.status == "cancelled":
+        messages.error(
+            request,
+            "Une commande annulée ne peut pas être validée."
+        )
+        return redirect(
+            "order_detail",
+            order_id=order.id
+        )
+
+    if order.admin_validated:
+        messages.info(
+            request,
+            "Cette commande est déjà validée."
+        )
+        return redirect(
+            "order_detail",
+            order_id=order.id
+        )
 
     if not order.seller_confirmed:
-
         messages.error(
             request,
             "Impossible de valider : le vendeur n'a pas confirmé la livraison."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
     if not order.customer_confirmed:
-
         messages.error(
             request,
             "Impossible de valider : le client n'a pas confirmé la réception."
         )
-
         return redirect(
             "order_detail",
             order_id=order.id
         )
 
-    # Validation définitive
+    # Synchronisation des anciennes commandes
+    if order.seller is None and order.product:
+        order.seller = order.product.seller
 
     order.admin_validated = True
     order.admin_validated_at = timezone.now()
-
     order.status = "delivered"
     order.payment_status = "paid"
-
-    # Récompense du client
-    # Le nombre de jetons vient du produit.
 
     if order.product and not order.reward_given:
 
@@ -429,15 +560,10 @@ def admin_validate_order(request, order_id):
             wallet=wallet,
             amount=reward,
             transaction_type="product",
-            description=(
-                f"Récompense commande #{order.id}"
-            )
+            description=f"Récompense commande #{order.id}"
         )
 
         order.reward_given = True
-
-    # Revenu du vendeur
-    # Il n'est créé qu'après validation administrative.
 
     if order.seller:
 
@@ -448,7 +574,7 @@ def admin_validate_order(request, order_id):
                 "amount": order.total_price,
                 "description": (
                     f"Vente du produit "
-                    f"« {order.product.name} » "
+                    f"« {order.product.name if order.product else 'Produit'} » "
                     f"- commande #{order.id}"
                 )
             }
@@ -456,6 +582,7 @@ def admin_validate_order(request, order_id):
 
     order.save(
         update_fields=[
+            "seller",
             "admin_validated",
             "admin_validated_at",
             "status",
@@ -463,8 +590,6 @@ def admin_validate_order(request, order_id):
             "reward_given",
         ]
     )
-
-    # Notification client
 
     OrderNotification.objects.create(
         recipient=order.user,
@@ -478,8 +603,6 @@ def admin_validate_order(request, order_id):
             f"jetons a été ajoutée à votre portefeuille."
         )
     )
-
-    # Notification vendeur
 
     if order.seller:
 
@@ -504,6 +627,8 @@ def admin_validate_order(request, order_id):
         "order_detail",
         order_id=order.id
     )
+
+
 @login_required
 def my_orders(request):
 
@@ -529,11 +654,13 @@ def my_orders(request):
 def seller_orders(request):
 
     orders = Order.objects.filter(
-        seller=request.user
+        Q(seller=request.user)
+        | Q(product__seller=request.user)
     ).select_related(
         "product",
-        "user"
-    ).order_by(
+        "user",
+        "seller"
+    ).distinct().order_by(
         "-created_at"
     )
 
@@ -548,19 +675,21 @@ def seller_orders(request):
 
 @login_required
 def order_notifications(request):
-
-    notifications = OrderNotification.objects.filter(
-        recipient=request.user
-    ).select_related(
-        "order"
-    ).order_by(
-        "-created_at"
+    notifications = (
+        OrderNotification.objects
+        .filter(recipient=request.user)
+        .select_related("order", "order__product", "order__user", "order__seller")
+        .order_by("-created_at")
     )
+
+    unread_notifications = notifications.filter(is_read=False)
+
+    unread_notifications.update(is_read=True)
 
     return render(
         request,
         "orders/notifications.html",
         {
-            "notifications": notifications
+            "notifications": notifications,
         }
     )

@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 class CoursePayment(models.Model):
+
     METHOD_CHOICES = [
         ("mtn", "MTN Mobile Money"),
         ("orange", "Orange Money"),
@@ -25,7 +26,9 @@ class CoursePayment(models.Model):
         on_delete=models.CASCADE
     )
 
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(
+        max_length=20
+    )
 
     method = models.CharField(
         max_length=10,
@@ -43,9 +46,11 @@ class CoursePayment(models.Model):
         default="pending"
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.user} - {self.course} - {self.amount} FCFA"
 
 
@@ -53,7 +58,10 @@ class Order(models.Model):
 
     STATUS_CHOICES = [
         ("pending", "En attente"),
+        ("seller_delivered", "Livrée par le vendeur"),
+        ("customer_received", "Réception confirmée"),
         ("delivered", "Livrée"),
+        ("cancelled", "Annulée"),
     ]
 
     PAYMENT_STATUS_CHOICES = [
@@ -65,6 +73,7 @@ class Order(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
+
     seller = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -94,30 +103,16 @@ class Order(models.Model):
         blank=True
     )
 
-    full_name = models.CharField(
-        max_length=200
-    )
-
-    phone_number = models.CharField(
-        max_length=30
-    )
-
-    delivery_address = models.TextField()
-
     product = models.ForeignKey(
         "products.Product",
         on_delete=models.CASCADE,
         null=True,
         blank=True
     )
-    seller = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="product_orders_received"
+
+    quantity = models.PositiveIntegerField(
+        default=1
     )
-    quantity = models.PositiveIntegerField(default=1)
 
     total_price = models.DecimalField(
         max_digits=10,
@@ -135,6 +130,7 @@ class Order(models.Model):
         choices=PAYMENT_STATUS_CHOICES,
         default="pending"
     )
+
     seller_confirmed = models.BooleanField(
         default=False
     )
@@ -161,9 +157,14 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-    reward_given = models.BooleanField(default=False)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    reward_given = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
 
@@ -171,6 +172,8 @@ class Order(models.Model):
             return f"Commande #{self.id} - {self.product.name}"
 
         return f"Commande #{self.id}"
+
+
 class OrderNotification(models.Model):
 
     recipient = models.ForeignKey(

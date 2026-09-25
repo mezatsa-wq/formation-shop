@@ -14,6 +14,7 @@ urlpatterns = [
         name="trainer_courses"
     ),
 
+
     # Gestion d'une formation
     path(
         "<int:course_id>/manage/",

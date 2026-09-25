@@ -7,6 +7,7 @@ class Product(models.Model):
     name = models.CharField(
         max_length=200
     )
+
     seller = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -31,6 +32,7 @@ class Product(models.Model):
     reward_tokens = models.PositiveIntegerField(
         default=20
     )
+
     is_featured = models.BooleanField(
         default=False
     )
@@ -44,14 +46,6 @@ class Product(models.Model):
         upload_to="products/",
         blank=True,
         null=True
-    )
-
-    seller = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="products_created"
     )
 
     created_at = models.DateTimeField(

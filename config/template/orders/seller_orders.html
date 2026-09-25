@@ -6,105 +6,273 @@ Commandes reçues - FormaShop
 
 {% block content %}
 
-<section>
+<style>
 
-    <h1>Commandes reçues</h1>
+.seller-orders-page {
+    max-width: 1150px;
+    margin: 40px auto;
+    padding: 0 20px 50px;
+}
+
+.seller-orders-header {
+    margin-bottom: 30px;
+}
+
+.seller-orders-header h1 {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.seller-orders-header p {
+    color: #94a3b8;
+}
+
+.seller-orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px;
+}
+
+.seller-order-card {
+    background: rgba(15,23,42,.78);
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.18);
+}
+
+.seller-order-card h2 {
+    margin-top: 0;
+}
+
+.order-info {
+    color: #cbd5e1;
+    line-height: 1.75;
+}
+
+.status-badge {
+    display: inline-block;
+    margin: 12px 0;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-pending {
+    color: #facc15;
+    background: rgba(234,179,8,.12);
+}
+
+.status-progress {
+    color: #a5b4fc;
+    background: rgba(99,102,241,.12);
+}
+
+.status-success {
+    color: #4ade80;
+    background: rgba(34,197,94,.12);
+}
+
+.status-danger {
+    color: #f87171;
+    background: rgba(239,68,68,.12);
+}
+
+.seller-order-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 11px 17px;
+    border-radius: 11px;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    background: linear-gradient(135deg,#6366f1,#7c3aed);
+}
+
+.empty-orders {
+    padding: 45px;
+    text-align: center;
+    border-radius: 20px;
+    background: rgba(15,23,42,.7);
+    border: 1px solid rgba(148,163,184,.12);
+}
+
+@media(max-width:700px) {
+
+    .seller-orders-page {
+        margin-top: 25px;
+    }
+
+    .seller-orders-header h1 {
+        font-size: 27px;
+    }
+}
+
+</style>
+
+
+<div class="seller-orders-page">
+
+    <div class="seller-orders-header">
+
+        <h1>
+            Commandes reçues
+        </h1>
+
+        <p>
+            Gérez les commandes associées à vos produits.
+        </p>
+
+    </div>
+
 
     {% if orders %}
 
-        {% for order in orders %}
+        <div class="seller-orders-grid">
 
-            <article>
+            {% for order in orders %}
 
-                <h2>
-                    Commande #{{ order.id }}
-                </h2>
+                <article class="seller-order-card">
 
-                {% if order.product %}
+                    <h2>
+                        Commande #{{ order.id }}
+                    </h2>
 
-                    <p>
-                        Produit :
-                        {{ order.product.name }}
-                    </p>
 
-                {% endif %}
+                    <div class="order-info">
 
-                <p>
-                    <strong>Client :</strong>
-                    {{ order.full_name }}
-                </p>
+                        <p>
 
-                <p>
-                    <strong>Téléphone :</strong>
-                    {{ order.phone_number }}
-                </p>
+                            <strong>Produit :</strong>
 
-                <p>
-                    <strong>Quartier :</strong>
-                    {{ order.neighborhood }}
-                </p>
+                            {% if order.product %}
+                                {{ order.product.name }}
+                            {% else %}
+                                Produit supprimé
+                            {% endif %}
 
-                <p>
-                    <strong>Adresse :</strong>
-                    {{ order.delivery_address }}
-                </p>
+                        </p>
 
-                <p>
-                    <strong>Quantité :</strong>
-                    {{ order.quantity }}
-                </p>
 
-                <p>
-                    <strong>Montant :</strong>
-                    {{ order.total_price }} FCFA
-                </p>
+                        <p>
+                            <strong>Client :</strong>
+                            {{ order.full_name }}
+                        </p>
 
-                <p>
-                    <strong>Livraison avant :</strong>
-                    {% if order.delivery_deadline %}
-                        {{ order.delivery_deadline|date:"d/m/Y à H:i" }}
+
+                        <p>
+                            <strong>Téléphone :</strong>
+                            {{ order.phone_number }}
+                        </p>
+
+
+                        <p>
+                            <strong>Quartier :</strong>
+                            {{ order.neighborhood|default:"Non précisé" }}
+                        </p>
+
+
+                        <p>
+                            <strong>Adresse :</strong>
+                            {{ order.delivery_address }}
+                        </p>
+
+
+                        <p>
+                            <strong>Quantité :</strong>
+                            {{ order.quantity }}
+                        </p>
+
+
+                        <p>
+                            <strong>Montant :</strong>
+                            {{ order.total_price }} FCFA
+                        </p>
+
+
+                        {% if order.delivery_deadline %}
+
+                            <p>
+                                <strong>Livraison avant :</strong>
+                                {{ order.delivery_deadline|date:"d/m/Y à H:i" }}
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    {% if order.status == "cancelled" %}
+
+                        <span class="status-badge status-danger">
+                            ✕ Commande annulée
+                        </span>
+
+
+                    {% elif order.admin_validated %}
+
+                        <span class="status-badge status-success">
+                            ✓ Vente finalisée
+                        </span>
+
+
+                    {% elif order.customer_confirmed %}
+
+                        <span class="status-badge status-progress">
+                            ✓ Réception confirmée — validation admin en attente
+                        </span>
+
+
+                    {% elif order.seller_confirmed %}
+
+                        <span class="status-badge status-progress">
+                            📦 Livraison confirmée — attente client
+                        </span>
+
+
                     {% else %}
-                        Non définie
+
+                        <span class="status-badge status-pending">
+                            ⏳ Livraison à effectuer
+                        </span>
+
                     {% endif %}
-                </p>
 
-                <p>
-                    État :
-                    {{ order.get_status_display }}
-                </p>
 
-                {% if order.seller_confirmed %}
+                    <div>
 
-                    <p>
-                        ✅ Vous avez confirmé la livraison.
-                    </p>
+                        <a
+                            href="{% url 'order_detail' order.id %}"
+                            class="seller-order-btn"
+                        >
+                            Gérer la commande
+                        </a>
 
-                {% else %}
+                    </div>
 
-                    <p>
-                        ⏳ Vous devez livrer cette commande.
-                    </p>
+                </article>
 
-                {% endif %}
+            {% endfor %}
 
-                <a href="{% url 'order_detail' order.id %}">
-                    Gérer la commande
-                </a>
-
-            </article>
-
-            <hr>
-
-        {% endfor %}
+        </div>
 
     {% else %}
 
-        <p>
-            Vous n'avez encore reçu aucune commande.
-        </p>
+        <div class="empty-orders">
+
+            <h2>
+                Vous n'avez encore reçu aucune commande.
+            </h2>
+
+            <p>
+                Les commandes de vos produits apparaîtront ici.
+            </p>
+
+        </div>
 
     {% endif %}
 
-</section>
+</div>
 
 {% endblock %}

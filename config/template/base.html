@@ -1,952 +1,1922 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
+
     <meta name="theme-color"
           content="#0b0f19">
+
     <title>
         {% block title %}FormaShop{% endblock %}
     </title>
-    <!-- CSS GLOBAL -->
+
+    <!-- =====================================================
+         CSS GLOBAL
+    ====================================================== -->
     <link rel="stylesheet"
           href="{% static 'css/style.css' %}">
-    <!-- CSS COMPTES -->
+
+    <!-- =====================================================
+         CSS COMPTES
+    ====================================================== -->
     <link rel="stylesheet"
           href="{% static 'accounts/css/account.css' %}">
+
     {% block extra_css %}
     {% endblock %}
 </head>
+
 <body>
+
 <!-- =========================================================
-     NAVBAR
+     CONTENEUR GLOBAL
 ========================================================== -->
-<header class="navbar">
-    <!-- LOGO -->
-    <a href="{% url 'home' %}"
-       class="logo">
-        Forma<span>Shop</span>
-    </a>
+
+<div class="site-wrapper">
+
     <!-- =====================================================
-         NAVIGATION DESKTOP
+         NAVBAR
     ====================================================== -->
-    <nav class="desktop-navigation"
-         id="mainNavigation">
-        <a href="{% url 'home' %}">
-            Accueil
-        </a>
-        <a href="{% url 'course_list' %}">
-            Formations
-        </a>
-        <a href="{% url 'product_list' %}">
-            Produits
-        </a>
-        <a href="{% url 'document_list' %}">
-            Documents
-        </a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'my_courses' %}">
-                Mes formations
-            </a>
-            <!-- DASHBOARD GENERAL -->
-            <a href="{% url 'dashboard' %}"
-               class="dashboard-button">
-                Dashboard
-            </a>
-        {% endif %}
-    </nav>
-    <!-- =====================================================
-         ACTIONS DESKTOP
-    ====================================================== -->
-    <div class="nav-actions">
-        <a href="{% url 'cart' %}"
-           class="cart-button">
-            Panier
-        </a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'profile' %}"
-               class="profile-button">
-                Mon profil
-            </a>
-            <a href="{% url 'logout' %}"
-               class="logout-link">
-                Déconnexion
-            </a>
-        {% else %}
-            <a href="{% url 'login' %}"
-               class="login">
-                Connexion
-            </a>
-            <a href="{% url 'register' %}"
-               class="register">
-                Inscription
-            </a>
-        {% endif %}
-    </div>
-    <!-- =====================================================
-         BOUTON HAMBURGER
-    ====================================================== -->
-    <button
-        class="mobile-menu-button"
-        id="mobileMenuButton"
-        type="button"
-        aria-label="Ouvrir le menu"
-        aria-expanded="false"
-        aria-controls="mobileMenu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-</header>
-<!-- =========================================================
-     OVERLAY MOBILE
-========================================================== -->
-<div class="mobile-overlay"
-     id="mobileOverlay">
-</div>
-<!-- =========================================================
-     MENU MOBILE
-========================================================== -->
-<aside class="mobile-menu"
-       id="mobileMenu"
-       aria-hidden="true">
-    <!-- HEADER DU MENU -->
-    <div class="mobile-menu-header">
+
+    <header class="navbar">
+
+        <!-- LOGO -->
         <a href="{% url 'home' %}"
-           class="mobile-logo">
+           class="logo">
             Forma<span>Shop</span>
         </a>
-        <button
-            type="button"
-            class="mobile-close-button"
-            id="mobileCloseButton"
-            aria-label="Fermer le menu">
-            ×
-        </button>
-    </div>
-    <!-- PROFIL MOBILE -->
-    {% if user.is_authenticated %}
-        <div class="mobile-user-card">
-            <div class="mobile-avatar">
-                {{ user.username|first|upper }}
-            </div>
-            <div>
-                <span class="mobile-user-label">
-                    Connecté en tant que
-                </span>
-                <strong>
-                    {{ user.username }}
-                </strong>
-            </div>
-        </div>
-    {% endif %}
-    <!-- NAVIGATION MOBILE -->
-    <nav class="mobile-navigation">
-        <a href="{% url 'home' %}"
-           class="mobile-nav-link">
-            <span class="mobile-nav-icon">
-                01
-            </span>
-            <span>
+
+
+        <!-- =================================================
+             NAVIGATION DESKTOP
+        ================================================== -->
+
+        <nav class="desktop-navigation"
+             id="mainNavigation">
+
+            <a href="{% url 'home' %}">
                 Accueil
-            </span>
-        </a>
-        <a href="{% url 'course_list' %}"
-           class="mobile-nav-link">
-            <span class="mobile-nav-icon">
-                02
-            </span>
-            <span>
+            </a>
+
+            <a href="{% url 'course_list' %}">
                 Formations
-            </span>
-        </a>
-        <a href="{% url 'product_list' %}"
-           class="mobile-nav-link">
-            <span class="mobile-nav-icon">
-                03
-            </span>
-            <span>
+            </a>
+
+            <a href="{% url 'product_list' %}">
                 Produits
-            </span>
-        </a>
-        <a href="{% url 'document_list' %}"
-           class="mobile-nav-link">
-            <span class="mobile-nav-icon">
-                04
-            </span>
-            <span>
+            </a>
+
+            <a href="{% url 'document_list' %}">
                 Documents
-            </span>
-        </a>
-        {% if user.is_authenticated %}
-            <div class="mobile-divider"></div>
-            <a href="{% url 'dashboard' %}"
-               class="mobile-nav-link mobile-dashboard-link">
-                <span class="mobile-nav-icon">
-                    ✦
-                </span>
-                <span>
-                    Mon Dashboard
-                </span>
-                <span class="mobile-arrow">
-                    →
-                </span>
             </a>
-            <a href="{% url 'my_courses' %}"
-               class="mobile-nav-link">
-                <span class="mobile-nav-icon">
-                    05
-                </span>
-                <span>
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'my_courses' %}">
                     Mes formations
-                </span>
-            </a>
-            <a href="{% url 'cart' %}"
-               class="mobile-nav-link">
-                <span class="mobile-nav-icon">
-                    06
-                </span>
-                <span>
-                    Mon panier
-                </span>
-            </a>
-            <a href="{% url 'profile' %}"
-               class="mobile-nav-link">
-                <span class="mobile-nav-icon">
-                    07
-                </span>
-                <span>
-                    Mon profil
-                </span>
-            </a>
-            {% if user.trainer_profile %}
-                <div class="mobile-divider"></div>
-                <div class="mobile-section-title">
-                    ESPACE FORMATEUR
-                </div>
-                <a href="{% url 'trainer_dashboard' %}"
-                   class="mobile-nav-link">
-                    <span class="mobile-nav-icon">
-                        F
-                    </span>
-                    <span>
-                        Espace formateur
-                    </span>
                 </a>
-                <a href="{% url 'trainer_courses' %}"
-                   class="mobile-nav-link">
-                    <span class="mobile-nav-icon">
-                        C
+
+                <a href="{% url 'dashboard' %}"
+                   class="dashboard-button">
+                    Dashboard
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+
+        <!-- =================================================
+             ACTIONS DESKTOP
+        ================================================== -->
+
+        <div class="nav-actions">
+
+            <a href="{% url 'cart' %}"
+               class="cart-button">
+                Panier
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'profile' %}"
+                   class="profile-button">
+                    Mon profil
+                </a>
+
+                <a href="{% url 'logout' %}"
+                   class="logout-link">
+                    Déconnexion
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login' %}"
+                   class="login">
+                    Connexion
+                </a>
+
+                <a href="{% url 'register' %}"
+                   class="register">
+                    Inscription
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             BOUTON HAMBURGER
+        ================================================== -->
+
+        <button
+            class="mobile-menu-button"
+            id="mobileMenuButton"
+            type="button"
+            aria-label="Ouvrir le menu"
+            aria-expanded="false"
+            aria-controls="mobileMenu">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+    </header>
+
+
+    <!-- =====================================================
+         OVERLAY MOBILE
+    ====================================================== -->
+
+    <div class="mobile-overlay"
+         id="mobileOverlay">
+    </div>
+
+
+    <!-- =====================================================
+         MENU MOBILE
+    ====================================================== -->
+
+    <aside class="mobile-menu"
+           id="mobileMenu"
+           aria-hidden="true">
+
+
+        <!-- HEADER DU MENU -->
+
+        <div class="mobile-menu-header">
+
+            <a href="{% url 'home' %}"
+               class="mobile-logo">
+                Forma<span>Shop</span>
+            </a>
+
+            <button
+                type="button"
+                class="mobile-close-button"
+                id="mobileCloseButton"
+                aria-label="Fermer le menu">
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             PROFIL MOBILE
+        ================================================== -->
+
+        {% if user.is_authenticated %}
+
+            <div class="mobile-user-card">
+
+                <div class="mobile-avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <div>
+
+                    <span class="mobile-user-label">
+                        Connecté en tant que
                     </span>
+
+                    <strong>
+                        {{ user.username }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             NAVIGATION MOBILE
+        ================================================== -->
+
+        <nav class="mobile-navigation">
+
+
+            <!-- ACCUEIL -->
+
+            <a href="{% url 'home' %}"
+               class="mobile-nav-link">
+
+                <span class="mobile-nav-icon">
+                    ⌂
+                </span>
+
+                <span>
+                    Accueil
+                </span>
+
+            </a>
+
+
+            <!-- FORMATIONS -->
+
+            <a href="{% url 'course_list' %}"
+               class="mobile-nav-link">
+
+                <span class="mobile-nav-icon">
+                    ▣
+                </span>
+
+                <span>
+                    Formations
+                </span>
+
+            </a>
+
+
+            <!-- PRODUITS -->
+
+            <a href="{% url 'product_list' %}"
+               class="mobile-nav-link">
+
+                <span class="mobile-nav-icon">
+                    ◈
+                </span>
+
+                <span>
+                    Produits
+                </span>
+
+            </a>
+
+
+            <!-- DOCUMENTS -->
+
+            <a href="{% url 'document_list' %}"
+               class="mobile-nav-link">
+
+                <span class="mobile-nav-icon">
+                    □
+                </span>
+
+                <span>
+                    Documents
+                </span>
+
+            </a>
+
+
+            {% if user.is_authenticated %}
+
+                <div class="mobile-divider"></div>
+
+
+                <!-- DASHBOARD -->
+
+                <a href="{% url 'dashboard' %}"
+                   class="mobile-nav-link mobile-dashboard-link">
+
+                    <span class="mobile-nav-icon">
+                        ◆
+                    </span>
+
+                    <span>
+                        Mon Dashboard
+                    </span>
+
+                    <span class="mobile-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+                <!-- MES FORMATIONS -->
+
+                <a href="{% url 'my_courses' %}"
+                   class="mobile-nav-link">
+
+                    <span class="mobile-nav-icon">
+                        ▣
+                    </span>
+
                     <span>
                         Mes formations
                     </span>
+
                 </a>
-            {% else %}
-                <div class="mobile-divider"></div>
-                <a href="{% url 'become_trainer' %}"
-                   class="mobile-nav-link mobile-trainer-link">
+
+
+                <!-- MES COMMANDES -->
+
+                <a href="{% url 'my_orders' %}"
+                   class="mobile-nav-link">
+
                     <span class="mobile-nav-icon">
-                        +
+                        ◇
                     </span>
+
                     <span>
-                        Devenir formateur
+                        Mes commandes
                     </span>
+
                 </a>
+
+
+                <!-- NOTIFICATIONS -->
+
+                <a href="{% url 'order_notifications' %}"
+                   class="mobile-nav-link">
+
+                    <span class="mobile-nav-icon">
+                        !
+                    </span>
+
+                    <span>
+                        Notifications
+                    </span>
+
+                </a>
+
+
+                <!-- PANIER -->
+
+                <a href="{% url 'cart' %}"
+                   class="mobile-nav-link">
+
+                    <span class="mobile-nav-icon">
+                        ◇
+                    </span>
+
+                    <span>
+                        Mon panier
+                    </span>
+
+                </a>
+
+
+                <!-- PROFIL -->
+
+                <a href="{% url 'profile' %}"
+                   class="mobile-nav-link">
+
+                    <span class="mobile-nav-icon">
+                        ○
+                    </span>
+
+                    <span>
+                        Mon profil
+                    </span>
+
+                </a>
+
+
+                <!-- =================================================
+                     ESPACE VENDEUR
+                ================================================== -->
+
+                {% if user.seller_profile %}
+
+                    <div class="mobile-divider"></div>
+
+                    <div class="mobile-section-title">
+                        ESPACE VENDEUR
+                    </div>
+
+
+                    <a href="{% url 'my_products' %}"
+                       class="mobile-nav-link">
+
+                        <span class="mobile-nav-icon">
+                            ◈
+                        </span>
+
+                        <span>
+                            Mes produits
+                        </span>
+
+                    </a>
+
+
+                    <a href="{% url 'seller_orders' %}"
+                       class="mobile-nav-link">
+
+                        <span class="mobile-nav-icon">
+                            ◇
+                        </span>
+
+                        <span>
+                            Commandes reçues
+                        </span>
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     ESPACE FORMATEUR
+                ================================================== -->
+
+                {% if user.trainer_profile %}
+
+                    <div class="mobile-divider"></div>
+
+                    <div class="mobile-section-title">
+                        ESPACE FORMATEUR
+                    </div>
+
+                    <a href="{% url 'trainer_dashboard' %}"
+                       class="mobile-nav-link">
+
+                        <span class="mobile-nav-icon">
+                            F
+                        </span>
+
+                        <span>
+                            Espace formateur
+                        </span>
+
+                    </a>
+
+
+                    <a href="{% url 'trainer_courses' %}"
+                       class="mobile-nav-link">
+
+                        <span class="mobile-nav-icon">
+                            C
+                        </span>
+
+                        <span>
+                            Mes formations
+                        </span>
+
+                    </a>
+
+                {% else %}
+
+                    <div class="mobile-divider"></div>
+
+                    <a href="{% url 'become_trainer' %}"
+                       class="mobile-nav-link mobile-trainer-link">
+
+                        <span class="mobile-nav-icon">
+                            +
+                        </span>
+
+                        <span>
+                            Devenir formateur
+                        </span>
+
+                    </a>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     DECONNEXION
+                ================================================== -->
+
+                <div class="mobile-divider"></div>
+
+                <a href="{% url 'logout' %}"
+                   class="mobile-logout">
+
+                    <span>
+                        Déconnexion
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     UTILISATEUR NON CONNECTÉ
+                ================================================== -->
+
+                <div class="mobile-divider"></div>
+
+
+                <a href="{% url 'cart' %}"
+                   class="mobile-nav-link">
+
+                    <span class="mobile-nav-icon">
+                        ◇
+                    </span>
+
+                    <span>
+                        Mon panier
+                    </span>
+
+                </a>
+
+
+                <a href="{% url 'login' %}"
+                   class="mobile-nav-link">
+
+                    <span class="mobile-nav-icon">
+                        →
+                    </span>
+
+                    <span>
+                        Connexion
+                    </span>
+
+                </a>
+
+
+                <a href="{% url 'register' %}"
+                   class="mobile-register">
+
+                    <span>
+                        Inscription
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
             {% endif %}
-            <div class="mobile-divider"></div>
-            <a href="{% url 'logout' %}"
-               class="mobile-logout">
-                <span>
-                    Déconnexion
-                </span>
-                <span>
-                    →
-                </span>
-            </a>
-        {% else %}
-            <div class="mobile-divider"></div>
-            <a href="{% url 'login' %}"
-               class="mobile-nav-link">
-                <span class="mobile-nav-icon">
-                    →
-                </span>
-                <span>
-                    Connexion
-                </span>
-            </a>
-            <a href="{% url 'register' %}"
-               class="mobile-register">
-                Créer mon compte
-                <span>
-                    →
-                </span>
-            </a>
-        {% endif %}
-    </nav>
-</aside>
-<!-- =========================================================
-     CONTENU PRINCIPAL
-========================================================== -->
-<main>
-    {% block content %}
-    {% endblock %}
-</main>
-<!-- =========================================================
-     FOOTER
-========================================================== -->
-<footer>
-    <div>
-        <h2>
-            FormaShop
-        </h2>
-        <p>
-            Formations, produits et connaissances
-            accessibles en un seul endroit.
-        </p>
-    </div>
-    <div>
-        <h3>
-            Navigation
-        </h3>
-        <a href="{% url 'home' %}">
-            Accueil
-        </a>
-        <a href="{% url 'course_list' %}">
-            Formations
-        </a>
-        <a href="{% url 'product_list' %}">
-            Produits
-        </a>
-        <a href="{% url 'document_list' %}">
-            Documents
-        </a>
-    </div>
-    <div>
-        <h3>
-            Assistance
-        </h3>
-        <a href="#">
-            Contact
-        </a>
-        <a href="#">
-            FAQ
-        </a>
-        <a href="#">
-            Conditions
-        </a>
-    </div>
-</footer>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENU PRINCIPAL
+    ====================================================== -->
+
+    <main class="site-main">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-inner">
+
+
+            <!-- =================================================
+                 IDENTITÉ
+            ================================================== -->
+
+            <div class="footer-brand">
+
+                <a href="{% url 'home' %}"
+                   class="footer-logo">
+                    Forma<span>Shop</span>
+                </a>
+
+                <p>
+                    Formations, produits et connaissances
+                    accessibles en un seul endroit.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 NAVIGATION
+            ================================================== -->
+
+            <div class="footer-column">
+
+                <h3>
+                    Navigation
+                </h3>
+
+                <a href="{% url 'home' %}">
+                    Accueil
+                </a>
+
+                <a href="{% url 'course_list' %}">
+                    Formations
+                </a>
+
+                <a href="{% url 'product_list' %}">
+                    Produits
+                </a>
+
+                <a href="{% url 'document_list' %}">
+                    Documents
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 COMPTE
+            ================================================== -->
+
+            <div class="footer-column">
+
+                <h3>
+                    Mon espace
+                </h3>
+
+                {% if user.is_authenticated %}
+
+                    <a href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+
+                    <a href="{% url 'my_orders' %}">
+                        Mes commandes
+                    </a>
+
+                    <a href="{% url 'profile' %}">
+                        Mon profil
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'login' %}">
+                        Connexion
+                    </a>
+
+                    <a href="{% url 'register' %}">
+                        Inscription
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 ASSISTANCE
+            ================================================== -->
+
+            <div class="footer-column">
+
+                <h3>
+                    Assistance
+                </h3>
+
+                <a href="#">
+                    Contact
+                </a>
+
+                <a href="#">
+                    FAQ
+                </a>
+
+                <a href="#">
+                    Conditions
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             COPYRIGHT
+        ================================================== -->
+
+        <div class="footer-bottom">
+
+            <span>
+                © {% now "Y" %} FormaShop
+            </span>
+
+            <span>
+                Plateforme de formation et de services
+            </span>
+
+        </div>
+
+    </footer>
+
+</div>
+
+
 <!-- =========================================================
      MOBILE NAVIGATION — JAVASCRIPT
 ========================================================== -->
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const menuButton =
         document.getElementById("mobileMenuButton");
+
     const closeButton =
         document.getElementById("mobileCloseButton");
+
     const mobileMenu =
         document.getElementById("mobileMenu");
+
     const overlay =
         document.getElementById("mobileOverlay");
+
+
     /*
      * Vérification de sécurité.
-     * Si un élément n'existe pas, on évite
-     * de provoquer une erreur JavaScript.
      */
+
     if (!menuButton || !mobileMenu || !overlay) {
         return;
     }
+
+
     /*
      * OUVRIR LE MENU
      */
+
     function openMenu() {
+
         mobileMenu.classList.add("active");
+
         overlay.classList.add("active");
+
         menuButton.classList.add("active");
+
         menuButton.setAttribute(
             "aria-expanded",
             "true"
         );
+
         mobileMenu.setAttribute(
             "aria-hidden",
             "false"
         );
+
         document.body.classList.add(
             "mobile-menu-open"
         );
     }
+
+
     /*
      * FERMER LE MENU
      */
+
     function closeMenu() {
+
         mobileMenu.classList.remove("active");
+
         overlay.classList.remove("active");
+
         menuButton.classList.remove("active");
+
         menuButton.setAttribute(
             "aria-expanded",
             "false"
         );
+
         mobileMenu.setAttribute(
             "aria-hidden",
             "true"
         );
+
         document.body.classList.remove(
             "mobile-menu-open"
         );
     }
+
+
     /*
      * TOGGLE
      */
+
     menuButton.addEventListener(
         "click",
         function () {
+
             const isOpen =
                 mobileMenu.classList.contains("active");
+
             if (isOpen) {
+
                 closeMenu();
+
             } else {
+
                 openMenu();
+
             }
+
         }
     );
+
+
     /*
      * BOUTON X
      */
+
     if (closeButton) {
+
         closeButton.addEventListener(
             "click",
             closeMenu
         );
+
     }
+
+
     /*
-     * CLIQUER SUR L'OVERLAY
+     * OVERLAY
      */
+
     overlay.addEventListener(
         "click",
         closeMenu
     );
+
+
     /*
      * CLIQUER SUR UN LIEN
      */
+
     const mobileLinks =
         mobileMenu.querySelectorAll("a");
+
     mobileLinks.forEach(function (link) {
+
         link.addEventListener(
             "click",
             closeMenu
         );
+
     });
+
+
     /*
      * TOUCHE ESC
      */
+
     document.addEventListener(
         "keydown",
         function (event) {
+
             if (
                 event.key === "Escape" &&
                 mobileMenu.classList.contains("active")
             ) {
+
                 closeMenu();
+
             }
+
         }
     );
+
+
     /*
-     * SI ON REPASSE SUR DESKTOP,
-     * ON FERME LE MENU.
+     * SI ON REPASSE SUR DESKTOP
      */
+
     window.addEventListener(
         "resize",
         function () {
+
             if (window.innerWidth > 900) {
+
                 closeMenu();
+
             }
+
         }
     );
+
 });
 </script>
+
+
 <!-- =========================================================
-     STYLE DU MENU MOBILE
+     STYLE NAVBAR / MENU / FOOTER
 ========================================================== -->
+
 <style>
+
+/* =========================================================
+   STRUCTURE GLOBALE
+========================================================= */
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+}
+
+.site-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-main {
+    flex: 1 0 auto;
+}
+
+
 /* =========================================================
    DESKTOP
 ========================================================= */
+
 .mobile-menu-button,
 .mobile-menu,
 .mobile-overlay {
     display: none;
 }
+
+
 /* =========================================================
    NAVBAR PREMIUM
 ========================================================= */
+
 .navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
+
     min-height: 72px;
+
     display: flex;
     align-items: center;
+
     padding: 0 5%;
+
     background:
         rgba(9, 13, 22, 0.88);
+
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+
     border-bottom:
         1px solid rgba(255,255,255,0.07);
 }
+
+
 /* LOGO */
+
 .logo {
     margin-right: 45px;
+
     color: #ffffff;
+
     font-size: 1.45rem;
     font-weight: 900;
+
     letter-spacing: -0.04em;
+
     text-decoration: none;
 }
+
 .logo span,
-.mobile-logo span {
+.mobile-logo span,
+.footer-logo span {
     color: #8d9aff;
 }
+
+
 /* NAVIGATION */
+
 .desktop-navigation {
     display: flex;
     align-items: center;
+
     gap: 25px;
+
     flex: 1;
 }
+
 .desktop-navigation a {
     position: relative;
+
     color: #929bad;
+
     font-size: 0.83rem;
     font-weight: 700;
+
     text-decoration: none;
+
     transition:
         color .2s ease;
 }
+
 .desktop-navigation a:hover {
     color: #ffffff;
 }
+
 .desktop-navigation a::after {
     content: "";
+
     position: absolute;
+
     left: 0;
     bottom: -8px;
+
     width: 0;
     height: 2px;
+
     border-radius: 10px;
+
     background: #8d9aff;
-    transition: width .25s ease;
+
+    transition:
+        width .25s ease;
 }
+
 .desktop-navigation a:hover::after {
     width: 100%;
 }
+
+
 /* DASHBOARD */
+
 .desktop-navigation .dashboard-button {
     padding: 9px 15px;
+
     border-radius: 10px;
+
     color: #ffffff;
+
     background:
         linear-gradient(
             135deg,
             #737fff,
             #5865d9
         );
+
     box-shadow:
         0 8px 25px rgba(88,101,217,0.25);
 }
+
 .desktop-navigation .dashboard-button::after {
     display: none;
 }
-/* ACTIONS */
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
 .nav-actions {
     display: flex;
     align-items: center;
+
     gap: 9px;
 }
+
 .nav-actions a {
     padding: 9px 13px;
+
     border-radius: 10px;
+
     color: #a2aabb;
+
     font-size: 0.78rem;
     font-weight: 700;
+
     text-decoration: none;
-    transition: all .2s ease;
+
+    transition:
+        all .2s ease;
 }
+
 .nav-actions a:hover {
     color: #ffffff;
-    background: rgba(255,255,255,0.06);
+
+    background:
+        rgba(255,255,255,0.06);
 }
+
 .nav-actions .cart-button {
     color: #b9c0ff;
-    background: rgba(141,154,255,0.08);
+
+    background:
+        rgba(141,154,255,0.08);
 }
+
 .nav-actions .register {
     color: #151927;
+
     background: #f1f2ff;
 }
+
+
 /* =========================================================
-   MOBILE — MAX 900px
+   FOOTER
 ========================================================= */
+
+.site-footer {
+    flex: 0 0 auto;
+
+    margin-top: 45px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0d121d 0%,
+            #090d16 100%
+        );
+
+    border-top:
+        1px solid rgba(255,255,255,0.07);
+}
+
+
+/* CONTENU FOOTER */
+
+.footer-inner {
+    width: min(1180px, 90%);
+
+    margin: 0 auto;
+
+    padding: 32px 0 24px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.6fr
+        1fr
+        1fr
+        1fr;
+
+    gap: 35px;
+}
+
+
+/* MARQUE */
+
+.footer-brand {
+    max-width: 310px;
+}
+
+.footer-logo {
+    display: inline-block;
+
+    margin-bottom: 9px;
+
+    color: #ffffff;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+
+    letter-spacing: -0.03em;
+
+    text-decoration: none;
+}
+
+.footer-brand p {
+    margin: 0;
+
+    color: #737d91;
+
+    font-size: 0.76rem;
+    line-height: 1.6;
+}
+
+
+/* COLONNES */
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.footer-column h3 {
+    margin: 0 0 6px;
+
+    color: #ffffff;
+
+    font-size: 0.76rem;
+    font-weight: 800;
+
+    letter-spacing: .03em;
+}
+
+.footer-column a {
+    color: #737d91;
+
+    font-size: 0.73rem;
+
+    text-decoration: none;
+
+    transition:
+        color .2s ease,
+        transform .2s ease;
+}
+
+.footer-column a:hover {
+    color: #a5adff;
+
+    transform:
+        translateX(2px);
+}
+
+
+/* BAS FOOTER */
+
+.footer-bottom {
+    width: min(1180px, 90%);
+
+    margin: 0 auto;
+
+    padding: 13px 0 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-top:
+        1px solid rgba(255,255,255,0.055);
+
+    color: #596375;
+
+    font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   MOBILE — MAX 900PX
+========================================================= */
+
 @media (max-width: 900px) {
-    /*
-     * NAVBAR
-     */
+
     .navbar {
         min-height: 66px;
+
         padding: 0 20px;
+
         justify-content: space-between;
     }
-    /*
-     * LOGO
-     */
+
+
+    /* LOGO */
+
     .logo {
         margin-right: 0;
+
         font-size: 1.3rem;
     }
-    /*
-     * CACHER NAVIGATION DESKTOP
-     */
+
+
+    /* CACHER DESKTOP */
+
     .desktop-navigation,
     .nav-actions {
         display: none;
     }
-    /*
-     * BOUTON HAMBURGER
-     */
+
+
+    /* =====================================================
+       HAMBURGER
+    ====================================================== */
+
     .mobile-menu-button {
+
         position: relative;
+
         width: 45px;
         height: 45px;
+
         display: flex;
+
         flex-direction: column;
+
         align-items: center;
         justify-content: center;
+
         gap: 5px;
-        border: 1px solid
-            rgba(255,255,255,0.08);
+
+        border:
+            1px solid rgba(255,255,255,0.08);
+
         border-radius: 13px;
+
         background:
             rgba(255,255,255,0.04);
+
         cursor: pointer;
+
         transition:
             background .25s ease,
             border-color .25s ease;
+
         z-index: 1100;
     }
+
     .mobile-menu-button:hover {
         background:
             rgba(255,255,255,0.08);
+
         border-color:
             rgba(141,154,255,0.3);
     }
+
     .mobile-menu-button span {
+
         display: block;
+
         width: 20px;
         height: 2px;
+
         border-radius: 10px;
+
         background: #ffffff;
+
         transition:
             transform .3s ease,
             opacity .2s ease;
     }
-    /*
-     * ANIMATION HAMBURGER → X
-     */
+
+
+    /* HAMBURGER → X */
+
     .mobile-menu-button.active span:nth-child(1) {
         transform:
             translateY(7px)
             rotate(45deg);
     }
+
     .mobile-menu-button.active span:nth-child(2) {
         opacity: 0;
     }
+
     .mobile-menu-button.active span:nth-child(3) {
         transform:
             translateY(-7px)
             rotate(-45deg);
     }
-    /*
-     * OVERLAY
-     */
+
+
+    /* =====================================================
+       OVERLAY
+    ====================================================== */
+
     .mobile-overlay {
+
         position: fixed;
+
         inset: 0;
+
         display: block;
+
         background:
             rgba(0,0,0,0.65);
+
         backdrop-filter: blur(5px);
+
         -webkit-backdrop-filter: blur(5px);
+
         opacity: 0;
+
         visibility: hidden;
+
         transition:
             opacity .3s ease,
             visibility .3s ease;
+
         z-index: 1050;
     }
+
     .mobile-overlay.active {
         opacity: 1;
+
         visibility: visible;
     }
-    /*
-     * MENU
-     */
+
+
+    /* =====================================================
+       MENU
+    ====================================================== */
+
     .mobile-menu {
+
         position: fixed;
+
         top: 0;
         right: 0;
-        width: min(390px, 88vw);
+
+        width:
+            min(390px, 88vw);
+
         height: 100dvh;
+
         display: block;
+
         overflow-y: auto;
+
         padding: 22px;
+
         background:
             linear-gradient(
                 160deg,
                 #101522,
                 #0b0f18 70%
             );
+
         border-left:
             1px solid rgba(255,255,255,0.08);
+
         box-shadow:
             -25px 0 80px rgba(0,0,0,0.35);
+
         transform:
             translateX(105%);
+
         transition:
             transform .35s cubic-bezier(.22,1,.36,1);
+
         z-index: 1090;
     }
+
     .mobile-menu.active {
         transform:
             translateX(0);
     }
-    /*
-     * HEADER MENU
-     */
+
+
+    /* =====================================================
+       HEADER MENU
+    ====================================================== */
+
     .mobile-menu-header {
+
         display: flex;
+
         align-items: center;
+
         justify-content: space-between;
+
         padding-bottom: 22px;
+
         border-bottom:
             1px solid rgba(255,255,255,0.07);
     }
+
     .mobile-logo {
+
         color: #ffffff;
+
         font-size: 1.35rem;
+
         font-weight: 900;
+
         text-decoration: none;
     }
+
     .mobile-close-button {
+
         width: 40px;
         height: 40px;
+
         display: flex;
+
         align-items: center;
         justify-content: center;
+
         border:
             1px solid rgba(255,255,255,0.08);
+
         border-radius: 11px;
+
         background:
             rgba(255,255,255,0.04);
+
         color: #ffffff;
+
         font-size: 1.6rem;
+
         line-height: 1;
+
         cursor: pointer;
     }
-    /*
-     * UTILISATEUR
-     */
+
+
+    /* =====================================================
+       UTILISATEUR
+    ====================================================== */
+
     .mobile-user-card {
+
         display: flex;
+
         align-items: center;
+
         gap: 13px;
+
         margin: 22px 0;
+
         padding: 15px;
+
         border:
             1px solid rgba(255,255,255,0.07);
+
         border-radius: 17px;
+
         background:
             rgba(255,255,255,0.035);
     }
+
     .mobile-avatar {
+
         width: 43px;
         height: 43px;
+
         flex-shrink: 0;
+
         display: flex;
+
         align-items: center;
         justify-content: center;
+
         border-radius: 50%;
+
         background:
             linear-gradient(
                 135deg,
                 #7886ff,
                 #4f5dcc
             );
+
         color: #ffffff;
+
         font-weight: 900;
     }
+
     .mobile-user-label {
+
         display: block;
+
         margin-bottom: 3px;
+
         color: #697386;
+
         font-size: 0.67rem;
+
         text-transform: uppercase;
+
         letter-spacing: .08em;
     }
+
     .mobile-user-card strong {
+
         color: #ffffff;
+
         font-size: .9rem;
     }
-    /*
-     * NAVIGATION MOBILE
-     */
+
+
+    /* =====================================================
+       NAVIGATION MOBILE
+    ====================================================== */
+
     .mobile-navigation {
+
         display: flex;
+
         flex-direction: column;
+
         gap: 5px;
     }
+
     .mobile-nav-link {
+
         min-height: 53px;
+
         display: flex;
+
         align-items: center;
+
         gap: 13px;
+
         padding: 0 13px;
+
         border-radius: 13px;
+
         color: #aab1c0;
+
         text-decoration: none;
+
         font-size: .87rem;
+
         font-weight: 700;
+
         transition:
             background .2s ease,
             color .2s ease,
             transform .2s ease;
     }
+
     .mobile-nav-link:hover {
+
         color: #ffffff;
+
         background:
             rgba(255,255,255,0.055);
+
         transform:
             translateX(3px);
     }
+
+
+    /* ICONES */
+
     .mobile-nav-icon {
+
         width: 31px;
         height: 31px;
+
         display: flex;
+
         align-items: center;
         justify-content: center;
+
         flex-shrink: 0;
+
         border-radius: 9px;
+
         color: #929dff;
+
         background:
             rgba(141,154,255,0.08);
-        font-size: .66rem;
+
+        font-size: .85rem;
+
         font-weight: 900;
     }
+
+
+    /* FLECHE */
+
     .mobile-arrow {
+
         margin-left: auto;
+
         color: #697386;
     }
-    /*
-     * DASHBOARD MOBILE
-     */
+
+
+    /* =====================================================
+       DASHBOARD
+    ====================================================== */
+
     .mobile-dashboard-link {
+
         color: #ffffff;
+
         background:
             linear-gradient(
                 135deg,
                 rgba(111,125,255,.18),
                 rgba(111,125,255,.06)
             );
+
         border:
             1px solid rgba(141,154,255,.14);
     }
-    /*
-     * SECTION
-     */
+
+
+    /* =====================================================
+       SECTION
+    ====================================================== */
+
     .mobile-section-title {
+
         padding:
             12px
             13px
             5px;
+
         color: #667084;
+
         font-size: .64rem;
+
         font-weight: 900;
+
         letter-spacing: .14em;
     }
-    /*
-     * SEPARATEUR
-     */
+
+
+    /* =====================================================
+       SEPARATEUR
+    ====================================================== */
+
     .mobile-divider {
+
         height: 1px;
+
         margin: 12px 0;
+
         background:
             rgba(255,255,255,0.07);
     }
-    /*
-     * DEVENIR FORMATEUR
-     */
+
+
+    /* =====================================================
+       DEVENIR FORMATEUR
+    ====================================================== */
+
     .mobile-trainer-link {
         color: #a5e7ca;
     }
-    /*
-     * INSCRIPTION
-     */
+
+
+    /* =====================================================
+       INSCRIPTION
+    ====================================================== */
+
     .mobile-register {
+
         min-height: 50px;
+
         display: flex;
+
         align-items: center;
+
         justify-content: space-between;
+
         padding: 0 17px;
+
         border-radius: 13px;
+
         color: #131725;
+
         background: #f1f2ff;
+
         text-decoration: none;
+
         font-size: .82rem;
+
         font-weight: 900;
     }
-    /*
-     * LOGOUT
-     */
+
+
+    /* =====================================================
+       LOGOUT
+    ====================================================== */
+
     .mobile-logout {
+
         min-height: 50px;
+
         display: flex;
+
         align-items: center;
+
         justify-content: space-between;
+
         padding: 0 15px;
+
         border-radius: 13px;
+
         color: #ff9292;
+
         background:
             rgba(255,90,90,.055);
+
         border:
             1px solid rgba(255,90,90,.08);
+
         text-decoration: none;
+
         font-size: .82rem;
+
         font-weight: 800;
     }
+
+
+    /* =====================================================
+       FOOTER MOBILE
+    ====================================================== */
+
+    .site-footer {
+
+        margin-top: 35px;
+    }
+
+    .footer-inner {
+
+        width: 88%;
+
+        padding:
+            28px 0 22px;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap:
+            25px 20px;
+    }
+
+    .footer-brand {
+
+        grid-column:
+            1 / -1;
+
+        max-width: none;
+    }
+
+    .footer-bottom {
+
+        width: 88%;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 4px;
+
+        padding:
+            12px 0 15px;
+    }
+
+
     /*
-     * BLOQUER LE SCROLL DE LA PAGE
-     * QUAND LE MENU EST OUVERT
+     * BLOQUER LE SCROLL
      */
+
     body.mobile-menu-open {
         overflow: hidden;
     }
+
 }
+
+
 /* =========================================================
    PETITS TÉLÉPHONES
 ========================================================= */
+
 @media (max-width: 420px) {
+
     .mobile-menu {
+
         width: 92vw;
-        padding:
-            18px;
+
+        padding: 18px;
     }
+
     .mobile-nav-link {
+
         min-height: 50px;
     }
+
+    .footer-inner {
+
+        grid-template-columns: 1fr;
+
+        gap: 22px;
+    }
+
+    .footer-brand {
+
+        grid-column: auto;
+    }
+
 }
+
 </style>
+
 </body>
 </html>

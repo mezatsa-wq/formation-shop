@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Passer Premium - FormaShop{% endblock %}
+
+{% block content %}
+
+<div class="premium-page">
+
+    <div class="premium-card">
+
+        <div class="premium-icon">
+            ⭐
+        </div>
+
+        <h1>Passer Premium</h1>
+
+        <p class="premium-subtitle">
+            Développez votre activité vendeur avec le statut Premium.
+        </p>
+
+        <div class="premium-price">
+            <strong>1 000 FCFA</strong>
+            <span>pour l'abonnement</span>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="payment_method">
+                    Moyen de paiement
+                </label>
+
+                <select
+                    id="payment_method"
+                    name="payment_method"
+                    required
+                >
+                    <option value="">
+                        Sélectionner
+                    </option>
+
+                    <option value="mtn">
+                        MTN Mobile Money
+                    </option>
+
+                    <option value="orange">
+                        Orange Money
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="payment_phone">
+                    Numéro de paiement
+                </label>
+
+                <input
+                    type="text"
+                    id="payment_phone"
+                    name="payment_phone"
+                    placeholder="6XXXXXXXX"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="premium-button"
+            >
+                Continuer vers Premium
+            </button>
+
+        </form>
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="back-link"
+        >
+            Retour au dashboard
+        </a>
+
+    </div>
+
+</div>
+
+<style>
+.premium-page {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.premium-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 36px;
+    border-radius: 22px;
+    background: rgba(20, 20, 32, 0.95);
+    border: 1px solid rgba(124, 92, 255, 0.25);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.30);
+}
+
+.premium-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: rgba(124, 92, 255, 0.14);
+    font-size: 30px;
+}
+
+.premium-card h1 {
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: 30px;
+}
+
+.premium-subtitle {
+    color: #aaa7bb;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.premium-price {
+    padding: 18px;
+    margin-bottom: 25px;
+    border-radius: 14px;
+    background: rgba(124, 92, 255, 0.08);
+    border: 1px solid rgba(124, 92, 255, 0.18);
+}
+
+.premium-price strong {
+    display: block;
+    color: #9b8cff;
+    font-size: 25px;
+}
+
+.premium-price span {
+    color: #9995a8;
+    font-size: 13px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ddd9eb;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: #151522;
+    color: #ffffff;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #7c5cff;
+}
+
+.premium-button {
+    width: 100%;
+    border: 0;
+    padding: 14px;
+    border-radius: 11px;
+    background: linear-gradient(
+        135deg,
+        #7c5cff,
+        #9b7cff
+    );
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #aaa7bb;
+    text-decoration: none;
+}
+</style>
+
+{% endblock %}

@@ -1,106 +1,389 @@
 {% extends "base.html" %}
 
-{% block title %}Mes produits - FormaShop{% endblock %}
+{% block title %}
+Mes produits - FormaShop
+{% endblock %}
 
 {% block content %}
 
-<section class="page-header">
+<style>
 
-    <h1>Mes produits</h1>
+.my-products-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+}
 
-    <p>
-        Gérez les produits que vous proposez sur FormaShop.
-    </p>
+.my-products-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
 
-</section>
+.my-products-header h1 {
+    margin: 0 0 8px;
+    font-size: 34px;
+}
+
+.my-products-header p {
+    margin: 0;
+    color: #94a3b8;
+}
+
+.create-product-btn {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #7c3aed
+    );
+    transition: .2s ease;
+}
+
+.create-product-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99,102,241,.25);
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(280px, 1fr)
+    );
+    gap: 24px;
+}
+
+.product-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(15,23,42,.78);
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.18);
+}
+
+.product-card.featured {
+    border-color: rgba(250,204,21,.35);
+}
+
+.product-image {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 18px;
+}
+
+.product-placeholder {
+    height: 190px;
+    border-radius: 15px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(99,102,241,.12),
+            rgba(124,58,237,.10)
+        );
+}
+
+.product-card h2 {
+    margin: 0 0 10px;
+    font-size: 21px;
+}
+
+.product-description {
+    color: #94a3b8;
+    line-height: 1.6;
+    min-height: 48px;
+}
+
+.product-price {
+    display: block;
+    margin: 16px 0;
+    font-size: 21px;
+    color: #a5b4fc;
+}
+
+.product-info {
+    color: #cbd5e1;
+    line-height: 1.8;
+}
+
+.featured-box {
+    margin: 15px 0;
+    padding: 12px;
+    border-radius: 12px;
+    color: #fde68a;
+    background: rgba(250,204,21,.08);
+    border: 1px solid rgba(250,204,21,.18);
+}
+
+.product-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.product-action {
+    display: inline-block;
+    padding: 9px 13px;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    background: rgba(255,255,255,.08);
+    transition: .2s ease;
+}
+
+.product-action:hover {
+    background: rgba(99,102,241,.20);
+}
+
+.product-action.primary {
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #7c3aed
+    );
+}
+
+.product-action.danger {
+    background: rgba(239,68,68,.12);
+    color: #f87171;
+}
+
+.empty-products {
+    padding: 50px 30px;
+    text-align: center;
+    border-radius: 20px;
+    background: rgba(15,23,42,.72);
+    border: 1px solid rgba(148,163,184,.12);
+}
+
+.empty-products h2 {
+    margin-top: 0;
+}
+
+.empty-products p {
+    color: #94a3b8;
+    margin-bottom: 25px;
+}
+
+@media(max-width:700px) {
+
+    .my-products-page {
+        margin-top: 25px;
+    }
+
+    .my-products-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .my-products-header h1 {
+        font-size: 28px;
+    }
+
+    .create-product-btn {
+        text-align: center;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .product-action {
+        text-align: center;
+    }
+}
+
+</style>
 
 
-<section class="products-grid">
+<div class="my-products-page">
+
+
+    <div class="my-products-header">
+
+        <div>
+
+            <h1>
+                Mes produits
+            </h1>
+
+            <p>
+                Gérez les produits que vous proposez sur FormaShop.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{% url 'create_product' %}"
+            class="create-product-btn"
+        >
+            + Ajouter un produit
+        </a>
+
+    </div>
+
 
     {% if products %}
 
-        {% for product in products %}
-           {% if product.is_featured %}
-    <p>
-        ⭐ Produit actuellement mis en avant
-    </p>
+        <div class="products-grid">
 
-    {% if product.boost_until %}
-        <p>
-            Jusqu'au :
-            {{ product.boost_until|date:"d/m/Y H:i" }}
-        </p>
-    {% endif %}
+            {% for product in products %}
 
-{% else %}
+                <article
+                    class="product-card {% if product.is_featured %}featured{% endif %}"
+                >
 
-    <a href="{% url 'feature_product' product.id %}">
-        ⭐ Mettre en avant
-    </a>
 
-{% endif %}
-            <article class="product-card">
+                    {% if product.image %}
 
-                {% if product.image %}
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                            class="product-image"
+                        >
 
-                    <img
-                        src="{{ product.image.url }}"
-                        alt="{{ product.name }}"
-                    >
+                    {% else %}
 
-                {% endif %}
+                        <div class="product-placeholder">
+                            Aucune image
+                        </div>
 
-                <h2>
-                    {{ product.name }}
-                </h2>
+                    {% endif %}
 
-                <p>
-                    {{ product.description|truncatewords:20 }}
-                </p>
 
-                <strong>
-                    {{ product.price|floatformat:0 }} FCFA
-                </strong>
+                    <h2>
+                        {{ product.name }}
+                    </h2>
 
-                <p>
-                    Stock :
-                    {{ product.stock }}
-                </p>
 
-                <p>
-                    Récompense :
-                    {{ product.reward_tokens }} jetons
-                </p>
+                    <p class="product-description">
 
-                <div>
+                        {{ product.description|truncatewords:20 }}
 
-                    <a
-                        href="{% url 'edit_product' product.id %}"
-                    >
-                        Modifier
-                    </a>
+                    </p>
 
-                    <a
-                        href="{% url 'delete_product' product.id %}"
-                    >
-                        Supprimer
-                    </a>
 
-                </div>
+                    <strong class="product-price">
 
-            </article>
+                        {{ product.price|floatformat:0 }} FCFA
 
-        {% endfor %}
+                    </strong>
+
+
+                    <div class="product-info">
+
+                        <div>
+                            <strong>Stock :</strong>
+                            {{ product.stock }}
+                        </div>
+
+                        <div>
+                            <strong>Récompense :</strong>
+                            {{ product.reward_tokens }} jetons
+                        </div>
+
+                    </div>
+
+
+                    {% if product.is_featured %}
+
+                        <div class="featured-box">
+
+                            <strong>
+                                ⭐ Produit actuellement mis en avant
+                            </strong>
+
+                            {% if product.boost_until %}
+
+                                <div>
+                                    Jusqu'au :
+                                    {{ product.boost_until|date:"d/m/Y H:i" }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="product-actions">
+
+
+                        <a
+                            href="{% url 'edit_product' product.id %}"
+                            class="product-action"
+                        >
+                            Modifier
+                        </a>
+
+
+                        <a
+                            href="{% url 'delete_product' product.id %}"
+                            class="product-action danger"
+                        >
+                            Supprimer
+                        </a>
+
+
+                        {% if not product.is_featured %}
+
+                            <a
+                                href="{% url 'feature_product' product.id %}"
+                                class="product-action primary"
+                            >
+                                ⭐ Mettre en avant
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
 
     {% else %}
 
-        <div>
+        <div class="empty-products">
 
             <h2>
                 Vous n'avez encore aucun produit.
             </h2>
 
-            <a href="{% url 'create_product' %}">
+            <p>
+                Commencez par créer votre premier produit
+                pour commencer à vendre sur FormaShop.
+            </p>
+
+
+            <a
+                href="{% url 'create_product' %}"
+                class="create-product-btn"
+            >
                 Ajouter mon premier produit
             </a>
 
@@ -108,6 +391,7 @@
 
     {% endif %}
 
-</section>
+
+</div>
 
 {% endblock %}

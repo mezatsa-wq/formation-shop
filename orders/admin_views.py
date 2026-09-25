@@ -11,6 +11,10 @@ def admin_orders(request):
     status_filter = request.GET.get("status", "all")
     search = request.GET.get("search", "").strip()
 
+    # =====================================================
+    # TOUTES LES COMMANDES
+    # =====================================================
+
     orders = Order.objects.select_related(
         "user",
         "seller",
@@ -24,6 +28,7 @@ def admin_orders(request):
     if status_filter == "pending_delivery":
 
         orders = orders.filter(
+            status="pending",
             seller_confirmed=False,
             admin_validated=False
         )
@@ -31,6 +36,7 @@ def admin_orders(request):
     elif status_filter == "seller_delivered":
 
         orders = orders.filter(
+            status="seller_delivered",
             seller_confirmed=True,
             customer_confirmed=False,
             admin_validated=False
@@ -39,6 +45,7 @@ def admin_orders(request):
     elif status_filter == "ready":
 
         orders = orders.filter(
+            status="customer_received",
             seller_confirmed=True,
             customer_confirmed=True,
             admin_validated=False
@@ -47,7 +54,14 @@ def admin_orders(request):
     elif status_filter == "completed":
 
         orders = orders.filter(
+            status="delivered",
             admin_validated=True
+        )
+
+    elif status_filter == "cancelled":
+
+        orders = orders.filter(
+            status="cancelled"
         )
 
     # =====================================================
@@ -71,25 +85,37 @@ def admin_orders(request):
     total_orders = Order.objects.count()
 
     pending_delivery = Order.objects.filter(
+        status="pending",
         seller_confirmed=False,
         admin_validated=False
     ).count()
 
     seller_delivered = Order.objects.filter(
+        status="seller_delivered",
         seller_confirmed=True,
         customer_confirmed=False,
         admin_validated=False
     ).count()
 
     ready_for_validation = Order.objects.filter(
+        status="customer_received",
         seller_confirmed=True,
         customer_confirmed=True,
         admin_validated=False
     ).count()
 
     completed_orders = Order.objects.filter(
+        status="delivered",
         admin_validated=True
     ).count()
+
+    cancelled_orders = Order.objects.filter(
+        status="cancelled"
+    ).count()
+
+    # =====================================================
+    # CONTEXTE
+    # =====================================================
 
     context = {
         "orders": orders,
@@ -99,6 +125,7 @@ def admin_orders(request):
         "seller_delivered": seller_delivered,
         "ready_for_validation": ready_for_validation,
         "completed_orders": completed_orders,
+        "cancelled_orders": cancelled_orders,
 
         "status_filter": status_filter,
         "search": search,

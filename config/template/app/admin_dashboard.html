@@ -72,9 +72,6 @@
     "
 >
 
-
-    <!-- LOGO -->
-
     <div class="h-20 px-7 flex items-center border-b border-white/10">
 
         <a
@@ -86,8 +83,6 @@
 
     </div>
 
-
-    <!-- ADMIN -->
 
     <div class="px-6 py-5">
 
@@ -140,7 +135,9 @@
     </div>
 
 
-    <!-- NAVIGATION -->
+    <!-- =================================================
+         NAVIGATION
+    ================================================= -->
 
     <nav class="flex-1 px-4 overflow-y-auto">
 
@@ -176,13 +173,11 @@
                 mb-2
             "
         >
-
             <span class="text-purple">▣</span>
 
             <span class="text-sm font-medium">
                 Dashboard
             </span>
-
         </a>
 
 
@@ -286,6 +281,56 @@
         </a>
 
 
+        <!-- NOUVEAU : CANDIDATURES VENDEURS -->
+
+        <a
+            href="/admin/accounts/sellerapplication/"
+            class="
+                flex
+                items-center
+                justify-between
+                px-4
+                py-3
+                rounded-xl
+                text-slate-400
+                hover:text-white
+                hover:bg-white/[0.04]
+                transition
+            "
+        >
+
+            <span class="flex items-center gap-3">
+
+                <span>♢</span>
+
+                <span class="text-sm">
+                    Candidatures vendeurs
+                </span>
+
+            </span>
+
+            {% if pending_seller_applications %}
+                <span
+                    class="
+                        min-w-6
+                        h-6
+                        px-2
+                        rounded-full
+                        bg-amber-500/10
+                        text-amber-400
+                        text-xs
+                        flex
+                        items-center
+                        justify-center
+                    "
+                >
+                    {{ pending_seller_applications }}
+                </span>
+            {% endif %}
+
+        </a>
+
+
         <a
             href="/admin/courses/course/"
             class="
@@ -381,7 +426,7 @@
                 transition
             "
         >
-            <span>↗</span>
+            <span>↗️</span>
             <span class="text-sm">Retraits</span>
         </a>
 
@@ -572,7 +617,6 @@
                 mb-8
             "
         >
-
 
             <!-- USERS -->
 
@@ -789,6 +833,274 @@
                 <p class="mt-4 text-xs text-slate-600">
                     Produits disponibles
                 </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CANDIDATURES VENDEURS
+        ================================================= -->
+
+        <section
+            class="
+                mb-8
+                rounded-2xl
+                bg-panel
+                border
+                border-white/[0.07]
+                overflow-hidden
+                shadow-premium
+            "
+        >
+
+            <div
+                class="
+                    px-6
+                    py-5
+                    border-b
+                    border-white/[0.07]
+                    flex
+                    flex-col
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                    gap-4
+                "
+            >
+
+                <div>
+
+                    <div class="flex items-center gap-3">
+
+                        <p class="text-lg font-bold">
+                            Candidatures vendeurs
+                        </p>
+
+                        {% if pending_seller_applications %}
+                            <span
+                                class="
+                                    px-2.5
+                                    py-1
+                                    rounded-full
+                                    bg-amber-500/10
+                                    border
+                                    border-amber-500/20
+                                    text-amber-400
+                                    text-[11px]
+                                    font-bold
+                                "
+                            >
+                                {{ pending_seller_applications }} en attente
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <p class="text-xs text-slate-600 mt-1">
+                        Demandes pour devenir vendeur sur FormaShop.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="/admin/accounts/sellerapplication/"
+                    class="
+                        inline-flex
+                        items-center
+                        justify-center
+                        px-4
+                        py-2.5
+                        rounded-xl
+                        bg-purple/10
+                        border
+                        border-purple/20
+                        text-purple
+                        hover:bg-purple
+                        hover:text-white
+                        transition
+                        text-xs
+                        font-semibold
+                    "
+                >
+                    Gérer les candidatures →
+                </a>
+
+            </div>
+
+
+            <div class="divide-y divide-white/[0.05]">
+
+                {% for application in pending_seller_application_list %}
+
+                    <div
+                        class="
+                            p-5
+                            flex
+                            flex-col
+                            md:flex-row
+                            md:items-center
+                            md:justify-between
+                            gap-5
+                            hover:bg-white/[0.02]
+                            transition
+                        "
+                    >
+
+                        <div class="flex items-center gap-4">
+
+                            <div
+                                class="
+                                    w-12
+                                    h-12
+                                    rounded-xl
+                                    bg-gradient-to-br
+                                    from-purple
+                                    to-purple2
+                                    flex
+                                    items-center
+                                    justify-center
+                                    font-bold
+                                    shadow-lg
+                                    shadow-purple/20
+                                "
+                            >
+                                {{ application.user.username|first|upper }}
+                            </div>
+
+                            <div>
+
+                                <p class="font-semibold">
+                                    {{ application.full_name }}
+                                </p>
+
+                                <p class="text-xs text-slate-500 mt-1">
+                                    @{{ application.user.username }}
+                                </p>
+
+                                <p class="text-xs text-slate-600 mt-1">
+                                    {{ application.activity }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                flex
+                                flex-col
+                                sm:flex-row
+                                sm:items-center
+                                gap-3
+                            "
+                        >
+
+                            <span
+                                class="
+                                    px-3
+                                    py-1.5
+                                    rounded-full
+                                    bg-amber-500/10
+                                    border
+                                    border-amber-500/20
+                                    text-amber-400
+                                    text-[11px]
+                                    font-semibold
+                                    text-center
+                                "
+                            >
+                                En attente
+                            </span>
+
+
+                            <a
+                                href="/admin/accounts/sellerapplication/{{ application.id }}/change/"
+                                class="
+                                    inline-flex
+                                    items-center
+                                    justify-center
+                                    px-4
+                                    py-2.5
+                                    rounded-xl
+                                    bg-white/[0.05]
+                                    border
+                                    border-white/[0.08]
+                                    text-xs
+                                    font-semibold
+                                    hover:bg-purple
+                                    hover:border-purple
+                                    transition
+                                "
+                            >
+                                Examiner
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="p-10 text-center">
+
+                        <div
+                            class="
+                                mx-auto
+                                w-14
+                                h-14
+                                rounded-2xl
+                                bg-emerald-500/10
+                                border
+                                border-emerald-500/20
+                                flex
+                                items-center
+                                justify-center
+                                text-emerald-400
+                                text-2xl
+                                mb-4
+                            "
+                        >
+                            ✓
+                        </div>
+
+                        <p class="font-semibold">
+                            Aucune candidature vendeur en attente
+                        </p>
+
+                        <p class="text-sm text-slate-600 mt-2">
+                            Toutes les demandes de vendeurs ont été traitées.
+                        </p>
+
+                        <a
+                            href="/admin/accounts/sellerapplication/"
+                            class="
+                                inline-flex
+                                mt-5
+                                px-4
+                                py-2.5
+                                rounded-xl
+                                bg-white/[0.04]
+                                border
+                                border-white/[0.08]
+                                text-xs
+                                font-semibold
+                                text-slate-400
+                                hover:text-white
+                                hover:border-purple/30
+                                transition
+                            "
+                        >
+                            Voir toutes les candidatures
+                        </a>
+
+                    </div>
+
+                {% endfor %}
 
             </div>
 
@@ -1022,7 +1334,6 @@
 
                 <div class="p-5 space-y-3">
 
-
                     <a
                         href="{% url 'admin_orders' %}"
                         class="
@@ -1124,6 +1435,42 @@
 
                     </a>
 
+
+                    <!-- NOUVEAU : ACTIVITÉ VENDEURS -->
+
+                    <a
+                        href="/admin/accounts/sellerapplication/"
+                        class="
+                            block
+                            p-4
+                            rounded-xl
+                            bg-white/[0.025]
+                            border
+                            border-white/[0.05]
+                            hover:border-purple/20
+                            hover:bg-purple/[0.03]
+                            transition
+                        "
+                    >
+
+                        <div class="flex justify-between">
+
+                            <span class="text-sm text-slate-400">
+                                Candidatures vendeurs
+                            </span>
+
+                            <strong class="text-purple">
+                                {{ pending_seller_applications }}
+                            </strong>
+
+                        </div>
+
+                        <p class="text-[11px] text-slate-600 mt-2">
+                            Demandes actuellement en attente
+                        </p>
+
+                    </a>
+
                 </div>
 
             </div>
@@ -1165,10 +1512,6 @@
 </main>
 
 
-
-<!-- =====================================================
-     MOBILE JAVASCRIPT
-===================================================== -->
 
 <script>
 

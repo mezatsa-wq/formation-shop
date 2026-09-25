@@ -1,16 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
 from django.db import models
-from .models import Product
-from .forms import ProductForm
 from django.utils import timezone
 
+from .models import Product
+from .forms import ProductForm
+
+
 def update_expired_boosts():
-    """
-    Désactive automatiquement les mises en avant expirées.
-    """
 
     now = timezone.now()
 
@@ -22,19 +20,26 @@ def update_expired_boosts():
         is_featured=False,
         boost_until=None
     )
+
+
 def product_list(request):
 
     update_expired_boosts()
 
-    search = request.GET.get("search", "").strip()
+    search = request.GET.get(
+        "search",
+        ""
+    ).strip()
 
     products = Product.objects.filter(
         stock__gt=0
     )
 
     if search:
+
         products = products.filter(
-            models.Q(name__icontains=search) |
+            models.Q(name__icontains=search)
+            |
             models.Q(description__icontains=search)
         )
 
@@ -51,6 +56,8 @@ def product_list(request):
             "search": search,
         }
     )
+
+
 def product_detail(request, product_id):
 
     product = get_object_or_404(
@@ -71,7 +78,10 @@ def product_detail(request, product_id):
 @login_required
 def create_product(request):
 
-    if not hasattr(request.user, "seller_profile"):
+    if not hasattr(
+        request.user,
+        "seller_profile"
+    ):
 
         messages.error(
             request,
@@ -122,7 +132,10 @@ def create_product(request):
 @login_required
 def my_products(request):
 
-    if not hasattr(request.user, "seller_profile"):
+    if not hasattr(
+        request.user,
+        "seller_profile"
+    ):
 
         messages.error(
             request,
@@ -133,7 +146,9 @@ def my_products(request):
 
     products = Product.objects.filter(
         seller=request.user
-    ).order_by("-created_at")
+    ).order_by(
+        "-created_at"
+    )
 
     return render(
         request,
@@ -142,24 +157,37 @@ def my_products(request):
             "products": products
         }
     )
+
+
 @login_required
 def feature_product(request, product_id):
 
-    if not hasattr(request.user, "seller_profile"):
+    if not hasattr(
+        request.user,
+        "seller_profile"
+    ):
+
         messages.error(
             request,
             "Vous devez être un vendeur approuvé."
         )
+
         return redirect("home")
 
     from accounts.models import is_premium_seller
 
-    if not is_premium_seller(request.user):
+    if not is_premium_seller(
+        request.user
+    ):
+
         messages.error(
             request,
             "La mise en avant des produits est réservée aux vendeurs Premium."
         )
-        return redirect("my_products")
+
+        return redirect(
+            "my_products"
+        )
 
     product = get_object_or_404(
         Product,
@@ -169,23 +197,36 @@ def feature_product(request, product_id):
 
     if request.method == "POST":
 
-        days = request.POST.get("days", "7")
+        days = request.POST.get(
+            "days",
+            "7"
+        )
 
         try:
             days = int(days)
+
         except ValueError:
             days = 7
 
         if days not in [7, 15, 30]:
+
             messages.error(
                 request,
                 "Durée de mise en avant invalide."
             )
-            return redirect("my_products")
+
+            return redirect(
+                "my_products"
+            )
 
         product.is_featured = True
-        product.boost_until = timezone.now() + timezone.timedelta(
-            days=days
+
+        product.boost_until = (
+            timezone.now()
+            +
+            timezone.timedelta(
+                days=days
+            )
         )
 
         product.save(
@@ -200,7 +241,9 @@ def feature_product(request, product_id):
             f"Votre produit est maintenant mis en avant pendant {days} jours."
         )
 
-        return redirect("my_products")
+        return redirect(
+            "my_products"
+        )
 
     return render(
         request,
@@ -214,7 +257,10 @@ def feature_product(request, product_id):
 @login_required
 def edit_product(request, product_id):
 
-    if not hasattr(request.user, "seller_profile"):
+    if not hasattr(
+        request.user,
+        "seller_profile"
+    ):
 
         messages.error(
             request,
@@ -239,7 +285,13 @@ def edit_product(request, product_id):
 
         if form.is_valid():
 
-            form.save()
+            product = form.save(
+                commit=False
+            )
+
+            product.seller = request.user
+
+            product.save()
 
             messages.success(
                 request,
@@ -269,7 +321,10 @@ def edit_product(request, product_id):
 @login_required
 def delete_product(request, product_id):
 
-    if not hasattr(request.user, "seller_profile"):
+    if not hasattr(
+        request.user,
+        "seller_profile"
+    ):
 
         messages.error(
             request,

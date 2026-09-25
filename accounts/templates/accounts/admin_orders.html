@@ -423,9 +423,7 @@
 <main class="lg:ml-[280px] min-h-screen">
 
 
-    <!-- =================================================
-         HEADER
-    ================================================= -->
+    <!-- HEADER -->
 
     <header
         class="h-20
@@ -462,8 +460,6 @@
         </div>
 
 
-        <!-- ADMIN -->
-
         <div class="hidden sm:block text-right">
 
             <p class="text-sm font-semibold">
@@ -480,8 +476,6 @@
 
         </div>
 
-
-        <!-- MOBILE MENU -->
 
         <button
             id="menuButton"
@@ -501,19 +495,14 @@
     </header>
 
 
-    <!-- =================================================
-         PAGE
-    ================================================= -->
+    <!-- PAGE -->
 
     <div class="p-5 sm:p-8">
 
 
-        <!-- =================================================
-             INTRODUCTION
-        ================================================= -->
+        <!-- INTRODUCTION -->
 
         <section class="mb-8">
-
 
             <a
                 href="{% url 'admin_dashboard' %}"
@@ -565,7 +554,7 @@
             class="grid
                    grid-cols-2
                    lg:grid-cols-3
-                   xl:grid-cols-5
+                   xl:grid-cols-6
                    gap-4
                    mb-8"
         >
@@ -599,11 +588,7 @@
                     Total
                 </p>
 
-                <p
-                    class="text-3xl
-                           font-black
-                           mt-1"
-                >
+                <p class="text-3xl font-black mt-1">
                     {{ total_orders }}
                 </p>
 
@@ -746,9 +731,7 @@
             <!-- TERMINÉES -->
 
             <div
-                class="col-span-2
-                       lg:col-span-1
-                       bg-slate-900
+                class="bg-slate-900
                        border border-emerald-500/10
                        hover:border-emerald-500/25
                        rounded-2xl
@@ -783,6 +766,49 @@
 
                 <p class="text-xs text-slate-600 mt-1">
                     Validées par l'administration
+                </p>
+
+            </div>
+
+
+            <!-- ANNULÉES -->
+
+            <div
+                class="bg-slate-900
+                       border border-red-500/10
+                       hover:border-red-500/25
+                       rounded-2xl
+                       p-5
+                       transition"
+            >
+
+                <div
+                    class="w-10 h-10
+                           rounded-xl
+                           bg-red-500/10
+                           text-red-300
+                           flex items-center
+                           justify-center
+                           mb-4"
+                >
+                    ✕
+                </div>
+
+                <p class="text-sm text-slate-500">
+                    Annulées
+                </p>
+
+                <p
+                    class="text-3xl
+                           font-black
+                           text-red-300
+                           mt-1"
+                >
+                    {{ cancelled_orders }}
+                </p>
+
+                <p class="text-xs text-slate-600 mt-1">
+                    Annulées par les clients
                 </p>
 
             </div>
@@ -823,7 +849,6 @@
                        gap-3"
             >
 
-
                 <div class="flex-1 relative">
 
                     <input
@@ -846,6 +871,8 @@
 
                 </div>
 
+
+                <!-- FILTRE STATUT -->
 
                 <select
                     name="status"
@@ -905,6 +932,18 @@
                         {% endif %}
                     >
                         Terminées
+                    </option>
+
+
+                    <!-- NOUVEAU : COMMANDES ANNULÉES -->
+
+                    <option
+                        value="cancelled"
+                        {% if status_filter == "cancelled" %}
+                            selected
+                        {% endif %}
+                    >
+                        Commandes annulées
                     </option>
 
                 </select>
@@ -973,10 +1012,7 @@
                 </div>
 
 
-                <div
-                    class="text-xs
-                           text-slate-600"
-                >
+                <div class="text-xs text-slate-600">
 
                     Actualisation selon les confirmations
 
@@ -992,7 +1028,6 @@
             <div class="hidden xl:block overflow-x-auto">
 
                 <table class="w-full">
-
 
                     <thead class="bg-slate-950/60">
 
@@ -1037,10 +1072,7 @@
                     </thead>
 
 
-                    <tbody
-                        class="divide-y
-                               divide-slate-800"
-                    >
+                    <tbody class="divide-y divide-slate-800">
 
 
                         {% for order in orders %}
@@ -1049,7 +1081,6 @@
                                 class="hover:bg-slate-800/30
                                        transition"
                             >
-
 
                                 <!-- COMMANDE -->
 
@@ -1109,9 +1140,7 @@
 
                                     {% else %}
 
-                                        <span
-                                            class="text-slate-600"
-                                        >
+                                        <span class="text-slate-600">
                                             Aucun vendeur
                                         </span>
 
@@ -1141,9 +1170,7 @@
 
                                     {% else %}
 
-                                        <span
-                                            class="text-slate-600"
-                                        >
+                                        <span class="text-slate-600">
                                             Produit supprimé
                                         </span>
 
@@ -1160,7 +1187,6 @@
                                         {{ order.total_price }} FCFA
                                     </p>
 
-
                                     {% if order.payment_status == "paid" %}
 
                                         <span
@@ -1174,9 +1200,7 @@
                                                    text-emerald-300
                                                    text-xs"
                                         >
-
                                             ✓ Paiement confirmé
-
                                         </span>
 
                                     {% else %}
@@ -1192,9 +1216,7 @@
                                                    text-amber-300
                                                    text-xs"
                                         >
-
                                             Paiement en attente
-
                                         </span>
 
                                     {% endif %}
@@ -1208,57 +1230,51 @@
 
                                     <div class="space-y-2">
 
+                                        {% if order.status == "cancelled" %}
 
-                                        {% if order.seller_confirmed %}
-
-                                            <p
-                                                class="text-xs
-                                                       text-emerald-300"
-                                            >
-                                                ✓ Vendeur confirmé
+                                            <p class="text-xs text-red-300">
+                                                ✕ Commande annulée
                                             </p>
 
                                         {% else %}
 
-                                            <p
-                                                class="text-xs
-                                                       text-amber-300"
-                                            >
-                                                ○ Vendeur
-                                            </p>
+                                            {% if order.seller_confirmed %}
 
-                                        {% endif %}
+                                                <p class="text-xs text-emerald-300">
+                                                    ✓ Vendeur confirmé
+                                                </p>
 
+                                            {% else %}
 
-                                        {% if order.customer_confirmed %}
+                                                <p class="text-xs text-amber-300">
+                                                    ○ Vendeur
+                                                </p>
 
-                                            <p
-                                                class="text-xs
-                                                       text-emerald-300"
-                                            >
-                                                ✓ Client confirmé
-                                            </p>
-
-                                        {% else %}
-
-                                            <p
-                                                class="text-xs
-                                                       text-amber-300"
-                                            >
-                                                ○ Client
-                                            </p>
-
-                                        {% endif %}
+                                            {% endif %}
 
 
-                                        {% if order.admin_validated %}
+                                            {% if order.customer_confirmed %}
 
-                                            <p
-                                                class="text-xs
-                                                       text-indigo-300"
-                                            >
-                                                ✓ Administrateur validé
-                                            </p>
+                                                <p class="text-xs text-emerald-300">
+                                                    ✓ Client confirmé
+                                                </p>
+
+                                            {% else %}
+
+                                                <p class="text-xs text-amber-300">
+                                                    ○ Client
+                                                </p>
+
+                                            {% endif %}
+
+
+                                            {% if order.admin_validated %}
+
+                                                <p class="text-xs text-indigo-300">
+                                                    ✓ Administrateur validé
+                                                </p>
+
+                                            {% endif %}
 
                                         {% endif %}
 
@@ -1277,7 +1293,6 @@
                                                gap-2"
                                     >
 
-
                                         <a
                                             href="{% url 'order_detail' order.id %}"
                                             class="px-3 py-2
@@ -1289,13 +1304,11 @@
                                                    font-semibold
                                                    transition"
                                         >
-
                                             Voir
-
                                         </a>
 
 
-                                        {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+                                        {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated and order.status != "cancelled" %}
 
                                             <form
                                                 method="POST"
@@ -1315,26 +1328,21 @@
                                                            font-bold
                                                            transition"
                                                 >
-
                                                     ✓ Valider
-
                                                 </button>
 
                                             </form>
 
                                         {% endif %}
 
-
                                     </div>
 
                                 </td>
-
 
                             </tr>
 
 
                         {% empty %}
-
 
                             <tr>
 
@@ -1356,10 +1364,7 @@
                                         📦
                                     </div>
 
-                                    <p
-                                        class="text-slate-400
-                                               mt-4"
-                                    >
+                                    <p class="text-slate-400 mt-4">
                                         Aucune commande trouvée.
                                     </p>
 
@@ -1367,9 +1372,7 @@
 
                             </tr>
 
-
                         {% endfor %}
-
 
                     </tbody>
 
@@ -1379,11 +1382,10 @@
 
 
             <!-- =================================================
-                 TABLE INTERMÉDIAIRE / MOBILE
+                 MOBILE
             ================================================= -->
 
             <div class="xl:hidden">
-
 
                 {% for order in orders %}
 
@@ -1392,9 +1394,6 @@
                                border-b border-slate-800
                                last:border-b-0"
                     >
-
-
-                        <!-- TOP -->
 
                         <div
                             class="flex
@@ -1406,9 +1405,7 @@
                             <div>
 
                                 <p class="font-bold text-lg">
-
                                     Commande #{{ order.id }}
-
                                 </p>
 
                                 <p
@@ -1416,9 +1413,7 @@
                                            text-slate-500
                                            mt-1"
                                 >
-
                                     {{ order.created_at|date:"d/m/Y H:i" }}
-
                                 </p>
 
                             </div>
@@ -1426,7 +1421,22 @@
 
                             <!-- STATUS -->
 
-                            {% if order.admin_validated %}
+                            {% if order.status == "cancelled" %}
+
+                                <span
+                                    class="shrink-0
+                                           px-3 py-1.5
+                                           rounded-full
+                                           bg-red-500/10
+                                           border
+                                           border-red-500/20
+                                           text-red-300
+                                           text-xs"
+                                >
+                                    Annulée
+                                </span>
+
+                            {% elif order.admin_validated %}
 
                                 <span
                                     class="shrink-0
@@ -1491,7 +1501,6 @@
 
                             {% endif %}
 
-
                         </div>
 
 
@@ -1503,9 +1512,6 @@
                                    sm:grid-cols-2
                                    gap-4"
                         >
-
-
-                            <!-- CLIENT -->
 
                             <div
                                 class="rounded-xl
@@ -1524,9 +1530,7 @@
                                 </p>
 
                                 <p class="font-semibold mt-2">
-
                                     {{ order.full_name }}
-
                                 </p>
 
                                 <p
@@ -1534,9 +1538,7 @@
                                            text-slate-500
                                            mt-1"
                                 >
-
                                     @{{ order.user.username }}
-
                                 </p>
 
                                 <p
@@ -1544,15 +1546,11 @@
                                            text-slate-600
                                            mt-1"
                                 >
-
                                     {{ order.phone_number }}
-
                                 </p>
 
                             </div>
 
-
-                            <!-- VENDEUR -->
 
                             <div
                                 class="rounded-xl
@@ -1570,21 +1568,15 @@
                                     Vendeur
                                 </p>
 
-
                                 {% if order.seller %}
 
                                     <p class="font-semibold mt-2">
-
                                         {{ order.seller.username }}
-
                                     </p>
 
                                 {% else %}
 
-                                    <p
-                                        class="text-slate-600
-                                               mt-2"
-                                    >
+                                    <p class="text-slate-600 mt-2">
                                         Aucun vendeur
                                     </p>
 
@@ -1592,8 +1584,6 @@
 
                             </div>
 
-
-                            <!-- PRODUIT -->
 
                             <div
                                 class="rounded-xl
@@ -1611,13 +1601,10 @@
                                     Produit
                                 </p>
 
-
                                 {% if order.product %}
 
                                     <p class="font-semibold mt-2">
-
                                         {{ order.product.name }}
-
                                     </p>
 
                                     <p
@@ -1625,18 +1612,13 @@
                                                text-slate-500
                                                mt-1"
                                     >
-
                                         Quantité :
                                         {{ order.quantity }}
-
                                     </p>
 
                                 {% else %}
 
-                                    <p
-                                        class="text-slate-600
-                                               mt-2"
-                                    >
+                                    <p class="text-slate-600 mt-2">
                                         Produit supprimé
                                     </p>
 
@@ -1644,8 +1626,6 @@
 
                             </div>
 
-
-                            <!-- MONTANT -->
 
                             <div
                                 class="rounded-xl
@@ -1668,11 +1648,8 @@
                                            text-lg
                                            mt-2"
                                 >
-
                                     {{ order.total_price }} FCFA
-
                                 </p>
-
 
                                 {% if order.payment_status == "paid" %}
 
@@ -1722,191 +1699,192 @@
                             </p>
 
 
-                            <div
-                                class="grid
-                                       sm:grid-cols-3
-                                       gap-3"
-                            >
+                            {% if order.status == "cancelled" %}
 
+                                <div
+                                    class="rounded-lg
+                                           bg-red-500/10
+                                           border border-red-500/20
+                                           px-3 py-3"
+                                >
 
-                                <!-- VENDEUR -->
+                                    <p class="text-xs text-red-300">
+                                        ✕ Commande annulée
+                                    </p>
 
-                                {% if order.seller_confirmed %}
-
-                                    <div
-                                        class="rounded-lg
-                                               bg-emerald-500/10
-                                               border
-                                               border-emerald-500/20
-                                               px-3 py-2"
+                                    <p
+                                        class="text-[11px]
+                                               text-slate-600
+                                               mt-1"
                                     >
+                                        Cette commande ne peut plus être validée.
+                                    </p>
 
-                                        <p
-                                            class="text-xs
-                                                   text-emerald-300"
+                                </div>
+
+                            {% else %}
+
+                                <div
+                                    class="grid
+                                           sm:grid-cols-3
+                                           gap-3"
+                                >
+
+                                    {% if order.seller_confirmed %}
+
+                                        <div
+                                            class="rounded-lg
+                                                   bg-emerald-500/10
+                                                   border
+                                                   border-emerald-500/20
+                                                   px-3 py-2"
                                         >
-                                            ✓ Vendeur
-                                        </p>
 
-                                        <p
-                                            class="text-[11px]
-                                                   text-slate-600
-                                                   mt-1"
+                                            <p class="text-xs text-emerald-300">
+                                                ✓ Vendeur
+                                            </p>
+
+                                            <p
+                                                class="text-[11px]
+                                                       text-slate-600
+                                                       mt-1"
+                                            >
+                                                Livraison confirmée
+                                            </p>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div
+                                            class="rounded-lg
+                                                   bg-amber-500/10
+                                                   border
+                                                   border-amber-500/20
+                                                   px-3 py-2"
                                         >
-                                            Livraison confirmée
-                                        </p>
 
-                                    </div>
+                                            <p class="text-xs text-amber-300">
+                                                ○ Vendeur
+                                            </p>
 
-                                {% else %}
+                                            <p
+                                                class="text-[11px]
+                                                       text-slate-600
+                                                       mt-1"
+                                            >
+                                                En attente
+                                            </p>
 
-                                    <div
-                                        class="rounded-lg
-                                               bg-amber-500/10
-                                               border
-                                               border-amber-500/20
-                                               px-3 py-2"
-                                    >
+                                        </div>
 
-                                        <p
-                                            class="text-xs
-                                                   text-amber-300"
+                                    {% endif %}
+
+
+                                    {% if order.customer_confirmed %}
+
+                                        <div
+                                            class="rounded-lg
+                                                   bg-emerald-500/10
+                                                   border
+                                                   border-emerald-500/20
+                                                   px-3 py-2"
                                         >
-                                            ○ Vendeur
-                                        </p>
 
-                                        <p
-                                            class="text-[11px]
-                                                   text-slate-600
-                                                   mt-1"
+                                            <p class="text-xs text-emerald-300">
+                                                ✓ Client
+                                            </p>
+
+                                            <p
+                                                class="text-[11px]
+                                                       text-slate-600
+                                                       mt-1"
+                                            >
+                                                Réception confirmée
+                                            </p>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div
+                                            class="rounded-lg
+                                                   bg-amber-500/10
+                                                   border
+                                                   border-amber-500/20
+                                                   px-3 py-2"
                                         >
-                                            En attente
-                                        </p>
 
-                                    </div>
+                                            <p class="text-xs text-amber-300">
+                                                ○ Client
+                                            </p>
 
-                                {% endif %}
+                                            <p
+                                                class="text-[11px]
+                                                       text-slate-600
+                                                       mt-1"
+                                            >
+                                                En attente
+                                            </p>
+
+                                        </div>
+
+                                    {% endif %}
 
 
-                                <!-- CLIENT -->
+                                    {% if order.admin_validated %}
 
-                                {% if order.customer_confirmed %}
-
-                                    <div
-                                        class="rounded-lg
-                                               bg-emerald-500/10
-                                               border
-                                               border-emerald-500/20
-                                               px-3 py-2"
-                                    >
-
-                                        <p
-                                            class="text-xs
-                                                   text-emerald-300"
+                                        <div
+                                            class="rounded-lg
+                                                   bg-indigo-500/10
+                                                   border
+                                                   border-indigo-500/20
+                                                   px-3 py-2"
                                         >
-                                            ✓ Client
-                                        </p>
 
-                                        <p
-                                            class="text-[11px]
-                                                   text-slate-600
-                                                   mt-1"
+                                            <p class="text-xs text-indigo-300">
+                                                ✓ Administrateur
+                                            </p>
+
+                                            <p
+                                                class="text-[11px]
+                                                       text-slate-600
+                                                       mt-1"
+                                            >
+                                                Validation terminée
+                                            </p>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div
+                                            class="rounded-lg
+                                                   bg-slate-800
+                                                   border
+                                                   border-slate-700
+                                                   px-3 py-2"
                                         >
-                                            Réception confirmée
-                                        </p>
 
-                                    </div>
+                                            <p class="text-xs text-slate-500">
+                                                ○ Administrateur
+                                            </p>
 
-                                {% else %}
+                                            <p
+                                                class="text-[11px]
+                                                       text-slate-600
+                                                       mt-1"
+                                            >
+                                                En attente
+                                            </p>
 
-                                    <div
-                                        class="rounded-lg
-                                               bg-amber-500/10
-                                               border
-                                               border-amber-500/20
-                                               px-3 py-2"
-                                    >
+                                        </div>
 
-                                        <p
-                                            class="text-xs
-                                                   text-amber-300"
-                                        >
-                                            ○ Client
-                                        </p>
+                                    {% endif %}
 
-                                        <p
-                                            class="text-[11px]
-                                                   text-slate-600
-                                                   mt-1"
-                                        >
-                                            En attente
-                                        </p>
+                                </div>
 
-                                    </div>
-
-                                {% endif %}
-
-
-                                <!-- ADMIN -->
-
-                                {% if order.admin_validated %}
-
-                                    <div
-                                        class="rounded-lg
-                                               bg-indigo-500/10
-                                               border
-                                               border-indigo-500/20
-                                               px-3 py-2"
-                                    >
-
-                                        <p
-                                            class="text-xs
-                                                   text-indigo-300"
-                                        >
-                                            ✓ Administrateur
-                                        </p>
-
-                                        <p
-                                            class="text-[11px]
-                                                   text-slate-600
-                                                   mt-1"
-                                        >
-                                            Validation terminée
-                                        </p>
-
-                                    </div>
-
-                                {% else %}
-
-                                    <div
-                                        class="rounded-lg
-                                               bg-slate-800
-                                               border
-                                               border-slate-700
-                                               px-3 py-2"
-                                    >
-
-                                        <p
-                                            class="text-xs
-                                                   text-slate-500"
-                                        >
-                                            ○ Administrateur
-                                        </p>
-
-                                        <p
-                                            class="text-[11px]
-                                                   text-slate-600
-                                                   mt-1"
-                                        >
-                                            En attente
-                                        </p>
-
-                                    </div>
-
-                                {% endif %}
-
-
-                            </div>
+                            {% endif %}
 
                         </div>
 
@@ -1921,7 +1899,6 @@
                                    mt-5"
                         >
 
-
                             <a
                                 href="{% url 'order_detail' order.id %}"
                                 class="flex-1
@@ -1934,13 +1911,11 @@
                                        font-semibold
                                        transition"
                             >
-
                                 Voir la commande
-
                             </a>
 
 
-                            {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+                            {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated and order.status != "cancelled" %}
 
                                 <form
                                     method="POST"
@@ -1961,24 +1936,19 @@
                                                font-bold
                                                transition"
                                     >
-
                                         ✓ Valider la commande
-
                                     </button>
 
                                 </form>
 
                             {% endif %}
 
-
                         </div>
-
 
                     </article>
 
 
                 {% empty %}
-
 
                     <div
                         class="p-12
@@ -1997,24 +1967,17 @@
                             📦
                         </div>
 
-                        <p
-                            class="text-slate-400
-                                   mt-4"
-                        >
+                        <p class="text-slate-400 mt-4">
                             Aucune commande trouvée.
                         </p>
 
                     </div>
 
-
                 {% endfor %}
-
 
             </div>
 
-
         </section>
-
 
     </div>
 

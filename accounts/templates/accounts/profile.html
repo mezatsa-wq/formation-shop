@@ -10,9 +10,37 @@
 
         <div class="profile-header">
 
-            <div class="profile-avatar">
-                {{ user.username|first|upper }}
-            </div>
+           <div class="profile-avatar">
+    {% if profile.photo %}
+        <img
+            src="{{ profile.photo.url }}"
+            alt="Photo de profil de {{ user.username }}"
+        >
+    {% else %}
+        {{ user.username|first|upper }}
+    {% endif %}
+</div>
+
+<form
+    method="post"
+    enctype="multipart/form-data"
+    class="profile-photo-form"
+>
+    {% csrf_token %}
+
+    <label for="profile-photo" class="photo-upload-button">
+        📷 Ajouter une photo
+    </label>
+
+    <input
+        type="file"
+        id="profile-photo"
+        name="photo"
+        accept="image/*"
+        hidden
+        onchange="this.form.submit()"
+    >
+</form>
 
             <div>
                 <h1>{{ user.username }}</h1>

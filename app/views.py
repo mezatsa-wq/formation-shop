@@ -9,6 +9,7 @@ from django.contrib import messages
 
 from courses.models import Course
 from products.models import Product
+from accounts.models import SellerApplication
 from orders.models import Order, CoursePayment
 from accounts.models import (
     TrainerApplication,
@@ -30,14 +31,19 @@ def admin_dashboard(request):
     pending_applications = TrainerApplication.objects.filter(
         status="pending"
     ).select_related("user").order_by("-created_at")[:5]
+    pending_seller_application_list = SellerApplication.objects.filter(
+        status="pending"
+    ).select_related("user").order_by("-created_at")
 
+    pending_seller_applications = pending_seller_application_list.count()
     context = {
         "total_users": User.objects.count(),
 
         "total_trainers": TrainerApplication.objects.filter(
             status="approved"
         ).count(),
-
+        "pending_seller_applications": pending_seller_applications,
+        "pending_seller_application_list": pending_seller_application_list,
         "total_courses": Course.objects.count(),
 
         "total_products": Product.objects.count(),

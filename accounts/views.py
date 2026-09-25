@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.db.models import Q,Sum
 
 from documents.models import DocumentPurchase
 
@@ -18,6 +19,9 @@ from .models import (
     SellerSubscription,
     SellerProfile,
     SellerEarning,
+    UserProfile,
+    is_premium_seller,
+    get_seller_plan,
 )
 
 from orders.models import Order, OrderNotification
@@ -43,12 +47,10 @@ def register_view(request):
 
             login(request, user)
 
-            # Création du portefeuille de jetons
             wallet, created = TokenWallet.objects.get_or_create(
                 user=user
             )
 
-            # Attribution du bonus quotidien
             wallet.give_daily_reward()
 
             messages.success(
@@ -92,12 +94,10 @@ def login_view(request):
 
             login(request, user)
 
-            # Récupération ou création du portefeuille
             wallet, created = TokenWallet.objects.get_or_create(
                 user=user
             )
 
-            # Attribution du bonus quotidien
             wallet.give_daily_reward()
 
             messages.success(
@@ -141,6 +141,34 @@ def profile_view(request):
         user=request.user
     )
 
+    profile, profile_created = UserProfile.objects.get_or_create(
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        photo = request.FILES.get("photo")
+
+        if photo:
+
+            profile.photo = photo
+
+            profile.save(
+                update_fields=["photo"]
+            )
+
+            messages.success(
+                request,
+                "Votre photo de profil a été mise à jour."
+            )
+
+            return redirect("profile")
+
+        messages.error(
+            request,
+            "Veuillez sélectionner une image."
+        )
+
     document_purchases = DocumentPurchase.objects.filter(
         user=request.user
     ).select_related(
@@ -155,6 +183,7 @@ def profile_view(request):
         {
             "wallet": wallet,
             "document_purchases": document_purchases,
+            "profile": profile,
         }
     )
 
@@ -165,260 +194,138 @@ def profile_view(request):
 
 @login_required
 def dashboard(request):
-
     user = request.user
 
-    # =====================================================
-    # PORTEFEUILLE DE JETONS
-    # =====================================================
+    # =========================================================
+    # INFORMATIONS CLIENT
+    # =========================================================
 
-    wallet, created = TokenWallet.objects.get_or_create(
-        user=user
-    )
-
-    # =====================================================
-    # ESPACE CLIENT
-    # =====================================================
-
-    my_orders = Order.objects.filter(
+    user_orders = Order.objects.filter(
         user=user
     ).select_related(
         "product",
         "seller"
-    ).order_by(
-        "-created_at"
+    ).order_by("-created_at")
+
+    total_orders = user_orders.count()
+
+    pending_orders = user_orders.filter(
+        status="pending"
     )
 
-    my_notifications = OrderNotification.objects.filter(
-        recipient=user
+    completed_orders = user_orders.filter(
+        status="delivered"
+    )
+
+    cancelled_orders = user_orders.filter(
+        status="cancelled"
+    )
+
+    # =========================================================
+    # INFORMATIONS VENDEUR
+    # =========================================================
+
+    seller_profile = getattr(user, "seller_profile", None)
+
+    seller_products = Product.objects.filter(
+        seller=user
+    ).order_by("-created_at")
+
+    seller_orders = Order.objects.filter(
+        Q(seller=user) | Q(product__seller=user)
+    ).select_related(
+        "product",
+        "user",
+        "seller"
+    ).distinct().order_by("-created_at")
+
+    # Commandes en attente de livraison par le vendeur
+    seller_pending_orders = seller_orders.filter(
+        status="pending"
+    )
+
+    # Commandes livrées par le vendeur,
+    # mais dont le client n'a pas encore confirmé la réception
+    seller_delivered_orders = seller_orders.filter(
+        status="seller_delivered"
+    )
+
+    # Commandes complètement terminées
+    seller_completed_orders = seller_orders.filter(
+        status="delivered"
+    )
+
+    # Commandes annulées par les clients
+    seller_cancelled_orders = seller_orders.filter(
+        status="cancelled"
+    )
+
+    # Revenus du vendeur
+    seller_earnings = SellerEarning.objects.filter(
+        seller=user
     ).select_related(
         "order"
-    ).order_by(
-        "-created_at"
+    ).order_by("-created_at")
+
+    seller_revenue = seller_earnings.aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    # =========================================================
+    # NOTIFICATIONS VENDEUR
+    # =========================================================
+
+    seller_notifications = OrderNotification.objects.filter(
+        recipient=user
+    ).order_by("-created_at")
+
+    unread_seller_notifications = seller_notifications.filter(
+        is_read=False
     )
 
-    unread_order_notifications = my_notifications.filter(
-        is_read=False
-    ).count()
+    # =========================================================
+    # INFORMATIONS FORMATEUR
+    # =========================================================
 
-    # =====================================================
-    # ESPACE VENDEUR
-    # =====================================================
+    trainer_profile = getattr(user, "trainer_profile", None)
 
-    seller_profile = SellerProfile.objects.filter(
-        user=user
-    ).first()
-
-    seller_products = []
-    seller_orders = []
-    seller_earnings = []
-    seller_notifications = []
-
-    seller_unread_notifications = 0
-    seller_revenue = 0
-    seller_orders_to_deliver = 0
-    seller_late_orders = 0
-
-    seller_pending_orders = []
-    seller_delivered_orders = []
-    seller_completed_orders = []
-
-    if seller_profile:
-
-        # Produits du vendeur
-        seller_products = Product.objects.filter(
-            seller=user
-        ).order_by(
-            "-created_at"
-        )
-
-        # Commandes reçues
-        seller_orders = Order.objects.filter(
-            seller=user
-        ).select_related(
-            "product",
-            "user"
-        ).order_by(
-            "-created_at"
-        )
-
-        # Revenus
-        seller_earnings = SellerEarning.objects.filter(
-            seller=user
-        ).order_by(
-            "-created_at"
-        )
-
-        seller_revenue = sum(
-            earning.amount
-            for earning in seller_earnings
-        )
-
-        # Commandes que le vendeur doit encore traiter
-        seller_orders_to_deliver = seller_orders.filter(
-            seller_confirmed=False,
-            admin_validated=False
-        ).count()
-
-        # Commandes dont le délai est dépassé
-        now = timezone.now()
-
-        seller_late_orders = seller_orders.filter(
-            seller_confirmed=False,
-            admin_validated=False,
-            delivery_deadline__lt=now
-        ).count()
-
-        # Notifications vendeur
-        seller_notifications = OrderNotification.objects.filter(
-            recipient=user
-        ).select_related(
-            "order"
-        ).order_by(
-            "-created_at"
-        )[:5]
-
-        # Nombre réel de notifications non lues
-        seller_unread_notifications = OrderNotification.objects.filter(
-            recipient=user,
-            is_read=False
-        ).count()
-
-        # Commandes en attente de livraison
-        seller_pending_orders = seller_orders.filter(
-            seller_confirmed=False,
-            admin_validated=False
-        )
-
-        # Commandes livrées par le vendeur
-        # mais pas encore confirmées par le client
-        seller_delivered_orders = seller_orders.filter(
-            seller_confirmed=True,
-            customer_confirmed=False,
-            admin_validated=False
-        )
-
-        # Commandes totalement terminées
-        seller_completed_orders = seller_orders.filter(
-            admin_validated=True
-        )
-
-    # =====================================================
-    # ESPACE FORMATEUR
-    # =====================================================
-
-    trainer_profile = TrainerProfile.objects.filter(
-        user=user
-    ).first()
-
-    trainer_wallet = None
-    trainer_courses = []
-    trainer_earnings = []
-    trainer_notifications = []
-
-    trainer_unread_notifications = 0
-    trainer_revenue = 0
-
-    if trainer_profile:
-
-        # Portefeuille du formateur
-        trainer_wallet, created = TrainerWallet.objects.get_or_create(
-            user=user
-        )
-
-        # Formations créées par le formateur
-        trainer_courses = user.courses.all().order_by(
-            "-created_at"
-        )
-
-        # Revenus du formateur
-        trainer_earnings = TrainerEarning.objects.filter(
-            trainer=user
-        ).order_by(
-            "-created_at"
-        )
-
-        trainer_revenue = sum(
-            earning.amount
-            for earning in trainer_earnings
-        )
-
-        # Dernières notifications
-        trainer_notifications = TrainerNotification.objects.filter(
-            trainer=user
-        ).order_by(
-            "-created_at"
-        )[:5]
-
-        # Nombre réel de notifications non lues
-        trainer_unread_notifications = TrainerNotification.objects.filter(
-            trainer=user,
-            is_read=False
-        ).count()
-
-    # =====================================================
-    # CONTEXTE DU DASHBOARD
-    # =====================================================
+    # =========================================================
+    # CONTEXTE
+    # =========================================================
 
     context = {
+        # -------------------------
+        # Client
+        # -------------------------
+        "user_orders": user_orders,
+        "total_orders": total_orders,
+        "pending_orders": pending_orders,
+        "completed_orders": completed_orders,
+        "cancelled_orders": cancelled_orders,
 
-        # -------------------------------------------------
-        # CLIENT
-        # -------------------------------------------------
-
-        "wallet": wallet,
-
-        "my_orders": my_orders,
-
-        "my_notifications": my_notifications,
-
-        "unread_order_notifications": unread_order_notifications,
-
-        # -------------------------------------------------
-        # VENDEUR
-        # -------------------------------------------------
-
+        # -------------------------
+        # Vendeur
+        # -------------------------
         "seller_profile": seller_profile,
-
         "seller_products": seller_products,
-
         "seller_orders": seller_orders,
-
+        "seller_pending_orders": seller_pending_orders,
+        "seller_delivered_orders": seller_delivered_orders,
+        "seller_completed_orders": seller_completed_orders,
+        "seller_cancelled_orders": seller_cancelled_orders,
         "seller_earnings": seller_earnings,
-
-        "seller_notifications": seller_notifications,
-
         "seller_revenue": seller_revenue,
 
-        "seller_orders_to_deliver": seller_orders_to_deliver,
+        # -------------------------
+        # Notifications
+        # -------------------------
+        "seller_notifications": seller_notifications,
+        "unread_seller_notifications": unread_seller_notifications,
 
-        "seller_late_orders": seller_late_orders,
-
-        "seller_unread_notifications": seller_unread_notifications,
-
-        "seller_pending_orders": seller_pending_orders,
-
-        "seller_delivered_orders": seller_delivered_orders,
-
-        "seller_completed_orders": seller_completed_orders,
-
-        # -------------------------------------------------
-        # FORMATEUR
-        # -------------------------------------------------
-
+        # -------------------------
+        # Formateur
+        # -------------------------
         "trainer_profile": trainer_profile,
-
-        "trainer_wallet": trainer_wallet,
-
-        "trainer_courses": trainer_courses,
-
-        "trainer_earnings": trainer_earnings,
-
-        "trainer_notifications": trainer_notifications,
-
-        "trainer_revenue": trainer_revenue,
-
-        "trainer_unread_notifications": trainer_unread_notifications,
     }
 
     return render(
@@ -426,8 +333,6 @@ def dashboard(request):
         "accounts/dashboard.html",
         context
     )
-
-
 # =========================================================
 # DEVENIR FORMATEUR
 # =========================================================
@@ -438,10 +343,6 @@ def become_trainer(request):
     existing_application = TrainerApplication.objects.filter(
         user=request.user
     ).first()
-
-    # -----------------------------------------------------
-    # CANDIDATURE EXISTANTE
-    # -----------------------------------------------------
 
     if existing_application:
 
@@ -471,10 +372,6 @@ def become_trainer(request):
             )
 
             return redirect("home")
-
-    # -----------------------------------------------------
-    # NOUVELLE CANDIDATURE
-    # -----------------------------------------------------
 
     if request.method == "POST":
 
@@ -559,32 +456,27 @@ def trainer_dashboard(request):
             user=request.user
         )
 
-        # Dernières notifications
         notifications = TrainerNotification.objects.filter(
             trainer=request.user
         ).order_by(
             "-created_at"
         )[:5]
 
-        # Toutes les notifications non lues
         unread_notifications = TrainerNotification.objects.filter(
             trainer=request.user,
             is_read=False
         ).count()
 
-        # Revenus
         earnings = TrainerEarning.objects.filter(
             trainer=request.user
         ).order_by(
             "-created_at"
         )
 
-        # Formations
         trainer_courses = request.user.courses.all().order_by(
             "-created_at"
         )
 
-    # Portefeuille de jetons client
     wallet, created = TokenWallet.objects.get_or_create(
         user=request.user
     )
@@ -615,10 +507,6 @@ def become_seller(request):
         user=request.user
     ).first()
 
-    # -----------------------------------------------------
-    # CANDIDATURE EXISTANTE
-    # -----------------------------------------------------
-
     if existing_application:
 
         if existing_application.status == "pending":
@@ -647,10 +535,6 @@ def become_seller(request):
             )
 
             return redirect("home")
-
-    # -----------------------------------------------------
-    # NOUVELLE CANDIDATURE
-    # -----------------------------------------------------
 
     if request.method == "POST":
 
@@ -704,10 +588,6 @@ def become_seller(request):
             ""
         ).strip()
 
-        # -------------------------------------------------
-        # VÉRIFICATION DU PLAN
-        # -------------------------------------------------
-
         if plan not in [
             "standard",
             "premium"
@@ -722,10 +602,6 @@ def become_seller(request):
                 request,
                 "accounts/become_seller.html"
             )
-
-        # -------------------------------------------------
-        # VÉRIFICATION DES INFORMATIONS
-        # -------------------------------------------------
 
         if not all([
             full_name,
@@ -746,10 +622,6 @@ def become_seller(request):
                 request,
                 "accounts/become_seller.html"
             )
-
-        # -------------------------------------------------
-        # VÉRIFICATION PREMIUM
-        # -------------------------------------------------
 
         if plan == "premium":
 
@@ -780,11 +652,7 @@ def become_seller(request):
                     "accounts/become_seller.html"
                 )
 
-        # -------------------------------------------------
-        # CRÉATION DE LA CANDIDATURE
-        # -------------------------------------------------
-
-        application = SellerApplication.objects.create(
+        SellerApplication.objects.create(
             user=request.user,
             full_name=full_name,
             phone=phone,
@@ -795,10 +663,6 @@ def become_seller(request):
             description=description,
             plan=plan
         )
-
-        # -------------------------------------------------
-        # DEMANDE DE SOUSCRIPTION PREMIUM
-        # -------------------------------------------------
 
         if plan == "premium":
 
@@ -830,4 +694,106 @@ def become_seller(request):
     return render(
         request,
         "accounts/become_seller.html"
+    )
+
+
+# =========================================================
+# PASSER VENDEUR PREMIUM
+# =========================================================
+
+@login_required
+def upgrade_to_premium(request):
+
+    seller_profile = SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    if not seller_profile:
+
+        messages.error(
+            request,
+            "Vous devez être vendeur avant de passer Premium."
+        )
+
+        return redirect("dashboard")
+
+    if is_premium_seller(request.user):
+
+        messages.info(
+            request,
+            "Votre compte est déjà Premium."
+        )
+
+        return redirect("dashboard")
+
+    if request.method == "POST":
+
+        payment_method = request.POST.get(
+            "payment_method",
+            ""
+        ).strip().lower()
+
+        payment_phone = request.POST.get(
+            "payment_phone",
+            ""
+        ).strip()
+
+        if payment_method not in [
+            "mtn",
+            "orange"
+        ]:
+
+            messages.error(
+                request,
+                "Veuillez choisir un moyen de paiement."
+            )
+
+            return redirect("upgrade_to_premium")
+
+        if not payment_phone:
+
+            messages.error(
+                request,
+                "Veuillez saisir votre numéro de paiement."
+            )
+
+            return redirect("upgrade_to_premium")
+
+        # Une seule demande Premium en attente
+        existing_pending = SellerSubscription.objects.filter(
+            seller=request.user,
+            status="pending"
+        ).exists()
+
+        if existing_pending:
+
+            messages.info(
+                request,
+                "Une demande Premium est déjà en attente de validation."
+            )
+
+            return redirect("dashboard")
+
+        SellerSubscription.objects.create(
+            seller=request.user,
+            amount=1000,
+            method=payment_method,
+            phone_number=payment_phone,
+            status="pending"
+        )
+
+        messages.success(
+            request,
+            "Votre demande Premium a été enregistrée. "
+            "Elle sera activée après validation du paiement."
+        )
+
+        return redirect("dashboard")
+
+    return render(
+        request,
+        "accounts/upgrade_premium.html",
+        {
+            "seller_profile": seller_profile,
+        }
     )

@@ -131,18 +131,14 @@
 
         <div class="stats-grid">
 
-            <!-- PORTEFEUILLE -->
-
             <div class="stat-card featured">
 
                 <div class="stat-top">
-
                     <span>Portefeuille</span>
 
                     <span class="stat-symbol">
                         ◉
                     </span>
-
                 </div>
 
                 <strong class="stat-value">
@@ -156,8 +152,6 @@
             </div>
 
 
-            <!-- COMMANDES -->
-
             <a href="{% url 'my_orders' %}" class="stat-card">
 
                 <div class="stat-top">
@@ -165,7 +159,7 @@
                     <span>Commandes</span>
 
                     <span class="stat-symbol">
-                        ↗
+                        ↗️
                     </span>
 
                 </div>
@@ -180,8 +174,6 @@
 
             </a>
 
-
-            <!-- NOTIFICATIONS -->
 
             <a href="{% url 'order_notifications' %}" class="stat-card">
 
@@ -246,13 +238,63 @@
 
             </div>
 
-            <div class="role-badge seller-badge">
+            <div class="seller-status-area">
 
-                Vendeur • {{ seller_profile.get_plan_display }}
+                {% if seller_is_premium %}
+
+                    <div class="role-badge premium-badge">
+                        ⭐ PREMIUM
+                    </div>
+
+                {% else %}
+
+                    <div class="role-badge seller-badge">
+                        Vendeur Standard
+                    </div>
+
+                {% endif %}
 
             </div>
 
         </div>
+
+
+        {% if not seller_is_premium %}
+
+        <div class="premium-promotion">
+
+            <div class="premium-promotion-icon">
+                ⭐
+            </div>
+
+            <div class="premium-promotion-content">
+
+                <span class="premium-promotion-label">
+                    VENDEUR STANDARD
+                </span>
+
+                <h3>
+                    Passez à l'expérience Premium
+                </h3>
+
+                <p>
+                    Activez votre abonnement Premium pour bénéficier
+                    du statut Premium sur votre activité vendeur.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'upgrade_to_premium' %}"
+                class="premium-promotion-button"
+            >
+                Passer Premium
+                <span>→</span>
+            </a>
+
+        </div>
+
+        {% endif %}
 
 
         <div class="stats-grid seller-stats">
@@ -282,7 +324,7 @@
             </a>
 
 
-            <!-- COMMANDES -->
+            <!-- COMMANDES REÇUES -->
 
             <a href="{% url 'seller_orders' %}" class="stat-card">
 
@@ -291,7 +333,7 @@
                     <span>Commandes reçues</span>
 
                     <span class="stat-symbol">
-                        ↗
+                        ↗️
                     </span>
 
                 </div>
@@ -309,8 +351,10 @@
 
             <!-- À LIVRER -->
 
-            <a href="{% url 'seller_orders' %}"
-               class="stat-card warning-card">
+            <a
+                href="{% url 'seller_orders' %}"
+                class="stat-card warning-card"
+            >
 
                 <div class="stat-top">
 
@@ -370,8 +414,10 @@
 
             <!-- VENTES FINALISÉES -->
 
-            <a href="{% url 'seller_orders' %}"
-               class="stat-card success-card">
+            <a
+                href="{% url 'seller_orders' %}"
+                class="stat-card success-card"
+            >
 
                 <div class="stat-top">
 
@@ -419,10 +465,12 @@
             </div>
 
 
-            <!-- RETARDS -->
+            <!-- LIVRAISONS EN RETARD -->
 
-            <a href="{% url 'seller_orders' %}"
-               class="stat-card danger-card">
+            <a
+                href="{% url 'seller_orders' %}"
+                class="stat-card danger-card"
+            >
 
                 <div class="stat-top">
 
@@ -455,9 +503,50 @@
             </a>
 
 
-            <!-- NOTIFICATIONS VENDEUR -->
+            <!-- COMMANDES ANNULÉES -->
 
-            <a href="{% url 'order_notifications' %}" class="stat-card">
+            <a
+                href="{% url 'seller_orders' %}"
+                class="stat-card danger-card"
+            >
+
+                <div class="stat-top">
+
+                    <span>Commandes annulées</span>
+
+                    {% if seller_cancelled_orders|length > 0 %}
+
+                        <span class="notification-badge danger">
+                            {{ seller_cancelled_orders|length }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="stat-symbol">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_cancelled_orders|length }}
+                </strong>
+
+                <span class="stat-description">
+                    Commande(s) annulée(s)
+                </span>
+
+            </a>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <a
+                href="{% url 'order_notifications' %}"
+                class="stat-card"
+            >
 
                 <div class="stat-top">
 
@@ -514,20 +603,20 @@
 
             <div class="action-buttons">
 
-                <a href="{% url 'my_products' %}"
-                   class="primary-action">
-
+                <a
+                    href="{% url 'my_products' %}"
+                    class="primary-action"
+                >
                     Gérer mes produits
                     <span>→</span>
-
                 </a>
 
-                <a href="{% url 'seller_orders' %}"
-                   class="secondary-action">
-
+                <a
+                    href="{% url 'seller_orders' %}"
+                    class="secondary-action"
+                >
                     Mes commandes
                     <span>→</span>
-
                 </a>
 
             </div>
@@ -575,8 +664,6 @@
 
         <div class="stats-grid trainer-stats">
 
-            <!-- FORMATIONS -->
-
             <a href="{% url 'trainer_courses' %}" class="stat-card">
 
                 <div class="stat-top">
@@ -600,10 +687,10 @@
             </a>
 
 
-            <!-- PORTEFEUILLE FORMATEUR -->
-
-            <a href="{% url 'trainer_dashboard' %}"
-               class="stat-card featured">
+            <a
+                href="{% url 'trainer_dashboard' %}"
+                class="stat-card featured"
+            >
 
                 <div class="stat-top">
 
@@ -626,8 +713,6 @@
             </a>
 
 
-            <!-- REVENUS -->
-
             <div class="stat-card revenue-card">
 
                 <div class="stat-top">
@@ -635,7 +720,7 @@
                     <span>Revenus</span>
 
                     <span class="stat-symbol">
-                        ↗
+                        ↗️
                     </span>
 
                 </div>
@@ -651,10 +736,10 @@
             </div>
 
 
-            <!-- NOTIFICATIONS FORMATEUR -->
-
-            <a href="{% url 'order_notifications' %}"
-               class="stat-card">
+            <a
+                href="{% url 'order_notifications' %}"
+                class="stat-card"
+            >
 
                 <div class="stat-top">
 
@@ -689,8 +774,6 @@
         </div>
 
 
-        <!-- CENTRE FORMATEUR -->
-
         <div class="action-panel trainer-action">
 
             <div>
@@ -712,20 +795,20 @@
 
             <div class="action-buttons">
 
-                <a href="{% url 'trainer_dashboard' %}"
-                   class="primary-action">
-
+                <a
+                    href="{% url 'trainer_dashboard' %}"
+                    class="primary-action"
+                >
                     Ouvrir mon espace
                     <span>→</span>
-
                 </a>
 
-                <a href="{% url 'trainer_courses' %}"
-                   class="secondary-action">
-
+                <a
+                    href="{% url 'trainer_courses' %}"
+                    class="secondary-action"
+                >
                     Mes formations
                     <span>→</span>
-
                 </a>
 
             </div>
@@ -743,30 +826,66 @@
 
     {% if not seller_profile or not trainer_profile %}
 
-<section class="onboarding-section">
-<div class="section-heading">
-    <div>
-        <h2>Développez votre activité sur FormaShop</h2>
-        <p>
-            Rejoignez notre communauté de formateurs et de vendeurs.
-        </p>
-    </div>
-</div>
-<div class="onboarding-actions">
-    {% if not trainer_profile %}
-        <a href="{% url 'become_trainer' %}" class="primary-action">
-            Devenir formateur
-        </a>
-    {% endif %}
-    {% if not seller_profile %}
-        <a href="{% url 'become_seller' %}" class="secondary-action">
-            Devenir vendeur
-        </a>
-    {% endif %}
-</div>
-</section>
+    <section class="onboarding-section">
 
-{% endif %}
+        <div class="onboarding-content">
+
+            <span class="section-kicker">
+                FORMASHOP
+            </span>
+
+            <h2>
+                Développez votre activité sur FormaShop
+            </h2>
+
+            <p>
+                Rejoignez notre communauté de formateurs et de vendeurs.
+            </p>
+
+            <div class="onboarding-actions">
+
+                {% if not trainer_profile %}
+
+                    <a
+                        href="{% url 'become_trainer' %}"
+                        class="primary-action"
+                    >
+                        Devenir formateur
+                    </a>
+
+                {% endif %}
+
+
+                {% if not seller_profile %}
+
+                    <a
+                        href="{% url 'become_seller' %}"
+                        class="secondary-action"
+                    >
+                        Devenir vendeur
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="onboarding-decoration">
+
+            <div class="orbit"></div>
+
+            <div class="orbit orbit-two"></div>
+
+            <div class="orbit-center">
+                FS
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
 
 
     <!-- =====================================================
@@ -787,10 +906,6 @@
 
 </section>
 
-
-<!-- =========================================================
-     STYLE PREMIUM DU DASHBOARD
-========================================================= -->
 
 <style>
 
@@ -989,6 +1104,12 @@
     line-height: 1.6;
 }
 
+.seller-status-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .role-badge {
     padding: 9px 14px;
     border-radius: 999px;
@@ -1003,10 +1124,99 @@
     border: 1px solid rgba(112,126,255,0.18);
 }
 
+.premium-badge {
+    color: #d5ceff;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,92,255,0.20),
+            rgba(155,124,255,0.10)
+        );
+    border: 1px solid rgba(155,124,255,0.42);
+    box-shadow: 0 8px 25px rgba(124,92,255,0.10);
+}
+
 .trainer-badge {
     color: #9de4c3;
     background: rgba(63,190,137,0.08);
     border: 1px solid rgba(63,190,137,0.18);
+}
+
+.premium-promotion {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding: 20px;
+    border-radius: 20px;
+    background:
+        radial-gradient(
+            circle at 0% 50%,
+            rgba(124,92,255,0.14),
+            transparent 40%
+        ),
+        rgba(255,255,255,0.025);
+    border: 1px solid rgba(124,92,255,0.18);
+}
+
+.premium-promotion-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(124,92,255,0.12);
+    font-size: 22px;
+}
+
+.premium-promotion-content {
+    flex: 1;
+}
+
+.premium-promotion-label {
+    color: #9b8cff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+}
+
+.premium-promotion-content h3 {
+    margin: 5px 0;
+    color: #f4f2ff;
+    font-size: 1rem;
+}
+
+.premium-promotion-content p {
+    margin: 0;
+    color: #7f899b;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.premium-promotion-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 11px;
+    background: linear-gradient(
+        135deg,
+        #7c5cff,
+        #9b7cff
+    );
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.premium-promotion-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(124,92,255,0.22);
 }
 
 .stats-grid {
@@ -1368,6 +1578,24 @@
     .section-heading-flex {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .seller-status-area {
+        width: 100%;
+    }
+
+    .premium-promotion {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .premium-promotion-content {
+        min-width: 0;
+    }
+
+    .premium-promotion-button {
+        width: 100%;
+        justify-content: center;
     }
 
     .action-panel {

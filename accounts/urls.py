@@ -1,15 +1,9 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-
 from . import views
 
 
 urlpatterns = [
-
-    # =====================================================
-    # INSCRIPTION / CONNEXION / DÉCONNEXION
-    # =====================================================
-
     path(
         "register/",
         views.register_view,
@@ -27,10 +21,6 @@ urlpatterns = [
         views.logout_view,
         name="logout"
     ),
-
-    # =====================================================
-    # MOT DE PASSE OUBLIÉ
-    # =====================================================
 
     path(
         "password-reset/",
@@ -68,29 +58,23 @@ urlpatterns = [
         name="password_reset_complete"
     ),
 
-    # =====================================================
-    # VENDEUR
-    # =====================================================
-
     path(
         "devenir-vendeur/",
         views.become_seller,
         name="become_seller"
     ),
 
-    # =====================================================
-    # PROFIL
-    # =====================================================
+    path(
+        "upgrade-to-premium/",
+        views.upgrade_to_premium,
+        name="upgrade_to_premium"
+    ),
 
     path(
         "profile/",
         views.profile_view,
         name="profile"
     ),
-
-    # =====================================================
-    # FORMATEUR
-    # =====================================================
 
     path(
         "become-trainer/",
@@ -103,10 +87,6 @@ urlpatterns = [
         views.trainer_dashboard,
         name="trainer_dashboard"
     ),
-
-    # =====================================================
-    # DASHBOARD PRINCIPAL
-    # =====================================================
 
     path(
         "dashboard/",
