@@ -1,0 +1,1436 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — FormaShop{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="dashboard-header">
+
+        <div class="header-content">
+
+            <span class="section-label">
+                FORMASHOP • ESPACE PERSONNEL
+            </span>
+
+            <h1>
+                Bonjour <span>{{ user.username }}</span>
+            </h1>
+
+            <p>
+                Retrouvez ici toutes vos activités, vos services et vos espaces
+                FormaShop au même endroit.
+            </p>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a href="{% url 'profile' %}" class="header-btn">
+                Mon profil
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACCÈS RAPIDES
+    ====================================================== -->
+
+    <div class="quick-access">
+
+        <a href="{% url 'my_orders' %}" class="quick-item">
+
+            <div class="quick-icon">⌁</div>
+
+            <div>
+                <strong>Mes commandes</strong>
+                <span>{{ my_orders|length }} commande(s)</span>
+            </div>
+
+        </a>
+
+
+        <a href="{% url 'order_notifications' %}" class="quick-item">
+
+            <div class="quick-icon">!</div>
+
+            <div>
+                <strong>Notifications</strong>
+                <span>{{ unread_order_notifications }} non lue(s)</span>
+            </div>
+
+        </a>
+
+
+        {% if seller_profile %}
+
+        <a href="{% url 'my_products' %}" class="quick-item">
+
+            <div class="quick-icon">◆</div>
+
+            <div>
+                <strong>Mes produits</strong>
+                <span>{{ seller_products|length }} produit(s)</span>
+            </div>
+
+        </a>
+
+        {% endif %}
+
+
+        {% if trainer_profile %}
+
+        <a href="{% url 'trainer_courses' %}" class="quick-item">
+
+            <div class="quick-icon">◈</div>
+
+            <div>
+                <strong>Mes formations</strong>
+                <span>{{ trainer_courses|length }} formation(s)</span>
+            </div>
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         ESPACE CLIENT
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    ESPACE CLIENT
+                </span>
+
+                <h2>Mon activité</h2>
+
+                <p>
+                    Gérez vos achats, vos commandes et vos jetons.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+            <!-- PORTEFEUILLE -->
+
+            <div class="stat-card featured">
+
+                <div class="stat-top">
+
+                    <span>Portefeuille</span>
+
+                    <span class="stat-symbol">
+                        ◉
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ wallet.balance }}
+                </strong>
+
+                <span class="stat-description">
+                    Jetons disponibles
+                </span>
+
+            </div>
+
+
+            <!-- COMMANDES -->
+
+            <a href="{% url 'my_orders' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Commandes</span>
+
+                    <span class="stat-symbol">
+                        ↗
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ my_orders|length }}
+                </strong>
+
+                <span class="stat-description">
+                    Voir toutes mes commandes
+                </span>
+
+            </a>
+
+
+            <!-- NOTIFICATIONS -->
+
+            <a href="{% url 'order_notifications' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Notifications</span>
+
+                    {% if unread_order_notifications > 0 %}
+
+                        <span class="notification-badge">
+                            {{ unread_order_notifications }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="stat-symbol">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ unread_order_notifications }}
+                </strong>
+
+                <span class="stat-description">
+                    Notification(s) non lue(s)
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ESPACE VENDEUR
+    ====================================================== -->
+
+    {% if seller_profile %}
+
+    <section class="dashboard-section seller-section">
+
+        <div class="section-heading section-heading-flex">
+
+            <div>
+
+                <span class="section-kicker">
+                    ESPACE VENDEUR
+                </span>
+
+                <h2>
+                    Votre activité commerciale
+                </h2>
+
+                <p>
+                    Gérez vos produits, vos commandes et vos revenus.
+                </p>
+
+            </div>
+
+            <div class="role-badge seller-badge">
+
+                Vendeur • {{ seller_profile.get_plan_display }}
+
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid seller-stats">
+
+            <!-- PRODUITS -->
+
+            <a href="{% url 'my_products' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Produits</span>
+
+                    <span class="stat-symbol">
+                        ◆
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_products|length }}
+                </strong>
+
+                <span class="stat-description">
+                    Gérer mes produits
+                </span>
+
+            </a>
+
+
+            <!-- COMMANDES -->
+
+            <a href="{% url 'seller_orders' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Commandes reçues</span>
+
+                    <span class="stat-symbol">
+                        ↗
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_orders|length }}
+                </strong>
+
+                <span class="stat-description">
+                    Voir les commandes clients
+                </span>
+
+            </a>
+
+
+            <!-- À LIVRER -->
+
+            <a href="{% url 'seller_orders' %}"
+               class="stat-card warning-card">
+
+                <div class="stat-top">
+
+                    <span>À livrer</span>
+
+                    {% if seller_orders_to_deliver > 0 %}
+
+                        <span class="notification-badge warning">
+                            {{ seller_orders_to_deliver }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="stat-symbol">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_orders_to_deliver }}
+                </strong>
+
+                <span class="stat-description">
+                    Commande(s) à traiter
+                </span>
+
+            </a>
+
+
+            <!-- LIVRAISONS EFFECTUÉES -->
+
+            <a href="{% url 'seller_orders' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Livraisons effectuées</span>
+
+                    <span class="stat-symbol">
+                        ✓
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_delivered_orders|length }}
+                </strong>
+
+                <span class="stat-description">
+                    En attente de confirmation
+                </span>
+
+            </a>
+
+
+            <!-- VENTES FINALISÉES -->
+
+            <a href="{% url 'seller_orders' %}"
+               class="stat-card success-card">
+
+                <div class="stat-top">
+
+                    <span>Ventes finalisées</span>
+
+                    <span class="stat-symbol">
+                        ✓
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_completed_orders|length }}
+                </strong>
+
+                <span class="stat-description">
+                    Commandes terminées
+                </span>
+
+            </a>
+
+
+            <!-- REVENUS -->
+
+            <div class="stat-card revenue-card">
+
+                <div class="stat-top">
+
+                    <span>Revenus</span>
+
+                    <span class="stat-symbol">
+                        ₣
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_revenue }}
+                </strong>
+
+                <span class="stat-description">
+                    FCFA générés
+                </span>
+
+            </div>
+
+
+            <!-- RETARDS -->
+
+            <a href="{% url 'seller_orders' %}"
+               class="stat-card danger-card">
+
+                <div class="stat-top">
+
+                    <span>Livraisons en retard</span>
+
+                    {% if seller_late_orders > 0 %}
+
+                        <span class="notification-badge danger">
+                            {{ seller_late_orders }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="stat-symbol">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_late_orders }}
+                </strong>
+
+                <span class="stat-description">
+                    À surveiller
+                </span>
+
+            </a>
+
+
+            <!-- NOTIFICATIONS VENDEUR -->
+
+            <a href="{% url 'order_notifications' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Notifications</span>
+
+                    {% if seller_unread_notifications > 0 %}
+
+                        <span class="notification-badge">
+                            {{ seller_unread_notifications }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="stat-symbol">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ seller_unread_notifications }}
+                </strong>
+
+                <span class="stat-description">
+                    Notification(s) non lue(s)
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- CENTRE VENDEUR -->
+
+        <div class="action-panel">
+
+            <div>
+
+                <span class="action-label">
+                    CENTRE VENDEUR
+                </span>
+
+                <h3>
+                    Continuez votre activité
+                </h3>
+
+                <p>
+                    Accédez directement aux outils de gestion de votre boutique.
+                </p>
+
+            </div>
+
+            <div class="action-buttons">
+
+                <a href="{% url 'my_products' %}"
+                   class="primary-action">
+
+                    Gérer mes produits
+                    <span>→</span>
+
+                </a>
+
+                <a href="{% url 'seller_orders' %}"
+                   class="secondary-action">
+
+                    Mes commandes
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         ESPACE FORMATEUR
+    ====================================================== -->
+
+    {% if trainer_profile %}
+
+    <section class="dashboard-section trainer-section">
+
+        <div class="section-heading section-heading-flex">
+
+            <div>
+
+                <span class="section-kicker">
+                    ESPACE FORMATEUR
+                </span>
+
+                <h2>
+                    Votre activité pédagogique
+                </h2>
+
+                <p>
+                    Publiez vos formations, suivez vos revenus et développez
+                    votre espace formateur.
+                </p>
+
+            </div>
+
+            <div class="role-badge trainer-badge">
+                Formateur
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid trainer-stats">
+
+            <!-- FORMATIONS -->
+
+            <a href="{% url 'trainer_courses' %}" class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Formations</span>
+
+                    <span class="stat-symbol">
+                        ◈
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ trainer_courses|length }}
+                </strong>
+
+                <span class="stat-description">
+                    Gérer mes formations
+                </span>
+
+            </a>
+
+
+            <!-- PORTEFEUILLE FORMATEUR -->
+
+            <a href="{% url 'trainer_dashboard' %}"
+               class="stat-card featured">
+
+                <div class="stat-top">
+
+                    <span>Portefeuille</span>
+
+                    <span class="stat-symbol">
+                        ₣
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ trainer_wallet.balance }}
+                </strong>
+
+                <span class="stat-description">
+                    FCFA disponibles
+                </span>
+
+            </a>
+
+
+            <!-- REVENUS -->
+
+            <div class="stat-card revenue-card">
+
+                <div class="stat-top">
+
+                    <span>Revenus</span>
+
+                    <span class="stat-symbol">
+                        ↗
+                    </span>
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ trainer_revenue }}
+                </strong>
+
+                <span class="stat-description">
+                    FCFA générés
+                </span>
+
+            </div>
+
+
+            <!-- NOTIFICATIONS FORMATEUR -->
+
+            <a href="{% url 'trainer_dashboard' %}"
+               class="stat-card">
+
+                <div class="stat-top">
+
+                    <span>Notifications</span>
+
+                    {% if trainer_unread_notifications > 0 %}
+
+                        <span class="notification-badge">
+                            {{ trainer_unread_notifications }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="stat-symbol">
+                            ✓
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <strong class="stat-value">
+                    {{ trainer_unread_notifications }}
+                </strong>
+
+                <span class="stat-description">
+                    Notification(s) non lue(s)
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- CENTRE FORMATEUR -->
+
+        <div class="action-panel trainer-action">
+
+            <div>
+
+                <span class="action-label">
+                    CENTRE FORMATEUR
+                </span>
+
+                <h3>
+                    Votre espace pédagogique
+                </h3>
+
+                <p>
+                    Gérez vos formations et retrouvez toutes les informations
+                    liées à votre activité de formateur.
+                </p>
+
+            </div>
+
+            <div class="action-buttons">
+
+                <a href="{% url 'trainer_dashboard' %}"
+                   class="primary-action">
+
+                    Ouvrir mon espace
+                    <span>→</span>
+
+                </a>
+
+                <a href="{% url 'trainer_courses' %}"
+                   class="secondary-action">
+
+                    Mes formations
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         UTILISATEUR SANS RÔLE
+    ====================================================== -->
+
+    {% if not seller_profile and not trainer_profile %}
+
+    <section class="onboarding-section">
+
+        <div class="onboarding-content">
+
+            <span class="section-kicker">
+                DÉVELOPPEZ VOTRE ACTIVITÉ
+            </span>
+
+            <h2>
+                Faites évoluer votre compte FormaShop
+            </h2>
+
+            <p>
+                Vous utilisez actuellement FormaShop comme client.
+                Vous pouvez également devenir vendeur ou formateur et
+                développer votre propre activité sur la plateforme.
+            </p>
+
+            <div class="onboarding-actions">
+
+                <a href="{% url 'become_trainer' %}"
+                   class="primary-action">
+
+                    Devenir formateur
+                    <span>→</span>
+
+                </a>
+
+                <a href="{% url 'become_seller' %}"
+                   class="secondary-action">
+
+                    Devenir vendeur
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="onboarding-decoration">
+
+            <div class="orbit orbit-one"></div>
+
+            <div class="orbit orbit-two"></div>
+
+            <div class="orbit-center">
+                F
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         FOOTER DASHBOARD
+    ====================================================== -->
+
+    <div class="dashboard-footer">
+
+        <span>
+            FormaShop
+        </span>
+
+        <span>
+            Votre espace. Vos activités. Votre évolution.
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     STYLE PREMIUM DU DASHBOARD
+========================================================= -->
+
+<style>
+
+.dashboard-page {
+    width: min(1400px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 55px 0 70px;
+    color: #f5f7fb;
+}
+
+.dashboard-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    padding: 45px;
+    margin-bottom: 25px;
+    border-radius: 28px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(95, 110, 255, 0.25),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #101522,
+            #161c2c 55%,
+            #0c1019
+        );
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.28);
+}
+
+.dashboard-header::after {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    right: -120px;
+    top: -150px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+        0 0 0 40px rgba(255,255,255,0.015),
+        0 0 0 80px rgba(255,255,255,0.01);
+    pointer-events: none;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.section-label,
+.section-kicker,
+.action-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8d9aff;
+}
+
+.dashboard-header h1 {
+    margin: 13px 0 8px;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.045em;
+}
+
+.dashboard-header h1 span {
+    background: linear-gradient(90deg, #ffffff, #9ca8ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.dashboard-header p {
+    max-width: 680px;
+    margin: 0;
+    color: #9da6b8;
+    line-height: 1.7;
+}
+
+.header-actions {
+    position: relative;
+    z-index: 3;
+}
+
+.header-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 13px;
+    color: #ffffff;
+    background: rgba(255,255,255,0.055);
+    text-decoration: none;
+    font-weight: 700;
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+.header-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.quick-access {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 55px;
+}
+
+.quick-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 18px;
+    background: rgba(255,255,255,0.025);
+    color: inherit;
+    text-decoration: none;
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+.quick-item:hover {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,0.055);
+    border-color: rgba(141,154,255,0.3);
+}
+
+.quick-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: rgba(141,154,255,0.1);
+    color: #a6afff;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.quick-item strong {
+    display: block;
+    font-size: 0.92rem;
+}
+
+.quick-item span {
+    display: block;
+    margin-top: 4px;
+    color: #7f899b;
+    font-size: 0.78rem;
+}
+
+.dashboard-section {
+    margin-bottom: 70px;
+}
+
+.section-heading {
+    margin-bottom: 24px;
+}
+
+.section-heading-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 25px;
+}
+
+.section-heading h2 {
+    margin: 7px 0 5px;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    letter-spacing: -0.035em;
+}
+
+.section-heading p {
+    margin: 0;
+    color: #818b9d;
+    line-height: 1.6;
+}
+
+.role-badge {
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.seller-badge {
+    color: #b7c0ff;
+    background: rgba(112,126,255,0.1);
+    border: 1px solid rgba(112,126,255,0.18);
+}
+
+.trainer-badge {
+    color: #9de4c3;
+    background: rgba(63,190,137,0.08);
+    border: 1px solid rgba(63,190,137,0.18);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.seller-stats,
+.trainer-stats {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.stat-card {
+    min-height: 155px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.045),
+            rgba(255,255,255,0.018)
+        );
+    color: inherit;
+    text-decoration: none;
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(141,154,255,0.28);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(141,154,255,0.08),
+            rgba(255,255,255,0.025)
+        );
+    box-shadow: 0 18px 45px rgba(0,0,0,0.2);
+}
+
+.stat-card.featured {
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(109,124,255,0.18),
+            transparent 45%
+        ),
+        rgba(255,255,255,0.035);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #8b95a7;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.stat-symbol {
+    color: #a3adff;
+    font-size: 1.05rem;
+}
+
+.stat-value {
+    display: block;
+    margin: 17px 0 3px;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+}
+
+.stat-description {
+    color: #727d90;
+    font-size: 0.77rem;
+}
+
+.notification-badge {
+    min-width: 25px;
+    height: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: rgba(141,154,255,0.15);
+    color: #b8c0ff;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.notification-badge.warning {
+    background: rgba(255,183,77,0.12);
+    color: #ffc46f;
+}
+
+.notification-badge.danger {
+    background: rgba(255,95,95,0.12);
+    color: #ff8c8c;
+}
+
+.warning-card:hover {
+    border-color: rgba(255,183,77,0.3);
+}
+
+.success-card:hover {
+    border-color: rgba(63,190,137,0.3);
+}
+
+.danger-card:hover {
+    border-color: rgba(255,95,95,0.3);
+}
+
+.revenue-card {
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(63,190,137,0.11),
+            transparent 48%
+        ),
+        rgba(255,255,255,0.025);
+}
+
+.action-panel {
+    margin-top: 18px;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.045),
+            rgba(255,255,255,0.015)
+        );
+}
+
+.action-panel h3 {
+    margin: 7px 0 5px;
+    font-size: 1.15rem;
+}
+
+.action-panel p {
+    margin: 0;
+    color: #7f899b;
+    font-size: 0.85rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.primary-action,
+.secondary-action {
+    min-height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 0 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 800;
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+.primary-action {
+    background: #eef0ff;
+    color: #151927;
+}
+
+.primary-action:hover {
+    transform: translateY(-2px);
+    background: #ffffff;
+}
+
+.secondary-action {
+    color: #e9ecf4;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.09);
+}
+
+.secondary-action:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.08);
+}
+
+.onboarding-section {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    padding: 50px;
+    margin-bottom: 60px;
+    overflow: hidden;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background:
+        radial-gradient(
+            circle at 85% 50%,
+            rgba(106,119,255,0.18),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #111625,
+            #171d2d
+        );
+}
+
+.onboarding-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+}
+
+.onboarding-content h2 {
+    margin: 10px 0;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: -0.04em;
+}
+
+.onboarding-content p {
+    margin: 0 0 25px;
+    color: #8993a5;
+    line-height: 1.75;
+}
+
+.onboarding-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.onboarding-decoration {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    flex-shrink: 0;
+}
+
+.orbit {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(141,154,255,0.18);
+    animation: rotateOrbit 12s linear infinite;
+}
+
+.orbit-two {
+    inset: 25px;
+    animation-direction: reverse;
+    animation-duration: 8s;
+}
+
+.orbit-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 68px;
+    height: 68px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(
+        145deg,
+        #7886ff,
+        #4e5cce
+    );
+    box-shadow:
+        0 0 50px rgba(100,115,255,0.3);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+@keyframes rotateOrbit {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+.dashboard-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    color: #667083;
+    font-size: 0.76rem;
+}
+
+.dashboard-footer span:first-child {
+    color: #929caf;
+    font-weight: 800;
+}
+
+@media (max-width: 1100px) {
+
+    .quick-access {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .seller-stats,
+    .trainer-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 760px) {
+
+    .dashboard-page {
+        width: min(100% - 24px, 680px);
+        padding-top: 25px;
+    }
+
+    .dashboard-header {
+        padding: 30px 24px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .quick-access {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid,
+    .seller-stats,
+    .trainer-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .section-heading-flex {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .action-panel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .action-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .primary-action,
+    .secondary-action {
+        width: 100%;
+    }
+
+    .onboarding-section {
+        padding: 30px 24px;
+    }
+
+    .onboarding-decoration {
+        display: none;
+    }
+
+    .dashboard-footer {
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+{% endblock %}
