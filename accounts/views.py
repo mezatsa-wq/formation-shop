@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.db.models import Q, Sum
 from django.conf import settings
 from django.conf import settings
+
+from courses.models import Course
 from documents.models import DocumentPurchase
 
 from .models import (
@@ -199,24 +201,31 @@ def profile_view(request):
 
 @login_required
 def dashboard(request):
-
     user = request.user
 
-    # =========================================================
-    # INFORMATIONS CLIENT
-    # =========================================================
+    # =====================================================
+    # COMMANDES DU CLIENT
+    # =====================================================
 
-    user_orders = Order.objects.filter(
-        user=user
-    ).select_related(
-        "product",
-        "seller"
-    ).order_by("-created_at")
+    user_orders = (
+        Order.objects
+        .filter(user=user)
+        .select_related("product", "seller")
+        .order_by("-created_at")
+    )
 
     total_orders = user_orders.count()
 
     pending_orders = user_orders.filter(
         status="pending"
+    )
+
+    seller_delivered_user_orders = user_orders.filter(
+        status="seller_delivered"
+    )
+
+    customer_received_orders = user_orders.filter(
+        status="customer_received"
     )
 
     completed_orders = user_orders.filter(
@@ -227,47 +236,32 @@ def dashboard(request):
         status="cancelled"
     )
 
-    # =========================================================
-    # PROFIL VENDEUR
-    # =========================================================
+    # =====================================================
+    # VENDEUR
+    # =====================================================
 
-    seller_profile = getattr(
-        user,
-        "seller_profile",
-        None
+    seller_profile = getattr(user, "seller_profile", None)
+
+    seller_products = (
+        Product.objects
+        .filter(seller=user)
+        .order_by("-created_at")
     )
 
-    # =========================================================
-    # PRODUITS DU VENDEUR
-    # =========================================================
-
-    seller_products = Product.objects.filter(
-        seller=user
-    ).order_by("-created_at")
-
-    # =========================================================
-    # COMMANDES DU VENDEUR
-    #
-    # On prend :
-    # 1. les commandes dont seller = utilisateur
-    # 2. OU les anciennes commandes dont le produit
-    #    appartient à l'utilisateur
-    # =========================================================
-
-    seller_orders = Order.objects.filter(
-        Q(seller=user) |
-        Q(product__seller=user)
-    ).select_related(
-        "product",
-        "user",
-        "seller"
-    ).distinct().order_by(
-        "-created_at"
+    seller_orders = (
+        Order.objects
+        .filter(
+            Q(seller=user) |
+            Q(product__seller=user)
+        )
+        .select_related(
+            "product",
+            "user",
+            "seller"
+        )
+        .distinct()
+        .order_by("-created_at")
     )
-
-    # =========================================================
-    # STATISTIQUES COMMANDES VENDEUR
-    # =========================================================
 
     seller_pending_orders = seller_orders.filter(
         status="pending"
@@ -285,66 +279,68 @@ def dashboard(request):
         status="cancelled"
     )
 
-    # Commandes que le vendeur doit encore livrer
     seller_orders_to_deliver = seller_orders.filter(
         status="pending",
         seller_confirmed=False,
         admin_validated=False
     )
 
-    # =========================================================
-    # COMMANDES EN RETARD
-    # =========================================================
-
-    seller_late_orders = seller_orders.filter(
-        delivery_deadline__isnull=False,
-        delivery_deadline__lt=timezone.now()
-    ).exclude(
-        status__in=[
-            "delivered",
-            "cancelled"
-        ]
+    seller_late_orders = (
+        seller_orders
+        .filter(
+            delivery_deadline__isnull=False,
+            delivery_deadline__lt=timezone.now()
+        )
+        .exclude(
+            status__in=[
+                "delivered",
+                "cancelled"
+            ]
+        )
     )
 
-    # =========================================================
+    # =====================================================
     # REVENUS VENDEUR
-    # =========================================================
+    # =====================================================
 
-    seller_earnings = SellerEarning.objects.filter(
-        seller=user
-    ).select_related(
-        "order"
-    ).order_by(
-        "-created_at"
+    seller_earnings = (
+        SellerEarning.objects
+        .filter(seller=user)
+        .select_related("order")
+        .order_by("-created_at")
     )
 
-    seller_revenue = seller_earnings.aggregate(
-        total=Sum("amount")
-    )["total"] or 0
+    seller_revenue = (
+        seller_earnings.aggregate(
+            total=Sum("amount")
+        )["total"] or 0
+    )
 
-    # =========================================================
+    # =====================================================
     # NOTIFICATIONS VENDEUR
-    # =========================================================
+    # =====================================================
 
-    seller_notifications = OrderNotification.objects.filter(
-        recipient=user
-    ).order_by(
-        "-created_at"
+    seller_notifications = (
+        OrderNotification.objects
+        .filter(recipient=user)
+        .order_by("-created_at")
     )
 
-    unread_seller_notifications = seller_notifications.filter(
-        is_read=False
+    unread_seller_notifications = (
+        seller_notifications
+        .filter(is_read=False)
+        .count()
     )
 
-    # =========================================================
-    # STATUT PREMIUM
-    # =========================================================
+    # =====================================================
+    # PREMIUM VENDEUR
+    # =====================================================
 
     seller_is_premium = is_premium_seller(user)
 
-    # =========================================================
-    # INFORMATIONS FORMATEUR
-    # =========================================================
+    # =====================================================
+    # FORMATEUR
+    # =====================================================
 
     trainer_profile = getattr(
         user,
@@ -352,9 +348,52 @@ def dashboard(request):
         None
     )
 
-    # =========================================================
-    # CONTEXTE FINAL
-    # =========================================================
+    trainer_courses = []
+
+    trainer_wallet = None
+
+    trainer_revenue = 0
+
+    trainer_unread_notifications = 0
+
+    if trainer_profile:
+
+        trainer_courses = (
+            Course.objects
+            .filter(instructor=user)
+            .order_by("-id")
+        )
+
+        trainer_wallet = (
+            TrainerWallet.objects
+            .filter(user=user)
+            .first()
+        )
+
+        trainer_earnings = (
+            TrainerEarning.objects
+            .filter(trainer=user)
+            .order_by("-created_at")
+        )
+
+        trainer_revenue = (
+            trainer_earnings.aggregate(
+                total=Sum("amount")
+            )["total"] or 0
+        )
+
+        trainer_unread_notifications = (
+            TrainerNotification.objects
+            .filter(
+                trainer=user,
+                is_read=False
+            )
+            .count()
+        )
+
+    # =====================================================
+    # CONTEXTE
+    # =====================================================
 
     context = {
 
@@ -363,51 +402,94 @@ def dashboard(request):
         # -------------------------
 
         "user_orders": user_orders,
+
+        # Compatibilité avec ton ancien template
+        "my_orders": user_orders,
+
         "total_orders": total_orders,
+
         "pending_orders": pending_orders,
-        "completed_orders": completed_orders,
-        "cancelled_orders": cancelled_orders,
+
+        "seller_delivered_user_orders":
+            seller_delivered_user_orders,
+
+        "customer_received_orders":
+            customer_received_orders,
+
+        "completed_orders":
+            completed_orders,
+
+        "cancelled_orders":
+            cancelled_orders,
 
         # -------------------------
         # VENDEUR
         # -------------------------
 
-        "seller_profile": seller_profile,
-        "seller_products": seller_products,
+        "seller_profile":
+            seller_profile,
 
-        "seller_orders": seller_orders,
+        "seller_products":
+            seller_products,
 
-        "seller_pending_orders": seller_pending_orders,
+        "seller_orders":
+            seller_orders,
 
-        "seller_delivered_orders": seller_delivered_orders,
+        "seller_pending_orders":
+            seller_pending_orders,
 
-        "seller_completed_orders": seller_completed_orders,
+        "seller_delivered_orders":
+            seller_delivered_orders,
 
-        "seller_cancelled_orders": seller_cancelled_orders,
+        "seller_completed_orders":
+            seller_completed_orders,
 
-        "seller_orders_to_deliver": seller_orders_to_deliver,
+        "seller_cancelled_orders":
+            seller_cancelled_orders,
 
-        "seller_late_orders": seller_late_orders,
+        "seller_orders_to_deliver":
+            seller_orders_to_deliver,
 
-        "seller_earnings": seller_earnings,
+        "seller_late_orders":
+            seller_late_orders,
 
-        "seller_revenue": seller_revenue,
+        "seller_earnings":
+            seller_earnings,
 
-        "seller_is_premium": seller_is_premium,
+        "seller_revenue":
+            seller_revenue,
 
-        # -------------------------
-        # NOTIFICATIONS VENDEUR
-        # -------------------------
+        "seller_is_premium":
+            seller_is_premium,
 
-        "seller_notifications": seller_notifications,
+        "seller_notifications":
+            seller_notifications,
 
-        "unread_seller_notifications": unread_seller_notifications,
+        "unread_seller_notifications":
+            unread_seller_notifications,
+
+        # Compatibilité avec ton template actuel
+        "seller_unread_notifications":
+            unread_seller_notifications,
 
         # -------------------------
         # FORMATEUR
         # -------------------------
 
-        "trainer_profile": trainer_profile,
+        "trainer_profile":
+            trainer_profile,
+
+        "trainer_courses":
+            trainer_courses,
+
+        "trainer_wallet":
+            trainer_wallet,
+
+        "trainer_revenue":
+            trainer_revenue,
+
+        "trainer_unread_notifications":
+            trainer_unread_notifications,
     }
 
     return render(
@@ -415,7 +497,6 @@ def dashboard(request):
         "accounts/dashboard.html",
         context
     )
-# =========================================================
 # DEVENIR FORMATEUR
 # =========================================================
 
