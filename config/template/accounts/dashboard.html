@@ -653,7 +653,7 @@
 
             <!-- NOTIFICATIONS FORMATEUR -->
 
-            <a href="{% url 'trainer_dashboard' %}"
+            <a href="{% url 'order_notifications' %}"
                class="stat-card">
 
                 <div class="stat-top">
@@ -741,64 +741,32 @@
          UTILISATEUR SANS RÔLE
     ====================================================== -->
 
-    {% if not seller_profile and not trainer_profile %}
+    {% if not seller_profile or not trainer_profile %}
 
-    <section class="onboarding-section">
-
-        <div class="onboarding-content">
-
-            <span class="section-kicker">
-                DÉVELOPPEZ VOTRE ACTIVITÉ
-            </span>
-
-            <h2>
-                Faites évoluer votre compte FormaShop
-            </h2>
-
-            <p>
-                Vous utilisez actuellement FormaShop comme client.
-                Vous pouvez également devenir vendeur ou formateur et
-                développer votre propre activité sur la plateforme.
-            </p>
-
-            <div class="onboarding-actions">
-
-                <a href="{% url 'become_trainer' %}"
-                   class="primary-action">
-
-                    Devenir formateur
-                    <span>→</span>
-
-                </a>
-
-                <a href="{% url 'become_seller' %}"
-                   class="secondary-action">
-
-                    Devenir vendeur
-                    <span>→</span>
-
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <div class="onboarding-decoration">
-
-            <div class="orbit orbit-one"></div>
-
-            <div class="orbit orbit-two"></div>
-
-            <div class="orbit-center">
-                F
-            </div>
-
-        </div>
-
-    </section>
-
+<section class="onboarding-section">
+<div class="section-heading">
+    <div>
+        <h2>Développez votre activité sur FormaShop</h2>
+        <p>
+            Rejoignez notre communauté de formateurs et de vendeurs.
+        </p>
+    </div>
+</div>
+<div class="onboarding-actions">
+    {% if not trainer_profile %}
+        <a href="{% url 'become_trainer' %}" class="primary-action">
+            Devenir formateur
+        </a>
     {% endif %}
+    {% if not seller_profile %}
+        <a href="{% url 'become_seller' %}" class="secondary-action">
+            Devenir vendeur
+        </a>
+    {% endif %}
+</div>
+</section>
+
+{% endif %}
 
 
     <!-- =====================================================
