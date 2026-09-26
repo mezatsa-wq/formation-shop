@@ -838,6 +838,10 @@ def trainer_withdrawal(request):
 
     if available_balance < 0:
         available_balance = Decimal("0")
+        default_full_name = request.user.get_full_name().strip()
+
+        if not default_full_name:
+            default_full_name = request.user.username
 
     withdrawal_requests = (
         WithdrawalRequest.objects
