@@ -404,6 +404,14 @@ class SellerApplicationAdmin(admin.ModelAdmin):
             messages.WARNING,
         )
 
+    ordering = ("-created_at",)
+
+    list_per_page = 25
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
 
 @admin.register(SellerProfile)
 class SellerProfileAdmin(admin.ModelAdmin):
@@ -577,3 +585,11 @@ class SellerSubscriptionAdmin(admin.ModelAdmin):
             f"{rejected} abonnement(s) Premium refusé(s).",
             messages.WARNING,
         )
+
+    ordering = ("-created_at",)
+
+    list_per_page = 25
+
+    readonly_fields = (
+        "created_at",
+    )

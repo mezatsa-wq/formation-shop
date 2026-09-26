@@ -9,13 +9,16 @@ from django.contrib import messages
 
 from courses.models import Course
 from products.models import Product
-from accounts.models import SellerApplication
-from orders.models import Order, CoursePayment
+
 from accounts.models import (
+    SellerApplication,
+    SellerSubscription,
     TrainerApplication,
     TrainerProfile,
     TrainerWallet,
 )
+
+from orders.models import Order, CoursePayment
 
 
 @login_required
@@ -28,22 +31,69 @@ def admin_dashboard(request):
             status=403
         )
 
-    pending_applications = TrainerApplication.objects.filter(
-        status="pending"
-    ).select_related("user").order_by("-created_at")[:5]
-    pending_seller_application_list = SellerApplication.objects.filter(
-        status="pending"
-    ).select_related("user").order_by("-created_at")
+    # ========================================================
+    # FORMATEURS
+    # ========================================================
 
-    pending_seller_applications = pending_seller_application_list.count()
+    pending_applications = (
+        TrainerApplication.objects
+        .filter(status="pending")
+        .select_related("user")
+        .order_by("-created_at")[:5]
+    )
+
+    pending_trainers_count = TrainerApplication.objects.filter(
+        status="pending"
+    ).count()
+
+    total_trainers = TrainerApplication.objects.filter(
+        status="approved"
+    ).count()
+
+    # ========================================================
+    # VENDEURS
+    # ========================================================
+
+    pending_seller_application_list = (
+        SellerApplication.objects
+        .filter(status="pending")
+        .select_related("user")
+        .order_by("-created_at")
+    )
+
+    pending_seller_applications = (
+        pending_seller_application_list.count()
+    )
+
+    # ========================================================
+    # PREMIUM
+    # ========================================================
+
+    pending_premium_subscription_list = (
+        SellerSubscription.objects
+        .filter(status="pending")
+        .select_related("seller")
+        .order_by("-created_at")
+    )
+
+    pending_premium_subscriptions = (
+        pending_premium_subscription_list.count()
+    )
+
+    # ========================================================
+    # STATISTIQUES
+    # ========================================================
+
     context = {
+
         "total_users": User.objects.count(),
 
-        "total_trainers": TrainerApplication.objects.filter(
-            status="approved"
-        ).count(),
-        "pending_seller_applications": pending_seller_applications,
-        "pending_seller_application_list": pending_seller_application_list,
+        "total_trainers": total_trainers,
+
+        "pending_trainers_count": pending_trainers_count,
+
+        "pending_applications": pending_applications,
+
         "total_courses": Course.objects.count(),
 
         "total_products": Product.objects.count(),
@@ -58,11 +108,27 @@ def admin_dashboard(request):
             status="pending"
         ).count(),
 
-        "pending_applications": pending_applications,
+        # ----------------------------------------------------
+        # VENDEURS
+        # ----------------------------------------------------
 
-        "pending_trainers_count": TrainerApplication.objects.filter(
-            status="pending"
-        ).count(),
+        "pending_seller_applications": pending_seller_applications,
+
+        "pending_seller_application_list": (
+            pending_seller_application_list
+        ),
+
+        # ----------------------------------------------------
+        # PREMIUM
+        # ----------------------------------------------------
+
+        "pending_premium_subscriptions": (
+            pending_premium_subscriptions
+        ),
+
+        "pending_premium_subscription_list": (
+            pending_premium_subscription_list
+        ),
     }
 
     return render(
@@ -71,6 +137,10 @@ def admin_dashboard(request):
         context
     )
 
+
+# ============================================================
+# LISTE DES CANDIDATURES FORMATEURS
+# ============================================================
 
 @login_required
 def admin_trainers(request):
@@ -82,9 +152,11 @@ def admin_trainers(request):
             status=403
         )
 
-    applications = TrainerApplication.objects.select_related(
-        "user"
-    ).order_by("-created_at")
+    applications = (
+        TrainerApplication.objects
+        .select_related("user")
+        .order_by("-created_at")
+    )
 
     return render(
         request,
@@ -94,6 +166,10 @@ def admin_trainers(request):
         }
     )
 
+
+# ============================================================
+# DETAIL CANDIDATURE FORMATEUR
+# ============================================================
 
 @login_required
 def admin_trainer_detail(request, application_id):
@@ -119,6 +195,10 @@ def admin_trainer_detail(request, application_id):
     )
 
 
+# ============================================================
+# ACCEPTER FORMATEUR
+# ============================================================
+
 @login_required
 def admin_trainer_approve(request, application_id):
 
@@ -137,7 +217,10 @@ def admin_trainer_approve(request, application_id):
     if request.method == "POST":
 
         application.status = "approved"
-        application.save(update_fields=["status"])
+
+        application.save(
+            update_fields=["status"]
+        )
 
         TrainerProfile.objects.get_or_create(
             user=application.user,
@@ -160,6 +243,10 @@ def admin_trainer_approve(request, application_id):
     return redirect("admin_trainers")
 
 
+# ============================================================
+# REFUSER FORMATEUR
+# ============================================================
+
 @login_required
 def admin_trainer_reject(request, application_id):
 
@@ -178,12 +265,15 @@ def admin_trainer_reject(request, application_id):
     if request.method == "POST":
 
         application.status = "rejected"
-        application.save(update_fields=["status"])
+
+        application.save(
+            update_fields=["status"]
+        )
 
         messages.warning(
             request,
             f"La candidature de {application.user.username} "
-            "a été refusée."
+            f"a été refusée."
         )
 
     return redirect("admin_trainers")

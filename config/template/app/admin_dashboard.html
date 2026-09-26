@@ -1106,7 +1106,136 @@
 
         </section>
 
+<!-- ========================================================= -->
+<!-- ABONNEMENTS PREMIUM EN ATTENTE -->
+<!-- ========================================================= -->
 
+<section class="dashboard-card">
+
+    <div class="section-header">
+
+        <div>
+            <span class="section-kicker">
+                VENDEURS PREMIUM
+            </span>
+
+            <h2>
+                Abonnements Premium
+            </h2>
+
+            <p>
+                Vérifiez les demandes de passage au statut Premium.
+            </p>
+        </div>
+
+        <div class="section-actions">
+
+            {% if pending_premium_subscriptions %}
+                <span class="status-badge pending">
+                    {{ pending_premium_subscriptions }} en attente
+                </span>
+            {% endif %}
+
+            <a
+                href="/admin/accounts/sellersubscription/"
+                class="btn-secondary"
+            >
+                Voir tout
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% if pending_premium_subscription_list %}
+
+        <div class="applications-list">
+
+            {% for subscription in pending_premium_subscription_list %}
+
+                <div class="application-item">
+
+                    <div class="application-main">
+
+                        <div class="application-avatar">
+                            {{ subscription.seller.username|first|upper }}
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                {{ subscription.seller.username }}
+                            </h3>
+
+                            <p>
+                                Demande d'abonnement
+                                <strong>Premium</strong>
+                            </p>
+
+                            <div class="application-meta">
+
+                                <span>
+                                    💰 {{ subscription.amount }} FCFA
+                                </span>
+
+                                <span>
+                                    📱 {{ subscription.phone_number }}
+                                </span>
+
+                                <span>
+                                    {% if subscription.method == "mtn" %}
+                                        MTN Mobile Money
+                                    {% else %}
+                                        Orange Money
+                                    {% endif %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="application-actions">
+
+                        <a
+                            href="/admin/accounts/sellersubscription/{{ subscription.id }}/change/"
+                            class="btn-primary"
+                        >
+                            Vérifier
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                Aucun abonnement Premium en attente
+            </h3>
+
+            <p>
+                Toutes les demandes Premium ont été traitées.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
 
         <!-- TWO COLUMNS -->
 
