@@ -1,73 +1,314 @@
 {% extends "base.html" %}
 
-{% block title %}{{ course.title }}{% endblock %}
+{% block title %}{{ course.title }} — FormaShop{% endblock %}
 
 {% block content %}
 
+<style>
+    .learning-page {
+        min-height: 100vh;
+        padding: 70px 20px 90px;
+        background:
+            radial-gradient(circle at 15% 10%, rgba(124, 58, 237, .18), transparent 35%),
+            radial-gradient(circle at 85% 20%, rgba(37, 99, 235, .14), transparent 35%),
+            #050816;
+        color: #f8fafc;
+    }
+
+    .learning-wrapper {
+        width: min(1100px, 100%);
+        margin: 0 auto;
+    }
+
+    .learning-header {
+        position: relative;
+        overflow: hidden;
+        padding: 42px;
+        margin-bottom: 35px;
+        border: 1px solid rgba(124, 58, 237, .25);
+        border-radius: 28px;
+        background:
+            linear-gradient(
+                135deg,
+                rgba(15, 23, 42, .97),
+                rgba(30, 27, 75, .94)
+            );
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .35);
+    }
+
+    .learning-header::before {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        right: -100px;
+        top: -120px;
+        background: rgba(124, 58, 237, .18);
+        filter: blur(70px);
+        border-radius: 50%;
+    }
+
+    .learning-category {
+        position: relative;
+        display: inline-flex;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(124, 58, 237, .14);
+        border: 1px solid rgba(124, 58, 237, .3);
+        color: #a78bfa;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 18px;
+    }
+
+    .learning-header h1 {
+        position: relative;
+        margin: 0 0 15px;
+        font-size: clamp(32px, 5vw, 58px);
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: -1.5px;
+        background: linear-gradient(90deg, #ffffff, #c4b5fd, #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .learning-description {
+        position: relative;
+        max-width: 800px;
+        margin: 0;
+        color: #94a3b8;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .lessons-section {
+        margin-top: 30px;
+    }
+
+    .lessons-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .lessons-title h2 {
+        margin: 0;
+        font-size: 27px;
+        font-weight: 850;
+        color: #f8fafc;
+    }
+
+    .lessons-count {
+        padding: 8px 13px;
+        border-radius: 999px;
+        background: rgba(37, 99, 235, .12);
+        border: 1px solid rgba(37, 99, 235, .25);
+        color: #93c5fd;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .lesson-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 16px;
+        padding: 24px;
+        border-radius: 22px;
+        border: 1px solid rgba(148, 163, 184, .12);
+        background: linear-gradient(
+            135deg,
+            rgba(15, 23, 42, .96),
+            rgba(17, 24, 39, .92)
+        );
+        box-shadow: 0 15px 45px rgba(0, 0, 0, .22);
+        transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .lesson-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(124, 58, 237, .4);
+    }
+
+    .lesson-number {
+        flex: 0 0 52px;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        color: white;
+        font-size: 18px;
+        font-weight: 900;
+        box-shadow: 0 10px 25px rgba(124, 58, 237, .25);
+    }
+
+    .lesson-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .lesson-info h3 {
+        margin: 3px 0 9px;
+        color: #f8fafc;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .lesson-content {
+        margin: 0 0 18px;
+        color: #94a3b8;
+        line-height: 1.7;
+        white-space: pre-line;
+    }
+
+    .lesson-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        color: white;
+        text-decoration: none;
+        font-weight: 800;
+        box-shadow: 0 10px 25px rgba(37, 99, 235, .2);
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .lesson-action:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(124, 58, 237, .3);
+    }
+
+    .empty-lessons {
+        padding: 40px 25px;
+        text-align: center;
+        border-radius: 22px;
+        border: 1px dashed rgba(148, 163, 184, .2);
+        background: rgba(15, 23, 42, .7);
+        color: #94a3b8;
+    }
+
+    @media (max-width: 700px) {
+        .learning-page {
+            padding: 35px 14px 60px;
+        }
+
+        .learning-header {
+            padding: 28px 22px;
+            border-radius: 22px;
+        }
+
+        .learning-header h1 {
+            font-size: 34px;
+        }
+
+        .lesson-card {
+            padding: 18px;
+            gap: 14px;
+        }
+
+        .lesson-number {
+            flex-basis: 44px;
+            width: 44px;
+            height: 44px;
+            font-size: 15px;
+        }
+
+        .lesson-info h3 {
+            font-size: 17px;
+        }
+
+        .lessons-title {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
 <section class="learning-page">
 
-    <div class="learning-header">
+    <div class="learning-wrapper">
 
-        <span class="category">
-            Formation
-        </span>
+        <header class="learning-header">
 
-        <h1>{{ course.title }}</h1>
+            <span class="learning-category">
+                Formation
+            </span>
 
-        <p>
-            {{ course.description }}
-        </p>
+            <h1>{{ course.title }}</h1>
 
-    </div>
+            {% if course.description %}
+                <p class="learning-description">
+                    {{ course.description }}
+                </p>
+            {% endif %}
 
+        </header>
 
-    <div class="lessons-container">
+        <section class="lessons-section">
 
-        <h2>Programme de la formation</h2>
+            <div class="lessons-title">
+                <h2>Programme de la formation</h2>
 
-        {% for lesson in lessons %}
+                <span class="lessons-count">
+                    {{ lessons|length }} leçon{{ lessons|length|pluralize }}
+                </span>
+            </div>
 
-            <article class="lesson-card">
+            {% for lesson in lessons %}
 
-                <div class="lesson-number">
-                    {{ forloop.counter }}
+                <article class="lesson-card">
+
+                    <div class="lesson-number">
+                        {{ forloop.counter }}
+                    </div>
+
+                    <div class="lesson-info">
+
+                        <h3>
+                            {{ lesson.title }}
+                        </h3>
+
+                        {% if lesson.content %}
+                            <p class="lesson-content">
+                                {{ lesson.content }}
+                            </p>
+                        {% endif %}
+
+                        {% if lesson.video_url %}
+                            <a
+                                href="{{ lesson.video_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="lesson-action"
+                            >
+                                ▶ Regarder la leçon
+                            </a>
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="empty-lessons">
+                    Les leçons de cette formation seront bientôt disponibles.
                 </div>
 
-                <div class="lesson-info">
+            {% endfor %}
 
-                    <h3>
-                        {{ lesson.title }}
-                    </h3>
-
-                    {% if lesson.content %}
-                        <p>
-                            {{ lesson.content }}
-                        </p>
-                    {% endif %}
-
-                    {% if lesson.video_url %}
-
-                        <a
-                            href="{{ lesson.video_url }}"
-                            target="_blank"
-                            class="btn-primary"
-                        >
-                            ▶️ Regarder la leçon
-                        </a>
-
-                    {% endif %}
-
-                </div>
-
-            </article>
-
-        {% empty %}
-
-            <p>
-                Les leçons de cette formation seront bientôt disponibles.
-            </p>
-
-        {% endfor %}
+        </section>
 
     </div>
 

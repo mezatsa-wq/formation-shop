@@ -461,39 +461,37 @@ def dashboard(request):
 
 @login_required
 def become_trainer(request):
-    existing_application = TrainerApplication.objects.filter(
-        user=request.user
-    ).first()
 
-    if existing_application:
-        if existing_application.status == "pending":
-            messages.info(
-                request,
-                "Votre candidature de formateur est déjà en attente de validation par l'administration."
-            )
-            return redirect("dashboard")
-
-        if existing_application.status == "approved":
-            messages.success(
-                request,
-                "Votre candidature a déjà été approuvée. Vous êtes formateur."
-            )
-            return redirect("dashboard")
-
-        if existing_application.status == "rejected":
-            messages.error(
-                request,
-                "Votre précédente candidature a été refusée."
-            )
+    existing_application = (
+        TrainerApplication.objects
+        .filter(user=request.user)
+        .first()
+    )
 
     if request.method == "POST":
 
-        full_name = request.POST.get("full_name", "").strip()
-        phone = request.POST.get("phone", "").strip()
-        expertise = request.POST.get("expertise", "").strip()
-        description = request.POST.get("description", "").strip()
+        full_name = request.POST.get(
+            "full_name",
+            ""
+        ).strip()
+
+        phone = request.POST.get(
+            "phone",
+            ""
+        ).strip()
+
+        expertise = request.POST.get(
+            "expertise",
+            ""
+        ).strip()
+
+        description = request.POST.get(
+            "description",
+            ""
+        ).strip()
 
         if not full_name or not phone or not expertise or not description:
+
             messages.error(
                 request,
                 "Veuillez remplir tous les champs."
@@ -501,29 +499,75 @@ def become_trainer(request):
 
             return render(
                 request,
-                "accounts/become_trainer.html"
+                "accounts/become_trainer.html",
+                {
+                    "application": existing_application,
+                }
             )
 
-        TrainerApplication.objects.create(
-            user=request.user,
-            full_name=full_name,
-            phone=phone,
-            expertise=expertise,
-            description=description,
-            status="pending",
-        )
+        if existing_application:
+            if existing_application.status == "pending":
+                return render(
+                    request,
+                    "accounts/become_trainer.html",
+                    {
+                        "submitted": True,
+                        "application": existing_application,
+                    }
+                )
+
+            if existing_application.status == "approved":
+                messages.success(
+                    request,
+                    "Votre candidature a déjà été approuvée. Vous êtes formateur."
+                )
+                return redirect("trainer_dashboard")
+
+            if existing_application.status == "rejected":
+
+                existing_application.full_name = full_name
+                existing_application.phone = phone
+                existing_application.expertise = expertise
+                existing_application.description = description
+                existing_application.status = "pending"
+
+                existing_application.save()
+
+            else:
+
+                existing_application.full_name = full_name
+                existing_application.phone = phone
+                existing_application.expertise = expertise
+                existing_application.description = description
+                existing_application.status = "pending"
+
+                existing_application.save()
+
+        else:
+
+            TrainerApplication.objects.create(
+                user=request.user,
+                full_name=full_name,
+                phone=phone,
+                expertise=expertise,
+                description=description,
+                status="pending",
+            )
 
         return render(
             request,
             "accounts/become_trainer.html",
             {
-                "submitted": True
+                "submitted": True,
             }
         )
 
     return render(
         request,
-        "accounts/become_trainer.html"
+        "accounts/become_trainer.html",
+        {
+            "application": existing_application,
+        }
     )
 
 # =========================================================
@@ -692,17 +736,16 @@ def become_seller(request):
             city=city,
             activity=activity,
             description=description,
+            plan=plan,
             status="pending",
         )
 
         if plan == "premium":
-
             SellerSubscription.objects.create(
-                user=request.user,
-                plan="premium",
+                seller=request.user,
                 amount=1000,
-                payment_method=payment_method,
-                payment_phone=payment_phone,
+                method=payment_method,
+                phone_number=payment_phone,
                 status="pending",
             )
 
@@ -723,9 +766,9 @@ def become_seller(request):
 # =========================================================
 # PASSER VENDEUR PREMIUM
 # =========================================================
-
 @login_required
 def upgrade_to_premium(request):
+
     premium_mtn_number = getattr(
         settings,
         "PREMIUM_MTN_NUMBER",
@@ -738,25 +781,29 @@ def upgrade_to_premium(request):
         "694452058"
     )
 
-    seller_profile = SellerProfile.objects.filter(
-        user=request.user
-    ).first()
+    if is_premium_seller(request.user):
 
-    # Si le compte est déjà Premium, inutile de proposer
-    # une nouvelle souscription.
-    if seller_profile and seller_profile.plan == "premium":
         messages.info(
             request,
             "Votre compte vendeur est déjà Premium."
         )
+
         return redirect("dashboard")
 
     if request.method == "POST":
 
-        method = request.POST.get("payment_method", "").strip()
-        phone_number = request.POST.get("payment_phone", "").strip()
+        method = request.POST.get(
+            "payment_method",
+            ""
+        ).strip()
+
+        phone_number = request.POST.get(
+            "payment_phone",
+            ""
+        ).strip()
 
         if method not in ["mtn", "orange"]:
+
             messages.error(
                 request,
                 "Veuillez choisir MTN Mobile Money ou Orange Money."
@@ -772,6 +819,7 @@ def upgrade_to_premium(request):
             )
 
         if not phone_number:
+
             messages.error(
                 request,
                 "Veuillez entrer le numéro utilisé pour effectuer le dépôt."
@@ -786,25 +834,38 @@ def upgrade_to_premium(request):
                 }
             )
 
-        # Une seule demande Premium en attente à la fois.
-        existing_subscription = SellerSubscription.objects.filter(
-            seller=request.user,
-            status="pending"
-        ).first()
+        existing_subscription = (
+            SellerSubscription.objects
+            .filter(
+                seller=request.user,
+                status="pending"
+            )
+            .first()
+        )
 
         if existing_subscription:
-            messages.info(
+
+            return render(
                 request,
-                "Votre demande Premium est déjà en attente de validation par l'administration."
+                "accounts/upgrade_premium.html",
+                {
+                    "submitted": True,
+                    "already_pending": True,
+                    "premium_mtn_number": premium_mtn_number,
+                    "premium_orange_number": premium_orange_number,
+                }
             )
 
-            return redirect("dashboard")
-
         SellerSubscription.objects.create(
+
             seller=request.user,
+
             amount=1000,
+
             method=method,
+
             phone_number=phone_number,
+
             status="pending",
         )
 
@@ -826,6 +887,7 @@ def upgrade_to_premium(request):
             "premium_orange_number": premium_orange_number,
         }
     )
+
 @login_required
 def seller_notifications(request):
     notifications = SellerNotification.objects.filter(
