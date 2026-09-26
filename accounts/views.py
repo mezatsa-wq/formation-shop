@@ -378,10 +378,7 @@ def dashboard(request):
             .order_by("-created_at")
         )
 
-        trainer_revenue = sum(
-            earning.amount
-            for earning in trainer_earnings
-        )
+        trainer_revenue = trainer_wallet.balance
 
         trainer_notifications = (
             TrainerNotification.objects
