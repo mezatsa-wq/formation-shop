@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.db.models import Q, Sum
 from django.conf import settings
-
+from .models import SellerNotification
 from documents.models import DocumentPurchase
 
 from .models import (
@@ -819,5 +819,23 @@ def upgrade_to_premium(request):
         {
             "premium_mtn_number": premium_mtn_number,
             "premium_orange_number": premium_orange_number,
+        }
+    )
+@login_required
+def seller_notifications(request):
+    notifications = SellerNotification.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    SellerNotification.objects.filter(
+        user=request.user,
+        is_read=False
+    ).update(is_read=True)
+
+    return render(
+        request,
+        "accounts/seller_notifications.html",
+        {
+            "notifications": notifications,
         }
     )

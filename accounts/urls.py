@@ -93,4 +93,9 @@ urlpatterns = [
         views.dashboard,
         name="dashboard"
     ),
+path(
+    "seller/notifications/",
+    views.seller_notifications,
+    name="seller_notifications",
+),
 ]

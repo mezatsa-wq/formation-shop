@@ -1,0 +1,631 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications vendeur — FormaShop{% endblock %}
+
+{% block content %}
+
+<style>
+    .seller-notifications-page {
+        min-height: calc(100vh - 80px);
+        padding: 35px 18px 70px;
+        background:
+            radial-gradient(
+                circle at 10% 0%,
+                rgba(124, 58, 237, .20),
+                transparent 35%
+            ),
+            radial-gradient(
+                circle at 90% 10%,
+                rgba(37, 99, 235, .16),
+                transparent 35%
+            ),
+            #070b16;
+        color: #fff;
+    }
+
+    .seller-notifications-container {
+        width: min(1050px, 100%);
+        margin: 0 auto;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 28px;
+        margin-bottom: 25px;
+
+        border-radius: 24px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(124, 58, 237, .20),
+                rgba(37, 99, 235, .12)
+            ),
+            rgba(15, 23, 42, .88);
+
+        border: 1px solid rgba(139, 92, 246, .22);
+
+        box-shadow:
+            0 20px 60px rgba(0, 0, 0, .35);
+    }
+
+    .notifications-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .notifications-header-icon {
+        width: 58px;
+        height: 58px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 17px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #7c3aed,
+                #2563eb
+            );
+
+        font-size: 27px;
+
+        box-shadow:
+            0 12px 30px rgba(124, 58, 237, .30);
+    }
+
+    .notifications-header h1 {
+        margin: 0 0 6px;
+
+        font-size: clamp(25px, 4vw, 34px);
+        font-weight: 800;
+        letter-spacing: -.7px;
+    }
+
+    .notifications-header p {
+        margin: 0;
+
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    .notifications-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 43px;
+        padding: 0 16px;
+
+        border-radius: 12px;
+
+        color: #fff;
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        background: rgba(255, 255, 255, .05);
+
+        border: 1px solid rgba(255, 255, 255, .08);
+
+        transition: .2s ease;
+    }
+
+    .notifications-back:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, .09);
+        transform: translateY(-2px);
+    }
+
+    /* =====================================================
+       STATS
+       ===================================================== */
+
+    .notification-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        padding: 19px;
+
+        border-radius: 18px;
+
+        background: rgba(15, 23, 42, .82);
+
+        border: 1px solid rgba(148, 163, 184, .10);
+
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, .18);
+    }
+
+    .summary-label {
+        display: block;
+        margin-bottom: 7px;
+
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .summary-value {
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    /* =====================================================
+       LISTE
+       ===================================================== */
+
+    .notifications-card {
+        padding: 22px;
+
+        border-radius: 22px;
+
+        background: rgba(15, 23, 42, .86);
+
+        border: 1px solid rgba(148, 163, 184, .11);
+
+        box-shadow:
+            0 20px 55px rgba(0, 0, 0, .25);
+    }
+
+    .notifications-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+
+        margin-bottom: 18px;
+        padding-bottom: 17px;
+
+        border-bottom: 1px solid rgba(148, 163, 184, .09);
+    }
+
+    .notifications-card-header h2 {
+        margin: 0;
+
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .notification-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 30px;
+        min-height: 28px;
+
+        padding: 0 9px;
+
+        border-radius: 999px;
+
+        color: #c4b5fd;
+
+        background: rgba(124, 58, 237, .16);
+
+        border: 1px solid rgba(124, 58, 237, .22);
+
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .notifications-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    /* =====================================================
+       NOTIFICATION
+       ===================================================== */
+
+    .notification-item {
+        position: relative;
+
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+
+        padding: 18px;
+
+        border-radius: 17px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(124, 58, 237, .07),
+                rgba(37, 99, 235, .04)
+            ),
+            rgba(2, 6, 23, .42);
+
+        border: 1px solid rgba(148, 163, 184, .08);
+
+        transition: .2s ease;
+    }
+
+    .notification-item:hover {
+        transform: translateY(-2px);
+
+        border-color: rgba(124, 58, 237, .28);
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(124, 58, 237, .12),
+                rgba(37, 99, 235, .07)
+            ),
+            rgba(2, 6, 23, .55);
+    }
+
+    .notification-icon {
+        width: 45px;
+        height: 45px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(124, 58, 237, .23),
+                rgba(37, 99, 235, .18)
+            );
+
+        border: 1px solid rgba(124, 58, 237, .16);
+
+        font-size: 20px;
+    }
+
+    .notification-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .notification-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .notification-title {
+        margin: 0;
+
+        color: #fff;
+
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .notification-date {
+        flex-shrink: 0;
+
+        color: #64748b;
+
+        font-size: 11px;
+    }
+
+    .notification-message {
+        margin: 7px 0 0;
+
+        color: #94a3b8;
+
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+    .notification-status {
+        display: inline-flex;
+
+        margin-top: 11px;
+        padding: 5px 9px;
+
+        border-radius: 999px;
+
+        color: #c4b5fd;
+
+        background: rgba(124, 58, 237, .10);
+
+        border: 1px solid rgba(124, 58, 237, .15);
+
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    /* =====================================================
+       EMPTY STATE
+       ===================================================== */
+
+    .empty-notifications {
+        padding: 65px 20px;
+
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 70px;
+        height: 70px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 17px;
+
+        border-radius: 21px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(124, 58, 237, .15),
+                rgba(37, 99, 235, .10)
+            );
+
+        border: 1px solid rgba(124, 58, 237, .16);
+
+        font-size: 31px;
+    }
+
+    .empty-notifications h3 {
+        margin: 0 0 7px;
+
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .empty-notifications p {
+        max-width: 450px;
+        margin: 0 auto;
+
+        color: #64748b;
+
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 720px) {
+
+        .seller-notifications-page {
+            padding: 22px 12px 50px;
+        }
+
+        .notifications-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 21px;
+        }
+
+        .notifications-back {
+            width: 100%;
+        }
+
+        .notification-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .notifications-card {
+            padding: 17px;
+        }
+    }
+
+    @media (max-width: 520px) {
+
+        .notifications-header-left {
+            align-items: flex-start;
+        }
+
+        .notifications-header-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 22px;
+        }
+
+        .notification-item {
+            padding: 15px;
+        }
+
+        .notification-top {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .notification-date {
+            order: 2;
+        }
+    }
+</style>
+
+
+<div class="seller-notifications-page">
+
+    <div class="seller-notifications-container">
+
+        <!-- HEADER -->
+
+        <div class="notifications-header">
+
+            <div class="notifications-header-left">
+
+                <div class="notifications-header-icon">
+                    🔔
+                </div>
+
+                <div>
+                    <h1>Notifications</h1>
+
+                    <p>
+                        Retrouvez ici les informations importantes
+                        concernant votre activité de vendeur.
+                    </p>
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="notifications-back"
+            >
+                ← Retour au Dashboard
+            </a>
+
+        </div>
+
+
+        <!-- RÉSUMÉ -->
+
+        <div class="notification-summary">
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    Total des notifications
+                </span>
+
+                <span class="summary-value">
+                    {{ notifications|length }}
+                </span>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    Notifications récentes
+                </span>
+
+                <span class="summary-value">
+                    {{ notifications|length }}
+                </span>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    État
+                </span>
+
+                <span class="summary-value">
+                    ✓ À jour
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- LISTE -->
+
+        <div class="notifications-card">
+
+            <div class="notifications-card-header">
+
+                <h2>
+                    🔔 Vos notifications
+                </h2>
+
+                <span class="notification-count">
+                    {{ notifications|length }}
+                </span>
+
+            </div>
+
+
+            {% if notifications %}
+
+                <div class="notifications-list">
+
+                    {% for notification in notifications %}
+
+                        <article class="notification-item">
+
+                            <div class="notification-icon">
+                                🔔
+                            </div>
+
+                            <div class="notification-content">
+
+                                <div class="notification-top">
+
+                                    <h3 class="notification-title">
+                                        {{ notification.title }}
+                                    </h3>
+
+                                    <span class="notification-date">
+                                        {{ notification.created_at|date:"d/m/Y à H:i" }}
+                                    </span>
+
+                                </div>
+
+                                <p class="notification-message">
+                                    {{ notification.message }}
+                                </p>
+
+                                <span class="notification-status">
+                                    ✓ Notification consultée
+                                </span>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-notifications">
+
+                    <div class="empty-icon">
+                        🔔
+                    </div>
+
+                    <h3>
+                        Aucune notification
+                    </h3>
+
+                    <p>
+                        Vous n'avez actuellement aucune notification
+                        concernant votre activité de vendeur.
+                        Les nouvelles informations apparaîtront ici.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
