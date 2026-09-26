@@ -6,11 +6,19 @@ from . import admin_views
 
 urlpatterns = [
 
+    # =====================================================
+    # PAIEMENT FORMATION
+    # =====================================================
+
     path(
         "course/<int:course_id>/payment/",
         views.course_payment,
         name="course_payment"
     ),
+
+    # =====================================================
+    # COMMANDE
+    # =====================================================
 
     path(
         "order/<int:order_id>/",
@@ -18,11 +26,19 @@ urlpatterns = [
         name="order_detail"
     ),
 
+    # =====================================================
+    # VENDEUR
+    # =====================================================
+
     path(
         "order/<int:order_id>/seller-delivery/",
         views.seller_confirm_delivery,
         name="seller_confirm_delivery"
     ),
+
+    # =====================================================
+    # CLIENT
+    # =====================================================
 
     path(
         "order/<int:order_id>/customer-receipt/",
@@ -36,11 +52,19 @@ urlpatterns = [
         name="cancel_order"
     ),
 
+    # =====================================================
+    # ADMIN
+    # =====================================================
+
     path(
         "order/<int:order_id>/admin-validate/",
         views.admin_validate_order,
         name="admin_validate_order"
     ),
+
+    # =====================================================
+    # LISTES
+    # =====================================================
 
     path(
         "mes-commandes/",
@@ -54,11 +78,19 @@ urlpatterns = [
         name="seller_orders"
     ),
 
+    # =====================================================
+    # NOTIFICATIONS
+    # =====================================================
+
     path(
         "notifications/",
         views.order_notifications,
         name="order_notifications"
     ),
+
+    # =====================================================
+    # ADMINISTRATION
+    # =====================================================
 
     path(
         "administration/commandes/",

@@ -1,26 +1,312 @@
 {% extends "base.html" %}
 
-{% block title %}
-Devenir formateur — FormaShop
-{% endblock %}
+{% block title %}Devenir formateur — FormaShop{% endblock %}
 
 {% block content %}
 
-<section class="fs-trainer-page">
+<style>
 
-    <div class="fs-trainer-container">
+    .trainer-page {
+        max-width: 900px;
+        margin: 45px auto;
+        padding: 0 20px 70px;
+        color: #f5f3ff;
+    }
 
-        <div class="fs-trainer-card">
+    .trainer-card {
+        background: linear-gradient(
+            145deg,
+            #171a31,
+            #0f1320
+        );
+        border: 1px solid rgba(143,112,255,.18);
+        border-radius: 26px;
+        padding: 34px;
+        box-shadow: 0 22px 55px rgba(0,0,0,.28);
+    }
 
-            <!-- HEADER -->
-            <div class="fs-trainer-header">
+    .trainer-header {
+        margin-bottom: 30px;
+    }
 
-                <span class="fs-trainer-eyebrow">
-                    FORMASHOP ACADEMY
-                </span>
+    .trainer-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 13px;
+        border-radius: 999px;
+        background: rgba(105,88,245,.12);
+        border: 1px solid rgba(105,88,245,.22);
+        color: #b8aaff;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
 
-                <div class="fs-trainer-icon">
-                    🎓
+    .trainer-header h1 {
+        margin: 0 0 10px;
+        font-size: 32px;
+        color: #ffffff;
+    }
+
+    .trainer-header p {
+        margin: 0;
+        color: #9995b2;
+        line-height: 1.7;
+    }
+
+    .success-box {
+        padding: 28px;
+        border-radius: 20px;
+        background: linear-gradient(
+            135deg,
+            rgba(24,168,120,.13),
+            rgba(36,201,152,.05)
+        );
+        border: 1px solid rgba(36,201,152,.28);
+        margin-bottom: 25px;
+    }
+
+    .success-icon {
+        font-size: 42px;
+        margin-bottom: 12px;
+    }
+
+    .success-box h2 {
+        margin: 0 0 10px;
+        color: #71e0ba;
+        font-size: 24px;
+    }
+
+    .success-box p {
+        margin: 8px 0;
+        color: #c8c4dc;
+        line-height: 1.7;
+    }
+
+    .success-steps {
+        margin-top: 20px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .success-step {
+        padding: 13px 15px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.06);
+        color: #ddd9f5;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #ddd9f5;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 15px;
+        border-radius: 13px;
+        border: 1px solid rgba(255,255,255,.09);
+        background: #0c1020;
+        color: #ffffff;
+        outline: none;
+        font-size: 14px;
+        transition: .2s ease;
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: rgba(143,112,255,.65);
+        box-shadow: 0 0 0 3px rgba(105,88,245,.10);
+    }
+
+    .form-group textarea {
+        min-height: 150px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .error-box {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: 13px;
+        background: rgba(255,70,100,.09);
+        border: 1px solid rgba(255,70,100,.24);
+        color: #ff9aac;
+        line-height: 1.6;
+    }
+
+    .submit-btn {
+        width: 100%;
+        border: 0;
+        cursor: pointer;
+        padding: 15px 20px;
+        border-radius: 13px;
+        background: linear-gradient(
+            135deg,
+            #6958f5,
+            #8f70ff
+        );
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        box-shadow: 0 10px 28px rgba(105,88,245,.25);
+        transition: .2s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(105,88,245,.32);
+    }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        background: #20243a;
+        border: 1px solid rgba(255,255,255,.08);
+        color: #ddd9f5;
+        font-weight: 700;
+        transition: .2s ease;
+    }
+
+    .secondary-btn:hover {
+        transform: translateY(-2px);
+        color: #ffffff;
+        border-color: rgba(143,112,255,.30);
+    }
+
+    .info-box {
+        margin-top: 22px;
+        padding: 16px 18px;
+        border-radius: 14px;
+        background: rgba(105,88,245,.08);
+        border: 1px solid rgba(105,88,245,.16);
+        color: #aaa5c7;
+        line-height: 1.6;
+        font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+
+        .trainer-page {
+            margin: 20px auto;
+            padding: 0 12px 45px;
+        }
+
+        .trainer-card {
+            padding: 21px;
+            border-radius: 19px;
+        }
+
+        .trainer-header h1 {
+            font-size: 25px;
+        }
+
+        .success-box {
+            padding: 21px;
+        }
+
+        .bottom-actions {
+            flex-direction: column;
+        }
+
+        .secondary-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="trainer-page">
+
+    <div class="trainer-card">
+
+        {% if submitted %}
+
+            <div class="success-box">
+
+                <div class="success-icon">
+                    🎉
+                </div>
+
+                <h2>
+                    Votre candidature a bien été déposée !
+                </h2>
+
+                <p>
+                    Merci pour votre candidature pour devenir formateur
+                    sur <strong>FormaShop</strong>.
+                </p>
+
+                <p>
+                    Votre demande a été transmise à l'administration.
+                    Elle doit maintenant être étudiée et validée par un administrateur.
+                </p>
+
+                <div class="success-steps">
+
+                    <div class="success-step">
+                        ✅ <strong>Candidature enregistrée</strong>
+                    </div>
+
+                    <div class="success-step">
+                        ⏳ <strong>En attente de l'admission par l'administrateur</strong>
+                    </div>
+
+                    <div class="success-step">
+                        📚 <strong>Après approbation, vous pourrez gérer vos formations</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="bottom-actions">
+
+                <a href="{% url 'dashboard' %}"
+                   class="secondary-btn">
+                    📊 Aller au dashboard
+                </a>
+
+                <a href="{% url 'home' %}"
+                   class="secondary-btn">
+                    ← Retour à l'accueil
+                </a>
+
+            </div>
+
+
+        {% else %}
+
+            <div class="trainer-header">
+
+                <div class="trainer-badge">
+                    🎓 ESPACE FORMATEUR
                 </div>
 
                 <h1>
@@ -28,532 +314,136 @@ Devenir formateur — FormaShop
                 </h1>
 
                 <p>
-                    Partagez vos connaissances, créez vos formations
-                    et aidez d'autres personnes à progresser.
+                    Partagez vos connaissances, créez des formations
+                    et développez votre activité sur FormaShop.
                 </p>
 
             </div>
 
 
-            <!-- FORMULAIRE -->
-            <form method="POST" class="fs-trainer-form">
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="error-box">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <form method="post">
 
                 {% csrf_token %}
 
 
-                <div class="fs-trainer-section-title">
+                <div class="form-group">
 
-                    <span>01</span>
+                    <label for="full_name">
+                        Nom complet
+                    </label>
 
-                    <div>
-                        <h2>Votre profil de formateur</h2>
-                        <p>
-                            Présentez-nous votre profil et votre domaine d'expertise.
-                        </p>
-                    </div>
-
-                </div>
-
-
-                <div class="fs-trainer-fields">
-
-                    <!-- NOM -->
-                    <div class="fs-trainer-field">
-
-                        <label for="full_name">
-                            Nom complet
-                        </label>
-
-                        <input
-                            type="text"
-                            id="full_name"
-                            name="full_name"
-                            placeholder="Ex : Roland Mezatsa"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- TELEPHONE -->
-                    <div class="fs-trainer-field">
-
-                        <label for="phone">
-                            Numéro de téléphone
-                        </label>
-
-                        <input
-                            type="text"
-                            id="phone"
-                            name="phone"
-                            placeholder="Ex : 6XXXXXXXX"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- EXPERTISE -->
-                    <div class="fs-trainer-field fs-trainer-field-full">
-
-                        <label for="expertise">
-                            Domaine d'expertise
-                        </label>
-
-                        <input
-                            type="text"
-                            id="expertise"
-                            name="expertise"
-                            placeholder="Ex : Python, Laravel, Réseaux, Data Science..."
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- DESCRIPTION -->
-                    <div class="fs-trainer-field fs-trainer-field-full">
-
-                        <label for="description">
-                            Présentez-vous
-                        </label>
-
-                        <textarea
-                            id="description"
-                            name="description"
-                            placeholder="Expliquez votre expérience, vos compétences et ce que vous souhaitez enseigner..."
-                            required
-                        ></textarea>
-
-                        <small>
-                            Décrivez votre expérience et les sujets que vous souhaitez enseigner.
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SUBMIT -->
-                <div class="fs-trainer-submit-area">
-
-                    <button
-                        type="submit"
-                        class="fs-trainer-submit"
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Votre nom complet"
+                        required
                     >
-                        Envoyer ma candidature
-                        <span>→</span>
-                    </button>
 
                 </div>
+
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Numéro de téléphone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Ex : 6XXXXXXXX"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="expertise">
+                        Domaine d'expertise
+                    </label>
+
+                    <input
+                        type="text"
+                        id="expertise"
+                        name="expertise"
+                        placeholder="Ex : Développement web, Data Science..."
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Présentez votre expérience
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Expliquez votre expérience, vos compétences et les formations que vous souhaitez proposer..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <button type="submit"
+                        class="submit-btn">
+
+                    🚀 Envoyer ma candidature
+
+                </button>
 
             </form>
 
 
-            <!-- FOOTER -->
-            <div class="fs-trainer-footer">
+            <div class="info-box">
 
-                <div class="fs-trainer-footer-info">
+                💡 <strong>Après l'envoi :</strong>
+                votre candidature sera transmise à l'administration.
+                Vous devrez attendre son approbation avant de pouvoir
+                publier vos formations et documents comme formateur.
 
-                    <span>🛡️</span>
+            </div>
 
-                    <p>
-                        Votre candidature sera examinée par notre équipe
-                        avant l'activation de votre espace formateur.
-                    </p>
 
-                </div>
+            <div class="bottom-actions">
 
-                <a href="{% url 'home' %}">
-                    ← Retour à l'accueil
+                <a href="{% url 'dashboard' %}"
+                   class="secondary-btn">
+                    ← Retour au dashboard
+                </a>
+
+                <a href="{% url 'home' %}"
+                   class="secondary-btn">
+                    🏠 Accueil
                 </a>
 
             </div>
 
-        </div>
+        {% endif %}
 
     </div>
 
-</section>
-
-
-<style>
-
-/* =========================================================
-   FORMASHOP — DEVENIR FORMATEUR
-========================================================= */
-
-.fs-trainer-page {
-    width: 100% !important;
-    min-height: calc(100vh - 80px) !important;
-    box-sizing: border-box !important;
-
-    padding: 55px 20px 80px !important;
-
-    background:
-        radial-gradient(
-            circle at 15% 0%,
-            rgba(124,58,237,.16),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 90% 25%,
-            rgba(37,99,235,.12),
-            transparent 30%
-        ),
-        #070a12 !important;
-
-    color: #fff !important;
-}
-
-.fs-trainer-container {
-    width: 100% !important;
-    max-width: 820px !important;
-    margin: 0 auto !important;
-}
-
-.fs-trainer-card {
-    padding: 38px !important;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(18,23,37,.98),
-            rgba(10,14,24,.98)
-        ) !important;
-
-    border: 1px solid rgba(148,163,184,.12) !important;
-    border-radius: 25px !important;
-
-    box-shadow:
-        0 30px 75px rgba(0,0,0,.38) !important;
-}
-
-
-/* HEADER */
-
-.fs-trainer-header {
-    text-align: center !important;
-
-    padding-bottom: 32px !important;
-    margin-bottom: 30px !important;
-
-    border-bottom: 1px solid rgba(148,163,184,.09) !important;
-}
-
-.fs-trainer-eyebrow {
-    display: inline-block !important;
-
-    margin-bottom: 16px !important;
-
-    color: #a78bfa !important;
-    font-size: 11px !important;
-    font-weight: 900 !important;
-    letter-spacing: 1.8px !important;
-}
-
-.fs-trainer-icon {
-    width: 60px !important;
-    height: 60px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    margin: 0 auto 17px !important;
-
-    border-radius: 17px !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(124,58,237,.25),
-            rgba(37,99,235,.20)
-        ) !important;
-
-    border: 1px solid rgba(124,58,237,.30) !important;
-
-    font-size: 27px !important;
-
-    box-shadow: 0 12px 30px rgba(124,58,237,.13) !important;
-}
-
-.fs-trainer-header h1 {
-    margin: 0 !important;
-
-    color: #fff !important;
-
-    font-size: clamp(30px,5vw,42px) !important;
-    font-weight: 900 !important;
-
-    letter-spacing: -.7px !important;
-}
-
-.fs-trainer-header p {
-    max-width: 620px !important;
-
-    margin: 11px auto 0 !important;
-
-    color: #8993a6 !important;
-    font-size: 14px !important;
-    line-height: 1.65 !important;
-}
-
-
-/* SECTION */
-
-.fs-trainer-section-title {
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 14px !important;
-
-    margin-bottom: 20px !important;
-}
-
-.fs-trainer-section-title > span {
-    width: 32px !important;
-    height: 32px !important;
-    flex-shrink: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    border-radius: 9px !important;
-
-    color: #c4b5fd !important;
-    background: rgba(124,58,237,.15) !important;
-
-    font-size: 11px !important;
-    font-weight: 900 !important;
-}
-
-.fs-trainer-section-title h2 {
-    margin: 0 !important;
-
-    color: #fff !important;
-    font-size: 20px !important;
-    font-weight: 850 !important;
-}
-
-.fs-trainer-section-title p {
-    margin: 5px 0 0 !important;
-
-    color: #718096 !important;
-    font-size: 13px !important;
-}
-
-
-/* FORM */
-
-.fs-trainer-fields {
-    display: grid !important;
-    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
-    gap: 18px !important;
-}
-
-.fs-trainer-field {
-    min-width: 0 !important;
-}
-
-.fs-trainer-field-full {
-    grid-column: 1 / -1 !important;
-}
-
-.fs-trainer-field label {
-    display: block !important;
-
-    margin-bottom: 8px !important;
-
-    color: #d7deea !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-}
-
-.fs-trainer-field input,
-.fs-trainer-field textarea {
-    width: 100% !important;
-    max-width: none !important;
-    box-sizing: border-box !important;
-
-    padding: 13px 15px !important;
-
-    color: #fff !important;
-    background: #0b101c !important;
-
-    border: 1px solid #30394b !important;
-    border-radius: 11px !important;
-
-    outline: none !important;
-
-    font-family: inherit !important;
-    font-size: 14px !important;
-
-    transition: .2s ease !important;
-}
-
-.fs-trainer-field input {
-    min-height: 48px !important;
-}
-
-.fs-trainer-field textarea {
-    min-height: 155px !important;
-    resize: vertical !important;
-}
-
-.fs-trainer-field input::placeholder,
-.fs-trainer-field textarea::placeholder {
-    color: #566276 !important;
-}
-
-.fs-trainer-field input:focus,
-.fs-trainer-field textarea:focus {
-    border-color: #7c3aed !important;
-
-    background: #0e1422 !important;
-
-    box-shadow:
-        0 0 0 3px rgba(124,58,237,.12) !important;
-}
-
-.fs-trainer-field small {
-    display: block !important;
-
-    margin-top: 7px !important;
-
-    color: #657187 !important;
-    font-size: 11px !important;
-    line-height: 1.45 !important;
-}
-
-
-/* SUBMIT */
-
-.fs-trainer-submit-area {
-    margin-top: 27px !important;
-    padding-top: 24px !important;
-
-    border-top: 1px solid rgba(148,163,184,.09) !important;
-}
-
-.fs-trainer-submit {
-    width: 100% !important;
-
-    min-height: 51px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 12px !important;
-
-    border: 0 !important;
-    border-radius: 11px !important;
-
-    color: #fff !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            #7c3aed,
-            #2563eb
-        ) !important;
-
-    font-family: inherit !important;
-    font-size: 14px !important;
-    font-weight: 850 !important;
-
-    cursor: pointer !important;
-
-    box-shadow:
-        0 14px 30px rgba(37,99,235,.18) !important;
-
-    transition: .2s ease !important;
-}
-
-.fs-trainer-submit:hover {
-    transform: translateY(-2px) !important;
-
-    box-shadow:
-        0 18px 38px rgba(124,58,237,.25) !important;
-}
-
-
-/* FOOTER */
-
-.fs-trainer-footer {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 20px !important;
-
-    margin-top: 25px !important;
-    padding-top: 22px !important;
-
-    border-top: 1px solid rgba(148,163,184,.08) !important;
-}
-
-.fs-trainer-footer-info {
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 9px !important;
-}
-
-.fs-trainer-footer-info p {
-    margin: 0 !important;
-
-    color: #697589 !important;
-    font-size: 11px !important;
-    line-height: 1.5 !important;
-}
-
-.fs-trainer-footer > a {
-    flex-shrink: 0 !important;
-
-    color: #a78bfa !important;
-    text-decoration: none !important;
-
-    font-size: 12px !important;
-    font-weight: 800 !important;
-}
-
-.fs-trainer-footer > a:hover {
-    color: #fff !important;
-}
-
-
-/* MOBILE */
-
-@media (max-width: 680px) {
-
-    .fs-trainer-page {
-        padding: 30px 12px 55px !important;
-    }
-
-    .fs-trainer-card {
-        padding: 23px 16px !important;
-        border-radius: 19px !important;
-    }
-
-    .fs-trainer-fields {
-        grid-template-columns: 1fr !important;
-    }
-
-    .fs-trainer-field-full {
-        grid-column: auto !important;
-    }
-
-    .fs-trainer-footer {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        text-align: center !important;
-    }
-
-    .fs-trainer-footer-info {
-        justify-content: center !important;
-    }
-
-}
-
-</style>
+</div>
 
 {% endblock %}

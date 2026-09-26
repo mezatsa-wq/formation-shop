@@ -1,1037 +1,836 @@
 {% extends "base.html" %}
 
-{% block title %}Devenir vendeur - FormaShop{% endblock %}
+{% block title %}Devenir vendeur — FormaShop{% endblock %}
 
 {% block content %}
 
-<section class="fs-seller-page">
+<style>
 
-    <div class="fs-seller-container">
+    .seller-page {
+        max-width: 980px;
+        margin: 45px auto;
+        padding: 0 20px 70px;
+        color: #f5f3ff;
+    }
 
-        <!-- EN-TÊTE -->
-        <div class="fs-seller-header">
+    .seller-card {
+        background: linear-gradient(145deg, #171a31, #0f1320);
+        border: 1px solid rgba(143,112,255,.18);
+        border-radius: 26px;
+        padding: 34px;
+        box-shadow: 0 22px 55px rgba(0,0,0,.28);
+    }
 
-            <span class="fs-seller-eyebrow">
-                FORMASHOP MARKETPLACE
-            </span>
+    .seller-header {
+        margin-bottom: 30px;
+    }
 
-            <h1>
-                Devenir vendeur
-            </h1>
+    .seller-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 13px;
+        border-radius: 999px;
+        background: rgba(105,88,245,.12);
+        border: 1px solid rgba(105,88,245,.22);
+        color: #b8aaff;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
 
-            <p>
-                Développez votre activité sur FormaShop et commencez
-                à vendre vos produits à notre communauté.
-            </p>
+    .seller-header h1 {
+        margin: 0 0 10px;
+        font-size: 32px;
+        color: #ffffff;
+    }
 
-        </div>
+    .seller-header p {
+        margin: 0;
+        color: #9995b2;
+        line-height: 1.7;
+    }
+
+    .success-box {
+        padding: 28px;
+        border-radius: 20px;
+        background: linear-gradient(
+            135deg,
+            rgba(24,168,120,.13),
+            rgba(36,201,152,.05)
+        );
+        border: 1px solid rgba(36,201,152,.28);
+    }
+
+    .success-icon {
+        font-size: 42px;
+        margin-bottom: 12px;
+    }
+
+    .success-box h2 {
+        margin: 0 0 10px;
+        color: #71e0ba;
+        font-size: 24px;
+    }
+
+    .success-box p {
+        margin: 8px 0;
+        color: #c8c4dc;
+        line-height: 1.7;
+    }
+
+    .success-steps {
+        margin-top: 20px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .success-step {
+        padding: 13px 15px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.035);
+        border: 1px solid rgba(255,255,255,.06);
+        color: #ddd9f5;
+    }
+
+    .plans {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    .plan-card {
+        position: relative;
+        cursor: pointer;
+        padding: 22px;
+        border-radius: 18px;
+        background: #101426;
+        border: 1px solid rgba(255,255,255,.08);
+        transition: .2s ease;
+    }
+
+    .plan-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(143,112,255,.35);
+    }
+
+    .plan-card.active {
+        border-color: rgba(143,112,255,.65);
+        background: linear-gradient(
+            145deg,
+            rgba(105,88,245,.13),
+            rgba(37,99,235,.07)
+        );
+        box-shadow: 0 12px 30px rgba(105,88,245,.12);
+    }
+
+    .plan-card input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .plan-title {
+        font-size: 19px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 8px;
+    }
+
+    .plan-price {
+        color: #b8aaff;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .plan-description {
+        color: #9995b2;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .premium-payment {
+        display: none;
+        margin-bottom: 25px;
+        padding: 22px;
+        border-radius: 18px;
+        background: linear-gradient(
+            145deg,
+            rgba(105,88,245,.10),
+            rgba(37,99,235,.06)
+        );
+        border: 1px solid rgba(143,112,255,.20);
+    }
+
+    .premium-payment.visible {
+        display: block;
+    }
+
+    .premium-payment h3 {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 19px;
+    }
+
+    .premium-payment-intro {
+        margin: 0 0 18px;
+        color: #aaa5c7;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .payment-numbers {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .payment-number {
+        padding: 15px;
+        border-radius: 13px;
+        background: #0c1020;
+        border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .payment-number strong {
+        display: block;
+        color: #ffffff;
+        margin-bottom: 5px;
+    }
+
+    .payment-number span {
+        color: #71e0ba;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #ddd9f5;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 15px;
+        border-radius: 13px;
+        border: 1px solid rgba(255,255,255,.09);
+        background: #0c1020;
+        color: #ffffff;
+        outline: none;
+        font-size: 14px;
+        font-family: inherit;
+        transition: .2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: rgba(143,112,255,.65);
+        box-shadow: 0 0 0 3px rgba(105,88,245,.10);
+    }
+
+    .form-group textarea {
+        min-height: 130px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .payment-method {
+        position: relative;
+    }
+
+    .payment-method input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .payment-method label {
+        display: block;
+        padding: 14px;
+        border-radius: 13px;
+        background: #0c1020;
+        border: 1px solid rgba(255,255,255,.08);
+        color: #ddd9f5;
+        cursor: pointer;
+        font-weight: 700;
+        text-align: center;
+        transition: .2s ease;
+    }
+
+    .payment-method input:checked + label {
+        border-color: rgba(143,112,255,.65);
+        background: rgba(105,88,245,.12);
+        color: #ffffff;
+    }
+
+    .error-box {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: 13px;
+        background: rgba(255,70,100,.09);
+        border: 1px solid rgba(255,70,100,.24);
+        color: #ff9aac;
+        line-height: 1.6;
+    }
+
+    .submit-btn {
+        width: 100%;
+        border: 0;
+        cursor: pointer;
+        padding: 15px 20px;
+        border-radius: 13px;
+        background: linear-gradient(135deg,#6958f5,#8f70ff);
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        box-shadow: 0 10px 28px rgba(105,88,245,.25);
+        transition: .2s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(105,88,245,.32);
+    }
+
+    .info-box {
+        margin-top: 22px;
+        padding: 16px 18px;
+        border-radius: 14px;
+        background: rgba(105,88,245,.08);
+        border: 1px solid rgba(105,88,245,.16);
+        color: #aaa5c7;
+        line-height: 1.6;
+        font-size: 13px;
+    }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        background: #20243a;
+        border: 1px solid rgba(255,255,255,.08);
+        color: #ddd9f5;
+        font-weight: 700;
+        transition: .2s ease;
+    }
+
+    .secondary-btn:hover {
+        transform: translateY(-2px);
+        color: #ffffff;
+        border-color: rgba(143,112,255,.30);
+    }
+
+    @media (max-width: 700px) {
+
+        .seller-page {
+            margin: 20px auto;
+            padding: 0 12px 45px;
+        }
+
+        .seller-card {
+            padding: 21px;
+            border-radius: 19px;
+        }
+
+        .seller-header h1 {
+            font-size: 25px;
+        }
+
+        .plans,
+        .payment-numbers,
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+
+        .success-box {
+            padding: 21px;
+        }
+
+        .bottom-actions {
+            flex-direction: column;
+        }
+
+        .secondary-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
 
 
-        <!-- FORMULES -->
-        <div class="fs-seller-plans">
+<div class="seller-page">
 
-            <div class="fs-seller-section-heading">
-                <span>01</span>
-                <div>
-                    <h2>Choisissez votre formule</h2>
-                    <p>
-                        Sélectionnez l'offre qui correspond à votre activité.
-                    </p>
+    <div class="seller-card">
+
+        {% if submitted %}
+
+            <div class="success-box">
+
+                <div class="success-icon">
+                    🎉
                 </div>
-            </div>
 
+                <h2>
+                    Votre candidature vendeur a bien été déposée !
+                </h2>
 
-            <div class="fs-seller-plan-grid">
+                <p>
+                    Votre demande pour devenir vendeur sur
+                    <strong>FormaShop</strong> a été enregistrée.
+                </p>
 
-                <!-- STANDARD -->
-                <div class="fs-seller-plan fs-seller-plan-standard">
+                <p>
+                    L'administration doit maintenant examiner votre candidature
+                    avant de l'accepter.
+                </p>
 
-                    <label
-                        for="seller-plan-standard"
-                        class="fs-seller-plan-label"
-                    >
+                {% if submitted_plan == "premium" %}
 
-                        <input
-                            type="radio"
-                            id="seller-plan-standard"
-                            name="plan_choice"
-                            value="standard"
-                            checked
-                            onclick="selectPlan('standard')"
-                        >
+                    <p>
+                        💳 Votre demande d'accès <strong>Premium</strong> et
+                        les informations de paiement ont également été transmises.
+                    </p>
 
-                        <div class="fs-seller-radio"></div>
+                {% endif %}
 
-                        <div class="fs-seller-plan-top">
+                <div class="success-steps">
 
-                            <div>
-                                <span class="fs-seller-plan-name">
-                                    Vendeur Standard
-                                </span>
+                    <div class="success-step">
+                        ✅ <strong>Candidature enregistrée</strong>
+                    </div>
 
-                                <span class="fs-seller-plan-price">
-                                    Gratuit
-                                </span>
-                            </div>
+                    {% if submitted_plan == "premium" %}
 
-                            <span class="fs-seller-plan-badge">
-                                0 FCFA
-                            </span>
-
+                        <div class="success-step">
+                            💳 <strong>Demande Premium enregistrée</strong>
                         </div>
 
-                        <p class="fs-seller-plan-description">
-                            L'essentiel pour commencer à vendre
-                            et gérer votre activité.
-                        </p>
+                    {% endif %}
 
-                        <ul class="fs-seller-features">
+                    <div class="success-step">
+                        ⏳ <strong>En attente de validation par l'administrateur</strong>
+                    </div>
 
-                            <li>Créer des produits</li>
-                            <li>Modifier vos produits</li>
-                            <li>Gérer votre stock</li>
-                            <li>Recevoir des commandes</li>
-                            <li>Voir les informations de livraison</li>
-                            <li>Gérer vos livraisons</li>
-                            <li>Voir vos ventes</li>
-                            <li>Recevoir vos notifications</li>
-
-                        </ul>
-
-                    </label>
-
-                </div>
-
-
-                <!-- PREMIUM -->
-                <div class="fs-seller-plan fs-seller-plan-premium">
-
-                    <label
-                        for="seller-plan-premium"
-                        class="fs-seller-plan-label"
-                    >
-
-                        <input
-                            type="radio"
-                            id="seller-plan-premium"
-                            name="plan_choice"
-                            value="premium"
-                            onclick="selectPlan('premium')"
-                        >
-
-                        <div class="fs-seller-radio"></div>
-
-                        <div class="fs-seller-plan-top">
-
-                            <div>
-                                <span class="fs-seller-plan-name">
-                                    Vendeur Premium
-                                </span>
-
-                                <span class="fs-seller-plan-price">
-                                    1 000 FCFA
-                                </span>
-                            </div>
-
-                            <span class="fs-seller-plan-badge premium">
-                                PREMIUM
-                            </span>
-
-                        </div>
-
-                        <p class="fs-seller-plan-description">
-                            Plus de visibilité et des fonctionnalités
-                            supplémentaires pour développer vos ventes.
-                        </p>
-
-                        <ul class="fs-seller-features">
-
-                            <li>Tout ce qui est inclus dans Standard</li>
-                            <li>Badge Premium</li>
-                            <li>Meilleure visibilité des produits</li>
-                            <li>Possibilité de mettre des produits en avant</li>
-                            <li>Fonctionnalités commerciales avancées à venir</li>
-                            <li>Fonctionnalités promotionnelles à venir</li>
-
-                        </ul>
-
-                    </label>
+                    <div class="success-step">
+                        🛍️ <strong>Après approbation, vous pourrez gérer vos produits</strong>
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
+            <div class="bottom-actions">
 
+                <a href="{% url 'dashboard' %}"
+                   class="secondary-btn">
+                    📊 Aller au dashboard
+                </a>
 
-        <!-- FORMULAIRE -->
-        <div class="fs-seller-form-card">
-
-            <div class="fs-seller-section-heading">
-
-                <span>02</span>
-
-                <div>
-                    <h2>Informations du vendeur</h2>
-                    <p>
-                        Ces informations permettront à FormaShop
-                        de traiter votre candidature.
-                    </p>
-                </div>
+                <a href="{% url 'home' %}"
+                   class="secondary-btn">
+                    ← Retour à l'accueil
+                </a>
 
             </div>
 
 
-            <form method="POST" class="fs-seller-form">
+        {% else %}
+
+            <div class="seller-header">
+
+                <div class="seller-badge">
+                    🛍️ ESPACE VENDEUR
+                </div>
+
+                <h1>
+                    Devenir vendeur
+                </h1>
+
+                <p>
+                    Vendez vos produits sur FormaShop et développez votre activité
+                    grâce à notre marketplace.
+                </p>
+
+            </div>
+
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="error-box">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <form method="post">
 
                 {% csrf_token %}
 
-                <input
-                    type="hidden"
-                    name="plan"
-                    id="plan"
-                    value="standard"
-                >
+                <input type="hidden"
+                       name="plan"
+                       id="selected-plan"
+                       value="standard">
 
 
-                <div class="fs-seller-fields">
+                <div class="plans">
 
-                    <!-- NOM -->
-                    <div class="fs-seller-field">
+                    <label class="plan-card active"
+                           id="standard-plan">
 
-                        <label for="full_name">
-                            Nom complet
-                        </label>
+                        <input type="radio"
+                               name="plan_choice"
+                               value="standard"
+                               checked
+                               onchange="selectPlan('standard')">
 
-                        <input
-                            type="text"
-                            id="full_name"
-                            name="full_name"
-                            placeholder="Votre nom complet"
-                            required
-                        >
+                        <div class="plan-title">
+                            🛍️ Vendeur Standard
+                        </div>
 
-                    </div>
+                        <div class="plan-price">
+                            Accès standard
+                        </div>
 
+                        <div class="plan-description">
+                            Soumettez votre candidature et attendez
+                            la validation de l'administration.
+                        </div>
 
-                    <!-- TELEPHONE -->
-                    <div class="fs-seller-field">
-
-                        <label for="phone">
-                            Téléphone
-                        </label>
-
-                        <input
-                            type="text"
-                            id="phone"
-                            name="phone"
-                            placeholder="Ex : 6XXXXXXXX"
-                            required
-                        >
-
-                    </div>
+                    </label>
 
 
-                    <!-- ADRESSE -->
-                    <div class="fs-seller-field fs-seller-field-full">
+                    <label class="plan-card"
+                           id="premium-plan">
 
-                        <label for="address">
-                            Adresse
-                        </label>
+                        <input type="radio"
+                               name="plan_choice"
+                               value="premium"
+                               onchange="selectPlan('premium')">
 
-                        <textarea
-                            id="address"
-                            name="address"
-                            placeholder="Votre adresse complète"
-                            required
-                        ></textarea>
+                        <div class="plan-title">
+                            ⭐ Vendeur Premium
+                        </div>
 
-                    </div>
+                        <div class="plan-price">
+                            1 000 FCFA
+                        </div>
 
+                        <div class="plan-description">
+                            Accès Premium après confirmation du dépôt
+                            et validation par l'administration.
+                        </div>
 
-                    <!-- QUARTIER -->
-                    <div class="fs-seller-field">
-
-                        <label for="neighborhood">
-                            Quartier
-                        </label>
-
-                        <input
-                            type="text"
-                            id="neighborhood"
-                            name="neighborhood"
-                            placeholder="Votre quartier"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- VILLE -->
-                    <div class="fs-seller-field">
-
-                        <label for="city">
-                            Ville
-                        </label>
-
-                        <input
-                            type="text"
-                            id="city"
-                            name="city"
-                            placeholder="Votre ville"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- ACTIVITE -->
-                    <div class="fs-seller-field fs-seller-field-full">
-
-                        <label for="activity">
-                            Activité
-                        </label>
-
-                        <input
-                            type="text"
-                            id="activity"
-                            name="activity"
-                            placeholder="Ex : Vente de vêtements, accessoires, informatique..."
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- DESCRIPTION -->
-                    <div class="fs-seller-field fs-seller-field-full">
-
-                        <label for="description">
-                            Présentez votre activité
-                        </label>
-
-                        <textarea
-                            id="description"
-                            name="description"
-                            class="fs-seller-description"
-                            placeholder="Présentez votre activité, vos produits et ce que vous souhaitez proposer sur FormaShop..."
-                            required
-                        ></textarea>
-
-                    </div>
+                    </label>
 
                 </div>
 
 
-                <!-- PAIEMENT PREMIUM -->
-                <div
-                    id="premium-payment"
-                    class="fs-seller-premium-payment"
-                    style="display: none;"
-                >
+                <div class="premium-payment"
+                     id="premium-payment">
 
-                    <div class="fs-seller-payment-header">
+                    <h3>
+                        ⭐ Paiement de l'accès Premium
+                    </h3>
 
-                        <div class="fs-seller-payment-icon">
-                            💳
-                        </div>
-
-                        <div>
-                            <span>
-                                FORMULE PREMIUM
-                            </span>
-
-                            <h2>
-                                Paiement Premium
-                            </h2>
-                        </div>
-
-                    </div>
-
-
-                    <div class="fs-seller-payment-price">
-                        <span>Montant à payer</span>
-                        <strong>1 000 FCFA</strong>
-                    </div>
-
-
-                    <div class="fs-seller-payment-fields">
-
-                        <div class="fs-seller-field">
-
-                            <label for="payment_method">
-                                Moyen de paiement
-                            </label>
-
-                            <select
-                                id="payment_method"
-                                name="payment_method"
-                            >
-
-                                <option value="">
-                                    Choisir un moyen de paiement
-                                </option>
-
-                                <option value="mtn">
-                                    MTN Mobile Money
-                                </option>
-
-                                <option value="orange">
-                                    Orange Money
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="fs-seller-field">
-
-                            <label for="payment_phone">
-                                Numéro utilisé pour le paiement
-                            </label>
-
-                            <input
-                                type="text"
-                                id="payment_phone"
-                                name="payment_phone"
-                                placeholder="Numéro Mobile Money"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="fs-seller-payment-info">
-
-                        <span>ℹ️</span>
-
-                        <p>
-                            Après votre demande, l'administrateur vérifiera
-                            le paiement avant d'activer votre abonnement Premium.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="fs-seller-submit-area">
-
-                    <button
-                        type="submit"
-                        class="fs-seller-submit"
-                    >
-                        Envoyer ma candidature
-                        <span>→</span>
-                    </button>
-
-                    <p>
-                        Votre candidature sera examinée par l'équipe FormaShop.
+                    <p class="premium-payment-intro">
+                        Effectuez un dépôt de <strong>1 000 FCFA</strong>
+                        vers l'un des numéros officiels ci-dessous,
+                        puis indiquez le numéro utilisé pour effectuer
+                        votre paiement.
                     </p>
 
+
+                    <div class="payment-numbers">
+
+                        <div class="payment-number">
+
+                            <strong>
+                                📱 MTN Mobile Money
+                            </strong>
+
+                            <span>
+                                654454429
+                            </span>
+
+                        </div>
+
+
+                        <div class="payment-number">
+
+                            <strong>
+                                📱 Orange Money
+                            </strong>
+
+                            <span>
+                                694452058
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="payment-methods">
+
+                        <div class="payment-method">
+
+                            <input type="radio"
+                                   id="mtn"
+                                   name="payment_method"
+                                   value="mtn">
+
+                            <label for="mtn">
+                                📱 MTN Mobile Money
+                            </label>
+
+                        </div>
+
+
+                        <div class="payment-method">
+
+                            <input type="radio"
+                                   id="orange"
+                                   name="payment_method"
+                                   value="orange">
+
+                            <label for="orange">
+                                🟠 Orange Money
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="payment_phone">
+                            Numéro utilisé pour le dépôt
+                        </label>
+
+                        <input type="tel"
+                               id="payment_phone"
+                               name="payment_phone"
+                               placeholder="Ex : 6XXXXXXXX">
+
+                    </div>
+
                 </div>
+
+
+                <div class="form-group">
+
+                    <label for="full_name">
+                        Nom complet
+                    </label>
+
+                    <input type="text"
+                           id="full_name"
+                           name="full_name"
+                           placeholder="Votre nom complet"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Numéro de téléphone
+                    </label>
+
+                    <input type="tel"
+                           id="phone"
+                           name="phone"
+                           placeholder="Ex : 6XXXXXXXX"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="address">
+                        Adresse
+                    </label>
+
+                    <input type="text"
+                           id="address"
+                           name="address"
+                           placeholder="Votre adresse"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="neighborhood">
+                        Quartier
+                    </label>
+
+                    <input type="text"
+                           id="neighborhood"
+                           name="neighborhood"
+                           placeholder="Votre quartier"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="city">
+                        Ville
+                    </label>
+
+                    <input type="text"
+                           id="city"
+                           name="city"
+                           placeholder="Votre ville"
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="activity">
+                        Activité / Type de produits
+                    </label>
+
+                    <input type="text"
+                           id="activity"
+                           name="activity"
+                           placeholder="Ex : vêtements, électronique, accessoires..."
+                           required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Présentation de votre activité
+                    </label>
+
+                    <textarea id="description"
+                              name="description"
+                              placeholder="Présentez votre activité et les produits que vous souhaitez vendre..."
+                              required></textarea>
+
+                </div>
+
+
+                <button type="submit"
+                        class="submit-btn">
+
+                    🚀 Envoyer ma candidature vendeur
+
+                </button>
 
             </form>
 
-        </div>
+
+            <div class="info-box">
+
+                💡 <strong>Important :</strong>
+                votre candidature sera examinée par l'administration.
+                Pour le plan Premium, le dépôt de <strong>1 000 FCFA</strong>
+                doit être effectué avant la validation de votre accès Premium.
+
+            </div>
+
+
+            <div class="bottom-actions">
+
+                <a href="{% url 'dashboard' %}"
+                   class="secondary-btn">
+                    ← Retour au dashboard
+                </a>
+
+                <a href="{% url 'home' %}"
+                   class="secondary-btn">
+                    🏠 Accueil
+                </a>
+
+            </div>
+
+        {% endif %}
 
     </div>
 
-</section>
+</div>
 
 
 <script>
 
-function selectPlan(plan) {
+    function selectPlan(plan) {
 
-    const planInput = document.getElementById("plan");
-    const premiumPayment = document.getElementById("premium-payment");
+        const standardPlan = document.getElementById("standard-plan");
+        const premiumPlan = document.getElementById("premium-plan");
+        const premiumPayment = document.getElementById("premium-payment");
+        const selectedPlan = document.getElementById("selected-plan");
 
-    const paymentMethod = document.getElementById("payment_method");
-    const paymentPhone = document.getElementById("payment_phone");
+        selectedPlan.value = plan;
 
-    planInput.value = plan;
+        if (plan === "premium") {
 
-    if (plan === "premium") {
+            premiumPlan.classList.add("active");
+            standardPlan.classList.remove("active");
 
-        premiumPayment.style.display = "block";
+            premiumPayment.classList.add("visible");
 
-        paymentMethod.required = true;
-        paymentPhone.required = true;
+        } else {
 
-    } else {
+            standardPlan.classList.add("active");
+            premiumPlan.classList.remove("active");
 
-        premiumPayment.style.display = "none";
+            premiumPayment.classList.remove("visible");
 
-        paymentMethod.required = false;
-        paymentPhone.required = false;
-
-        paymentMethod.value = "";
-        paymentPhone.value = "";
+        }
 
     }
-}
 
 </script>
-
-
-<style>
-
-/* =========================================================
-   FORMASHOP — DEVENIR VENDEUR
-   CSS SCOPÉ — PRIORITAIRE
-========================================================= */
-
-.fs-seller-page {
-    width: 100% !important;
-    min-height: calc(100vh - 80px) !important;
-    box-sizing: border-box !important;
-    padding: 55px 20px 80px !important;
-
-    background:
-        radial-gradient(
-            circle at 8% 0%,
-            rgba(124,58,237,.16),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 92% 15%,
-            rgba(37,99,235,.13),
-            transparent 30%
-        ),
-        #070a12 !important;
-
-    color: #fff !important;
-}
-
-.fs-seller-container {
-    width: 100% !important;
-    max-width: 1000px !important;
-    margin: 0 auto !important;
-}
-
-.fs-seller-header {
-    text-align: center !important;
-    margin-bottom: 38px !important;
-}
-
-.fs-seller-eyebrow {
-    display: inline-block !important;
-    margin-bottom: 10px !important;
-
-    color: #a78bfa !important;
-    font-size: 11px !important;
-    font-weight: 900 !important;
-    letter-spacing: 1.8px !important;
-}
-
-.fs-seller-header h1 {
-    margin: 0 !important;
-
-    color: #fff !important;
-    font-size: clamp(32px, 5vw, 48px) !important;
-    font-weight: 900 !important;
-    letter-spacing: -.8px !important;
-}
-
-.fs-seller-header p {
-    max-width: 650px !important;
-    margin: 12px auto 0 !important;
-
-    color: #8993a6 !important;
-    line-height: 1.65 !important;
-    font-size: 15px !important;
-}
-
-
-/* SECTION */
-
-.fs-seller-plans,
-.fs-seller-form-card {
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.fs-seller-section-heading {
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 14px !important;
-    margin-bottom: 20px !important;
-}
-
-.fs-seller-section-heading > span {
-    width: 32px !important;
-    height: 32px !important;
-    flex-shrink: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    border-radius: 9px !important;
-
-    color: #c4b5fd !important;
-    background: rgba(124,58,237,.15) !important;
-    border: 1px solid rgba(124,58,237,.25) !important;
-
-    font-size: 11px !important;
-    font-weight: 900 !important;
-}
-
-.fs-seller-section-heading h2 {
-    margin: 0 !important;
-    color: #fff !important;
-    font-size: 21px !important;
-    font-weight: 850 !important;
-}
-
-.fs-seller-section-heading p {
-    margin: 5px 0 0 !important;
-    color: #718096 !important;
-    font-size: 13px !important;
-}
-
-
-/* PLANS */
-
-.fs-seller-plan-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
-    gap: 18px !important;
-    margin-bottom: 30px !important;
-}
-
-.fs-seller-plan {
-    min-width: 0 !important;
-}
-
-.fs-seller-plan-label {
-    position: relative !important;
-    display: block !important;
-    height: 100% !important;
-    box-sizing: border-box !important;
-
-    padding: 24px !important;
-
-    cursor: pointer !important;
-
-    border-radius: 19px !important;
-    border: 1px solid #293346 !important;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(18,23,37,.98),
-            rgba(10,14,24,.98)
-        ) !important;
-
-    transition: .2s ease !important;
-}
-
-.fs-seller-plan-label:hover {
-    transform: translateY(-3px) !important;
-    border-color: rgba(124,58,237,.55) !important;
-}
-
-.fs-seller-plan-label input {
-    position: absolute !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-.fs-seller-plan-label:has(input:checked) {
-    border-color: #7c3aed !important;
-
-    box-shadow:
-        0 20px 45px rgba(124,58,237,.12),
-        inset 0 1px 0 rgba(255,255,255,.04) !important;
-}
-
-.fs-seller-radio {
-    position: absolute !important;
-    top: 22px !important;
-    right: 22px !important;
-
-    width: 18px !important;
-    height: 18px !important;
-
-    border-radius: 50% !important;
-    border: 2px solid #4b5563 !important;
-}
-
-.fs-seller-plan-label:has(input:checked) .fs-seller-radio {
-    border-color: #8b5cf6 !important;
-    box-shadow: inset 0 0 0 4px #111827 !important;
-    background: #8b5cf6 !important;
-}
-
-.fs-seller-plan-top {
-    display: flex !important;
-    justify-content: space-between !important;
-    gap: 15px !important;
-    padding-right: 35px !important;
-}
-
-.fs-seller-plan-name {
-    display: block !important;
-    color: #fff !important;
-    font-size: 17px !important;
-    font-weight: 850 !important;
-}
-
-.fs-seller-plan-price {
-    display: block !important;
-    margin-top: 5px !important;
-    color: #a78bfa !important;
-    font-size: 14px !important;
-    font-weight: 800 !important;
-}
-
-.fs-seller-plan-badge {
-    height: fit-content !important;
-    padding: 5px 9px !important;
-    border-radius: 20px !important;
-
-    color: #cbd5e1 !important;
-    background: rgba(148,163,184,.08) !important;
-
-    font-size: 9px !important;
-    font-weight: 900 !important;
-}
-
-.fs-seller-plan-badge.premium {
-    color: #ddd6fe !important;
-    background: rgba(124,58,237,.15) !important;
-    border: 1px solid rgba(124,58,237,.25) !important;
-}
-
-.fs-seller-plan-description {
-    margin: 18px 0 !important;
-
-    color: #8792a5 !important;
-    font-size: 13px !important;
-    line-height: 1.55 !important;
-}
-
-.fs-seller-features {
-    margin: 0 !important;
-    padding: 17px 0 0 0 !important;
-
-    list-style: none !important;
-
-    border-top: 1px solid rgba(148,163,184,.09) !important;
-}
-
-.fs-seller-features li {
-    position: relative !important;
-
-    margin: 9px 0 !important;
-    padding-left: 22px !important;
-
-    color: #aeb7c7 !important;
-    font-size: 12px !important;
-    line-height: 1.45 !important;
-}
-
-.fs-seller-features li::before {
-    content: "✓" !important;
-    position: absolute !important;
-    left: 0 !important;
-
-    color: #a78bfa !important;
-    font-weight: 900 !important;
-}
-
-
-/* FORM */
-
-.fs-seller-form-card {
-    padding: 32px !important;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(18,23,37,.98),
-            rgba(10,14,24,.98)
-        ) !important;
-
-    border: 1px solid rgba(148,163,184,.12) !important;
-    border-radius: 23px !important;
-
-    box-shadow: 0 28px 70px rgba(0,0,0,.35) !important;
-}
-
-.fs-seller-fields {
-    display: grid !important;
-    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
-    gap: 18px !important;
-}
-
-.fs-seller-field {
-    min-width: 0 !important;
-}
-
-.fs-seller-field-full {
-    grid-column: 1 / -1 !important;
-}
-
-.fs-seller-field label {
-    display: block !important;
-    margin-bottom: 8px !important;
-
-    color: #d7deea !important;
-    font-size: 13px !important;
-    font-weight: 750 !important;
-}
-
-.fs-seller-field input,
-.fs-seller-field textarea,
-.fs-seller-field select {
-    width: 100% !important;
-    max-width: none !important;
-    box-sizing: border-box !important;
-
-    padding: 13px 14px !important;
-
-    color: #fff !important;
-    background: #0b101c !important;
-
-    border: 1px solid #30394b !important;
-    border-radius: 11px !important;
-
-    outline: none !important;
-
-    font-family: inherit !important;
-    font-size: 14px !important;
-
-    transition: .2s ease !important;
-}
-
-.fs-seller-field input,
-.fs-seller-field select {
-    min-height: 48px !important;
-}
-
-.fs-seller-field textarea {
-    min-height: 110px !important;
-    resize: vertical !important;
-}
-
-.fs-seller-field .fs-seller-description {
-    min-height: 145px !important;
-}
-
-.fs-seller-field input::placeholder,
-.fs-seller-field textarea::placeholder {
-    color: #566276 !important;
-}
-
-.fs-seller-field input:focus,
-.fs-seller-field textarea:focus,
-.fs-seller-field select:focus {
-    border-color: #7c3aed !important;
-    background: #0e1422 !important;
-
-    box-shadow:
-        0 0 0 3px rgba(124,58,237,.12) !important;
-}
-
-
-/* PREMIUM */
-
-.fs-seller-premium-payment {
-    margin-top: 27px !important;
-    padding: 24px !important;
-
-    border-radius: 17px !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(124,58,237,.12),
-            rgba(37,99,235,.07)
-        ) !important;
-
-    border: 1px solid rgba(124,58,237,.30) !important;
-}
-
-.fs-seller-payment-header {
-    display: flex !important;
-    align-items: center !important;
-    gap: 13px !important;
-}
-
-.fs-seller-payment-icon {
-    width: 45px !important;
-    height: 45px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    border-radius: 12px !important;
-    background: rgba(124,58,237,.20) !important;
-
-    font-size: 20px !important;
-}
-
-.fs-seller-payment-header span {
-    color: #a78bfa !important;
-    font-size: 10px !important;
-    font-weight: 900 !important;
-    letter-spacing: 1.2px !important;
-}
-
-.fs-seller-payment-header h2 {
-    margin: 3px 0 0 !important;
-    color: #fff !important;
-    font-size: 19px !important;
-}
-
-.fs-seller-payment-price {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-
-    margin: 20px 0 !important;
-    padding: 15px !important;
-
-    border-radius: 11px !important;
-    background: rgba(0,0,0,.20) !important;
-}
-
-.fs-seller-payment-price span {
-    color: #8993a6 !important;
-    font-size: 13px !important;
-}
-
-.fs-seller-payment-price strong {
-    color: #c4b5fd !important;
-    font-size: 18px !important;
-}
-
-.fs-seller-payment-fields {
-    display: grid !important;
-    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
-    gap: 18px !important;
-}
-
-.fs-seller-payment-info {
-    display: flex !important;
-    gap: 10px !important;
-
-    margin-top: 18px !important;
-    padding: 13px !important;
-
-    border-radius: 10px !important;
-    background: rgba(37,99,235,.07) !important;
-}
-
-.fs-seller-payment-info p {
-    margin: 0 !important;
-    color: #8da0ba !important;
-    font-size: 12px !important;
-    line-height: 1.5 !important;
-}
-
-
-/* SUBMIT */
-
-.fs-seller-submit-area {
-    margin-top: 30px !important;
-    padding-top: 24px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 18px !important;
-
-    border-top: 1px solid rgba(148,163,184,.09) !important;
-}
-
-.fs-seller-submit {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 12px !important;
-
-    min-height: 50px !important;
-    padding: 13px 23px !important;
-
-    border: 0 !important;
-    border-radius: 11px !important;
-
-    color: #fff !important;
-
-    background:
-        linear-gradient(135deg,#7c3aed,#2563eb) !important;
-
-    font-family: inherit !important;
-    font-size: 14px !important;
-    font-weight: 850 !important;
-
-    cursor: pointer !important;
-
-    box-shadow: 0 12px 28px rgba(37,99,235,.18) !important;
-
-    transition: .2s ease !important;
-}
-
-.fs-seller-submit:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 16px 35px rgba(124,58,237,.25) !important;
-}
-
-.fs-seller-submit-area p {
-    margin: 0 !important;
-    color: #68758a !important;
-    font-size: 11px !important;
-}
-
-
-/* MOBILE */
-
-@media (max-width: 720px) {
-
-    .fs-seller-page {
-        padding: 30px 12px 55px !important;
-    }
-
-    .fs-seller-plan-grid,
-    .fs-seller-fields,
-    .fs-seller-payment-fields {
-        grid-template-columns: 1fr !important;
-    }
-
-    .fs-seller-field-full {
-        grid-column: auto !important;
-    }
-
-    .fs-seller-form-card {
-        padding: 22px 16px !important;
-    }
-
-    .fs-seller-plan-label {
-        padding: 20px !important;
-    }
-
-    .fs-seller-submit-area {
-        flex-direction: column !important;
-        align-items: stretch !important;
-    }
-
-    .fs-seller-submit {
-        width: 100% !important;
-    }
-
-    .fs-seller-submit-area p {
-        text-align: center !important;
-    }
-
-}
-
-</style>
 
 {% endblock %}

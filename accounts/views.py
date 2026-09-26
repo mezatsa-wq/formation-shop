@@ -7,7 +7,6 @@ from django.utils import timezone
 from django.db.models import Q, Sum
 from django.conf import settings
 
-from courses.models import Course
 from documents.models import DocumentPurchase
 
 from .models import (
@@ -23,7 +22,6 @@ from .models import (
     SellerEarning,
     UserProfile,
     is_premium_seller,
-    get_seller_plan,
 )
 
 from orders.models import Order, OrderNotification
@@ -133,7 +131,7 @@ def logout_view(request):
 
 
 # =========================================================
-# PROFIL UTILISATEUR
+# PROFIL
 # =========================================================
 
 @login_required
@@ -190,7 +188,7 @@ def profile_view(request):
 
 
 # =========================================================
-# TABLEAU DE BORD PRINCIPAL
+# DASHBOARD PRINCIPAL
 # =========================================================
 
 @login_required
@@ -205,6 +203,7 @@ def dashboard(request):
     wallet, created = TokenWallet.objects.get_or_create(
         user=user
     )
+
     wallet.give_daily_reward()
 
     user_orders = (
@@ -230,7 +229,6 @@ def dashboard(request):
         status="cancelled"
     )
 
-    # Notifications reçues par le client
     unread_order_notifications = (
         OrderNotification.objects
         .filter(
@@ -326,10 +324,6 @@ def dashboard(request):
         or 0
     )
 
-    # =====================================================
-    # NOTIFICATIONS VENDEUR
-    # =====================================================
-
     seller_notifications = (
         OrderNotification.objects
         .filter(recipient=user)
@@ -403,96 +397,53 @@ def dashboard(request):
 
     context = {
 
-        # -------------------------
         # CLIENT
-        # -------------------------
-
         "wallet": wallet,
-
         "user_orders": user_orders,
         "my_orders": my_orders,
-
         "total_orders": total_orders,
         "pending_orders": pending_orders,
         "completed_orders": completed_orders,
         "cancelled_orders": cancelled_orders,
-
         "unread_order_notifications":
             unread_order_notifications,
 
-
-        # -------------------------
         # VENDEUR
-        # -------------------------
-
-        "seller_profile":
-            seller_profile,
-
-        "seller_products":
-            seller_products,
-
-        "seller_orders":
-            seller_orders,
-
-        "seller_pending_orders":
-            seller_pending_orders,
-
-        "seller_delivered_orders":
-            seller_delivered_orders,
-
-        "seller_completed_orders":
-            seller_completed_orders,
-
-        "seller_cancelled_orders":
-            seller_cancelled_orders,
-
+        "seller_profile": seller_profile,
+        "seller_products": seller_products,
+        "seller_orders": seller_orders,
+        "seller_pending_orders": seller_pending_orders,
+        "seller_delivered_orders": seller_delivered_orders,
+        "seller_completed_orders": seller_completed_orders,
+        "seller_cancelled_orders": seller_cancelled_orders,
         "seller_orders_to_deliver":
             seller_orders_to_deliver,
-
         "seller_orders_to_deliver_count":
             seller_orders_to_deliver_count,
-
         "seller_late_orders":
             seller_late_orders,
-
         "seller_late_orders_count":
             seller_late_orders_count,
-
-        "seller_earnings":
-            seller_earnings,
-
-        "seller_revenue":
-            seller_revenue,
-
+        "seller_earnings": seller_earnings,
+        "seller_revenue": seller_revenue,
         "seller_notifications":
             seller_notifications,
-
         "seller_unread_notifications":
             seller_unread_notifications,
-
         "seller_is_premium":
             seller_is_premium,
 
-
-        # -------------------------
         # FORMATEUR
-        # -------------------------
-
         "trainer_profile":
             trainer_profile,
-
         "trainer_courses":
             trainer_courses,
-
         "trainer_wallet":
             trainer_wallet,
-
         "trainer_revenue":
             trainer_revenue,
-
         "trainer_notifications":
             trainer_notifications,
-
         "trainer_unread_notifications":
             trainer_unread_notifications,
     }
@@ -510,71 +461,39 @@ def dashboard(request):
 
 @login_required
 def become_trainer(request):
-
-    existing_application = (
-        TrainerApplication.objects
-        .filter(user=request.user)
-        .first()
-    )
+    existing_application = TrainerApplication.objects.filter(
+        user=request.user
+    ).first()
 
     if existing_application:
-
         if existing_application.status == "pending":
-
             messages.info(
                 request,
-                "Votre candidature pour devenir formateur est déjà en attente."
+                "Votre candidature de formateur est déjà en attente de validation par l'administration."
             )
-
-            return redirect("home")
+            return redirect("dashboard")
 
         if existing_application.status == "approved":
-
-            messages.info(
+            messages.success(
                 request,
-                "Vous êtes déjà formateur."
+                "Votre candidature a déjà été approuvée. Vous êtes formateur."
             )
-
-            return redirect("home")
+            return redirect("dashboard")
 
         if existing_application.status == "rejected":
-
-            messages.info(
+            messages.error(
                 request,
-                "Votre candidature a été refusée."
+                "Votre précédente candidature a été refusée."
             )
-
-            return redirect("home")
 
     if request.method == "POST":
 
-        full_name = request.POST.get(
-            "full_name",
-            ""
-        ).strip()
+        full_name = request.POST.get("full_name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        expertise = request.POST.get("expertise", "").strip()
+        description = request.POST.get("description", "").strip()
 
-        phone = request.POST.get(
-            "phone",
-            ""
-        ).strip()
-
-        expertise = request.POST.get(
-            "expertise",
-            ""
-        ).strip()
-
-        description = request.POST.get(
-            "description",
-            ""
-        ).strip()
-
-        if not all([
-            full_name,
-            phone,
-            expertise,
-            description
-        ]):
-
+        if not full_name or not phone or not expertise or not description:
             messages.error(
                 request,
                 "Veuillez remplir tous les champs."
@@ -590,21 +509,22 @@ def become_trainer(request):
             full_name=full_name,
             phone=phone,
             expertise=expertise,
-            description=description
+            description=description,
+            status="pending",
         )
 
-        messages.success(
+        return render(
             request,
-            "Votre candidature a été envoyée à l'administrateur."
+            "accounts/become_trainer.html",
+            {
+                "submitted": True
+            }
         )
-
-        return redirect("home")
 
     return render(
         request,
         "accounts/become_trainer.html"
     )
-
 
 # =========================================================
 # DASHBOARD FORMATEUR
@@ -685,102 +605,50 @@ def trainer_dashboard(request):
 
 @login_required
 def become_seller(request):
-
-    existing_application = (
-        SellerApplication.objects
-        .filter(user=request.user)
-        .first()
-    )
+    existing_application = SellerApplication.objects.filter(
+        user=request.user
+    ).first()
 
     if existing_application:
-
         if existing_application.status == "pending":
-
             messages.info(
                 request,
-                "Votre candidature vendeur est déjà en attente."
+                "Votre candidature vendeur est déjà en attente de validation par l'administration."
             )
-
-            return redirect("home")
+            return redirect("dashboard")
 
         if existing_application.status == "approved":
-
-            messages.info(
+            messages.success(
                 request,
-                "Vous êtes déjà vendeur."
+                "Votre candidature vendeur a déjà été approuvée."
             )
-
-            return redirect("home")
+            return redirect("dashboard")
 
         if existing_application.status == "rejected":
-
-            messages.info(
+            messages.error(
                 request,
-                "Votre candidature vendeur a été refusée."
+                "Votre précédente candidature vendeur a été refusée."
             )
-
-            return redirect("home")
 
     if request.method == "POST":
 
-        full_name = request.POST.get(
-            "full_name",
-            ""
-        ).strip()
+        plan = request.POST.get("plan", "standard").strip()
 
-        phone = request.POST.get(
-            "phone",
-            ""
-        ).strip()
+        full_name = request.POST.get("full_name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        address = request.POST.get("address", "").strip()
+        neighborhood = request.POST.get("neighborhood", "").strip()
+        city = request.POST.get("city", "").strip()
+        activity = request.POST.get("activity", "").strip()
+        description = request.POST.get("description", "").strip()
 
-        address = request.POST.get(
-            "address",
-            ""
-        ).strip()
+        payment_method = request.POST.get("payment_method", "").strip()
+        payment_phone = request.POST.get("payment_phone", "").strip()
 
-        neighborhood = request.POST.get(
-            "neighborhood",
-            ""
-        ).strip()
-
-        city = request.POST.get(
-            "city",
-            ""
-        ).strip()
-
-        activity = request.POST.get(
-            "activity",
-            ""
-        ).strip()
-
-        description = request.POST.get(
-            "description",
-            ""
-        ).strip()
-
-        plan = request.POST.get(
-            "plan",
-            "standard"
-        ).strip().lower()
-
-        payment_method = request.POST.get(
-            "payment_method",
-            ""
-        ).strip().lower()
-
-        payment_phone = request.POST.get(
-            "payment_phone",
-            ""
-        ).strip()
-
-        if plan not in [
-            "standard",
-            "premium"
-        ]:
-
+        if not full_name or not phone or not address or not neighborhood or not city or not activity or not description:
             messages.error(
                 request,
-                "Veuillez choisir une formule vendeur valide."
+                "Veuillez remplir tous les champs obligatoires."
             )
 
             return render(
@@ -788,36 +656,15 @@ def become_seller(request):
                 "accounts/become_seller.html"
             )
 
-        if not all([
-            full_name,
-            phone,
-            address,
-            neighborhood,
-            city,
-            activity,
-            description
-        ]):
-
-            messages.error(
-                request,
-                "Veuillez remplir tous les champs."
-            )
-
-            return render(
-                request,
-                "accounts/become_seller.html"
-            )
+        if plan not in ["standard", "premium"]:
+            plan = "standard"
 
         if plan == "premium":
 
-            if payment_method not in [
-                "mtn",
-                "orange"
-            ]:
-
+            if payment_method not in ["mtn", "orange"]:
                 messages.error(
                     request,
-                    "Veuillez choisir un moyen de paiement Premium valide."
+                    "Veuillez choisir MTN Mobile Money ou Orange Money pour votre dépôt Premium."
                 )
 
                 return render(
@@ -826,10 +673,9 @@ def become_seller(request):
                 )
 
             if not payment_phone:
-
                 messages.error(
                     request,
-                    "Veuillez entrer le numéro utilisé pour le paiement Premium."
+                    "Veuillez indiquer le numéro utilisé pour effectuer le dépôt Premium."
                 )
 
                 return render(
@@ -837,7 +683,7 @@ def become_seller(request):
                     "accounts/become_seller.html"
                 )
 
-        SellerApplication.objects.create(
+        seller_application = SellerApplication.objects.create(
             user=request.user,
             full_name=full_name,
             phone=phone,
@@ -846,41 +692,33 @@ def become_seller(request):
             city=city,
             activity=activity,
             description=description,
-            plan=plan
+            status="pending",
         )
 
         if plan == "premium":
 
             SellerSubscription.objects.create(
-                seller=request.user,
+                user=request.user,
+                plan="premium",
                 amount=1000,
-                method=payment_method,
-                phone_number=payment_phone,
-                status="pending"
+                payment_method=payment_method,
+                payment_phone=payment_phone,
+                status="pending",
             )
 
-            messages.success(
-                request,
-                "Votre candidature vendeur Premium a été envoyée. "
-                "Votre paiement de 1 000 FCFA doit maintenant être vérifié "
-                "par l'administrateur."
-            )
-
-        else:
-
-            messages.success(
-                request,
-                "Votre candidature vendeur Standard a été envoyée "
-                "à l'administrateur."
-            )
-
-        return redirect("home")
+        return render(
+            request,
+            "accounts/become_seller.html",
+            {
+                "submitted": True,
+                "submitted_plan": plan,
+            }
+        )
 
     return render(
         request,
         "accounts/become_seller.html"
     )
-
 
 # =========================================================
 # PASSER VENDEUR PREMIUM
@@ -888,51 +726,31 @@ def become_seller(request):
 
 @login_required
 def upgrade_to_premium(request):
-
-    seller_profile = (
-        SellerProfile.objects
-        .filter(user=request.user)
-        .first()
+    premium_mtn_number = getattr(
+        settings,
+        "PREMIUM_MTN_NUMBER",
+        "654454429"
     )
 
-    if not seller_profile:
-
-        messages.error(
-            request,
-            "Vous devez être vendeur avant de passer Premium."
-        )
-
-        return redirect("dashboard")
-
-    if is_premium_seller(request.user):
-
-        messages.info(
-            request,
-            "Votre compte est déjà Premium."
-        )
-
-        return redirect("dashboard")
-
-    premium_mtn_number = settings.PREMIUM_MTN_NUMBER
-    premium_orange_number = settings.PREMIUM_ORANGE_NUMBER
+    premium_orange_number = getattr(
+        settings,
+        "PREMIUM_ORANGE_NUMBER",
+        "694452058"
+    )
 
     if request.method == "POST":
 
         payment_method = request.POST.get(
             "payment_method",
             ""
-        ).strip().lower()
+        ).strip()
 
         payment_phone = request.POST.get(
             "payment_phone",
             ""
         ).strip()
 
-        if payment_method not in [
-            "mtn",
-            "orange"
-        ]:
-
+        if payment_method not in ["mtn", "orange"]:
             messages.error(
                 request,
                 "Veuillez choisir MTN Mobile Money ou Orange Money."
@@ -942,72 +760,63 @@ def upgrade_to_premium(request):
                 request,
                 "accounts/upgrade_premium.html",
                 {
-                    "seller_profile": seller_profile,
                     "premium_mtn_number": premium_mtn_number,
                     "premium_orange_number": premium_orange_number,
-                    "selected_method": payment_method,
-                    "payment_phone": payment_phone,
                 }
             )
 
         if not payment_phone:
-
             messages.error(
                 request,
-                "Veuillez saisir le numéro utilisé pour effectuer le paiement."
+                "Veuillez entrer le numéro utilisé pour effectuer le dépôt."
             )
 
             return render(
                 request,
                 "accounts/upgrade_premium.html",
                 {
-                    "seller_profile": seller_profile,
                     "premium_mtn_number": premium_mtn_number,
                     "premium_orange_number": premium_orange_number,
-                    "selected_method": payment_method,
-                    "payment_phone": payment_phone,
                 }
             )
 
-        existing_pending = (
-            SellerSubscription.objects
-            .filter(
-                seller=request.user,
-                status="pending"
-            )
-            .exists()
-        )
+        existing_subscription = SellerSubscription.objects.filter(
+            user=request.user,
+            plan="premium",
+            status="pending"
+        ).first()
 
-        if existing_pending:
-
+        if existing_subscription:
             messages.info(
                 request,
-                "Une demande Premium est déjà en attente de validation."
+                "Votre demande Premium est déjà en attente de validation par l'administration."
             )
 
             return redirect("dashboard")
 
         SellerSubscription.objects.create(
-            seller=request.user,
+            user=request.user,
+            plan="premium",
             amount=1000,
-            method=payment_method,
-            phone_number=payment_phone,
-            status="pending"
+            payment_method=payment_method,
+            payment_phone=payment_phone,
+            status="pending",
         )
 
-        messages.success(
+        return render(
             request,
-            "Votre demande Premium a été enregistrée. "
-            "Elle sera activée après validation du paiement."
+            "accounts/upgrade_premium.html",
+            {
+                "submitted": True,
+                "premium_mtn_number": premium_mtn_number,
+                "premium_orange_number": premium_orange_number,
+            }
         )
-
-        return redirect("dashboard")
 
     return render(
         request,
         "accounts/upgrade_premium.html",
         {
-            "seller_profile": seller_profile,
             "premium_mtn_number": premium_mtn_number,
             "premium_orange_number": premium_orange_number,
         }

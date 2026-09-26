@@ -8,106 +8,364 @@ Commandes reçues - FormaShop
 
 <style>
 
-.seller-orders-page {
-    max-width: 1150px;
-    margin: 40px auto;
-    padding: 0 20px 50px;
-}
-
-.seller-orders-header {
-    margin-bottom: 30px;
-}
-
-.seller-orders-header h1 {
-    font-size: 34px;
-    margin-bottom: 8px;
-}
-
-.seller-orders-header p {
-    color: #94a3b8;
-}
-
-.seller-orders-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 22px;
-}
-
-.seller-order-card {
-    background: rgba(15,23,42,.78);
-    border: 1px solid rgba(148,163,184,.12);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.18);
-}
-
-.seller-order-card h2 {
-    margin-top: 0;
-}
-
-.order-info {
-    color: #cbd5e1;
-    line-height: 1.75;
-}
-
-.status-badge {
-    display: inline-block;
-    margin: 12px 0;
-    padding: 7px 12px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.status-pending {
-    color: #facc15;
-    background: rgba(234,179,8,.12);
-}
-
-.status-progress {
-    color: #a5b4fc;
-    background: rgba(99,102,241,.12);
-}
-
-.status-success {
-    color: #4ade80;
-    background: rgba(34,197,94,.12);
-}
-
-.status-danger {
-    color: #f87171;
-    background: rgba(239,68,68,.12);
-}
-
-.seller-order-btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 11px 17px;
-    border-radius: 11px;
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-    background: linear-gradient(135deg,#6366f1,#7c3aed);
-}
-
-.empty-orders {
-    padding: 45px;
-    text-align: center;
-    border-radius: 20px;
-    background: rgba(15,23,42,.7);
-    border: 1px solid rgba(148,163,184,.12);
-}
-
-@media(max-width:700px) {
-
     .seller-orders-page {
-        margin-top: 25px;
+        max-width: 1150px;
+        margin: 40px auto;
+        padding: 0 20px 70px;
+        color: #f5f3ff;
+    }
+
+    .seller-orders-header {
+        margin-bottom: 30px;
     }
 
     .seller-orders-header h1 {
-        font-size: 27px;
+        margin: 0 0 8px;
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: -.5px;
     }
-}
+
+    .seller-orders-header p {
+        margin: 0;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    .seller-orders-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 22px;
+    }
+
+    .seller-order-card {
+        position: relative;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(23,26,49,.96),
+                rgba(15,19,32,.96)
+            );
+        border: 1px solid rgba(143,112,255,.16);
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: 0 18px 45px rgba(0,0,0,.24);
+        transition: .22s ease;
+        overflow: hidden;
+    }
+
+    .seller-order-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(
+            90deg,
+            #6958f5,
+            #8f70ff,
+            #2563eb
+        );
+        opacity: .8;
+    }
+
+    .seller-order-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(143,112,255,.30);
+        box-shadow: 0 22px 55px rgba(0,0,0,.30);
+    }
+
+    .seller-order-card h2 {
+        margin: 0 0 18px;
+        font-size: 21px;
+        color: #ffffff;
+    }
+
+    .order-number {
+        color: #8f70ff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .order-info {
+        color: #cbd5e1;
+        line-height: 1.75;
+    }
+
+    .order-info p {
+        margin: 7px 0;
+    }
+
+    .order-info strong {
+        color: #f1efff;
+    }
+
+    .order-divider {
+        height: 1px;
+        background: rgba(255,255,255,.06);
+        margin: 18px 0;
+    }
+
+    .order-price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 14px 15px;
+        border-radius: 14px;
+        background: rgba(105,88,245,.08);
+        border: 1px solid rgba(105,88,245,.14);
+        margin-top: 16px;
+    }
+
+    .order-price-label {
+        color: #aaa5c7;
+        font-size: 13px;
+    }
+
+    .order-price-value {
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 17px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 18px 0 5px;
+        padding: 8px 13px;
+        border-radius: 999px;
+        font-size: 12px;
+        line-height: 1.4;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+
+    .status-pending {
+        color: #facc15;
+        background: rgba(234,179,8,.12);
+        border-color: rgba(234,179,8,.20);
+    }
+
+    .status-progress {
+        color: #a5b4fc;
+        background: rgba(99,102,241,.12);
+        border-color: rgba(99,102,241,.20);
+    }
+
+    .status-success {
+        color: #4ade80;
+        background: rgba(34,197,94,.12);
+        border-color: rgba(34,197,94,.20);
+    }
+
+    .status-danger {
+        color: #f87171;
+        background: rgba(239,68,68,.12);
+        border-color: rgba(239,68,68,.20);
+    }
+
+    .status-info {
+        color: #67e8f9;
+        background: rgba(6,182,212,.10);
+        border-color: rgba(6,182,212,.20);
+    }
+
+    .seller-action-box {
+        margin-top: 17px;
+        padding: 15px;
+        border-radius: 15px;
+        background: linear-gradient(
+            135deg,
+            rgba(24,168,120,.12),
+            rgba(36,201,152,.05)
+        );
+        border: 1px solid rgba(36,201,152,.22);
+    }
+
+    .seller-action-box strong {
+        display: block;
+        color: #71e0ba;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    .seller-action-box p {
+        margin: 0;
+        color: #aaa5c7;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .seller-order-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .seller-order-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 11px 17px;
+        min-height: 44px;
+        border-radius: 11px;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 13px;
+        border: 0;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .seller-order-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .manage-btn {
+        background: linear-gradient(
+            135deg,
+            #6366f1,
+            #7c3aed
+        );
+        box-shadow: 0 8px 22px rgba(99,102,241,.22);
+    }
+
+    .accept-btn {
+        background: linear-gradient(
+            135deg,
+            #18a878,
+            #24c998
+        );
+        box-shadow: 0 8px 22px rgba(24,168,120,.20);
+    }
+
+    .seller-order-form {
+        display: inline-flex;
+        margin: 0;
+    }
+
+    .empty-orders {
+        padding: 55px 30px;
+        text-align: center;
+        border-radius: 22px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(23,26,49,.95),
+                rgba(15,19,32,.95)
+            );
+        border: 1px solid rgba(143,112,255,.16);
+        box-shadow: 0 18px 45px rgba(0,0,0,.20);
+    }
+
+    .empty-orders-icon {
+        font-size: 46px;
+        margin-bottom: 12px;
+    }
+
+    .empty-orders h2 {
+        margin: 0 0 10px;
+        color: #ffffff;
+        font-size: 23px;
+    }
+
+    .empty-orders p {
+        margin: 0;
+        color: #9995b2;
+        line-height: 1.6;
+    }
+
+    .seller-orders-footer {
+        margin-top: 28px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .back-dashboard-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #ddd9f5;
+        background: #20243a;
+        border: 1px solid rgba(255,255,255,.08);
+        font-weight: 700;
+        transition: .2s ease;
+    }
+
+    .back-dashboard-btn:hover {
+        transform: translateY(-2px);
+        border-color: rgba(143,112,255,.28);
+        color: #ffffff;
+    }
+
+    @media(max-width: 700px) {
+
+        .seller-orders-page {
+            margin: 20px auto;
+            padding: 0 12px 45px;
+        }
+
+        .seller-orders-header {
+            margin-bottom: 22px;
+        }
+
+        .seller-orders-header h1 {
+            font-size: 27px;
+        }
+
+        .seller-orders-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .seller-order-card {
+            padding: 19px;
+            border-radius: 18px;
+        }
+
+        .seller-order-card h2 {
+            font-size: 19px;
+        }
+
+        .order-price {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .seller-order-actions {
+            flex-direction: column;
+        }
+
+        .seller-order-btn,
+        .seller-order-form {
+            width: 100%;
+        }
+
+        .seller-order-form .seller-order-btn {
+            width: 100%;
+        }
+
+        .empty-orders {
+            padding: 40px 20px;
+            border-radius: 18px;
+        }
+
+        .empty-orders h2 {
+            font-size: 20px;
+        }
+
+    }
 
 </style>
 
@@ -117,11 +375,12 @@ Commandes reçues - FormaShop
     <div class="seller-orders-header">
 
         <h1>
-            Commandes reçues
+            📦 Commandes reçues
         </h1>
 
         <p>
-            Gérez les commandes associées à vos produits.
+            Retrouvez ici les commandes associées à vos produits et
+            gérez chaque étape jusqu'à la validation finale.
         </p>
 
     </div>
@@ -135,66 +394,50 @@ Commandes reçues - FormaShop
 
                 <article class="seller-order-card">
 
+                    <div class="order-number">
+                        COMMANDE #{{ order.id }}
+                    </div>
+
                     <h2>
-                        Commande #{{ order.id }}
+                        {% if order.product %}
+                            {{ order.product.name }}
+                        {% else %}
+                            Produit supprimé
+                        {% endif %}
                     </h2>
 
 
                     <div class="order-info">
 
                         <p>
-
-                            <strong>Produit :</strong>
-
-                            {% if order.product %}
-                                {{ order.product.name }}
-                            {% else %}
-                                Produit supprimé
-                            {% endif %}
-
-                        </p>
-
-
-                        <p>
-                            <strong>Client :</strong>
+                            <strong>👤 Client :</strong>
                             {{ order.full_name }}
                         </p>
 
-
                         <p>
-                            <strong>Téléphone :</strong>
+                            <strong>📞 Téléphone :</strong>
                             {{ order.phone_number }}
                         </p>
 
-
                         <p>
-                            <strong>Quartier :</strong>
+                            <strong>📍 Quartier :</strong>
                             {{ order.neighborhood|default:"Non précisé" }}
                         </p>
 
-
                         <p>
-                            <strong>Adresse :</strong>
+                            <strong>🏠 Adresse :</strong>
                             {{ order.delivery_address }}
                         </p>
 
-
                         <p>
-                            <strong>Quantité :</strong>
+                            <strong>📦 Quantité :</strong>
                             {{ order.quantity }}
                         </p>
-
-
-                        <p>
-                            <strong>Montant :</strong>
-                            {{ order.total_price }} FCFA
-                        </p>
-
 
                         {% if order.delivery_deadline %}
 
                             <p>
-                                <strong>Livraison avant :</strong>
+                                <strong>⏰ Livraison avant :</strong>
                                 {{ order.delivery_deadline|date:"d/m/Y à H:i" }}
                             </p>
 
@@ -203,50 +446,158 @@ Commandes reçues - FormaShop
                     </div>
 
 
+                    <div class="order-price">
+
+                        <span class="order-price-label">
+                            Montant de la commande
+                        </span>
+
+                        <span class="order-price-value">
+                            {{ order.total_price }} FCFA
+                        </span>
+
+                    </div>
+
+
+                    {# ================================================= #}
+                    {# STATUT DE LA COMMANDE                            #}
+                    {# ================================================= #}
+
                     {% if order.status == "cancelled" %}
 
                         <span class="status-badge status-danger">
-                            ✕ Commande annulée
+                            ❌ Commande annulée par le client
                         </span>
 
 
                     {% elif order.admin_validated %}
 
                         <span class="status-badge status-success">
-                            ✓ Vente finalisée
+                            🎉 Vente finalisée et validée
                         </span>
 
 
                     {% elif order.customer_confirmed %}
 
-                        <span class="status-badge status-progress">
-                            ✓ Réception confirmée — validation admin en attente
+                        <span class="status-badge status-info">
+                            📦 Réception confirmée — validation admin en attente
                         </span>
 
 
                     {% elif order.seller_confirmed %}
 
                         <span class="status-badge status-progress">
-                            📦 Livraison confirmée — attente client
+                            🚚 Livraison confirmée — attente de la réception client
                         </span>
 
 
                     {% else %}
 
                         <span class="status-badge status-pending">
-                            ⏳ Livraison à effectuer
+                            ⏳ Nouvelle commande — acceptation requise
                         </span>
 
                     {% endif %}
 
 
-                    <div>
+                    {# ================================================= #}
+                    {# ACTION VENDEUR : NOUVELLE COMMANDE                #}
+                    {# ================================================= #}
 
-                        <a
-                            href="{% url 'order_detail' order.id %}"
-                            class="seller-order-btn"
-                        >
-                            Gérer la commande
+                    {% if order.status == "pending" and not order.seller_confirmed and not order.admin_validated %}
+
+                        <div class="seller-action-box">
+
+                            <strong>
+                                🛍️ Nouvelle commande à traiter
+                            </strong>
+
+                            <p>
+                                Vérifiez les informations du client et de livraison,
+                                puis acceptez la commande pour confirmer que vous
+                                prenez en charge sa livraison.
+                            </p>
+
+                        </div>
+
+                    {% elif order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
+
+                        <div class="seller-action-box">
+
+                            <strong>
+                                🚚 Livraison confirmée
+                            </strong>
+
+                            <p>
+                                Vous avez accepté cette commande et confirmé sa livraison.
+                                Le client doit maintenant confirmer la réception.
+                            </p>
+
+                        </div>
+
+                    {% elif order.customer_confirmed and not order.admin_validated %}
+
+                        <div class="seller-action-box">
+
+                            <strong>
+                                🛡️ Réception confirmée
+                            </strong>
+
+                            <p>
+                                Le client a confirmé la réception.
+                                La commande attend maintenant la validation finale
+                                de l'administration.
+                            </p>
+
+                        </div>
+
+                    {% elif order.admin_validated %}
+
+                        <div class="seller-action-box">
+
+                            <strong>
+                                🎉 Commande terminée
+                            </strong>
+
+                            <p>
+                                La commande a été définitivement validée par
+                                l'administration et votre vente a été enregistrée.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="seller-order-actions">
+
+                        {# ACCEPTATION DIRECTE DE LA COMMANDE #}
+
+                        {% if order.status == "pending" and not order.seller_confirmed and not order.admin_validated %}
+
+                            <form method="post"
+                                  action="{% url 'seller_confirm_delivery' order.id %}"
+                                  class="seller-order-form">
+
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="seller-order-btn accept-btn">
+
+                                    ✓ Accepter la commande
+
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+
+                        <a href="{% url 'order_detail' order.id %}"
+                           class="seller-order-btn manage-btn">
+
+                            🔎 Voir / gérer la commande
+
                         </a>
 
                     </div>
@@ -261,17 +612,34 @@ Commandes reçues - FormaShop
 
         <div class="empty-orders">
 
+            <div class="empty-orders-icon">
+                📦
+            </div>
+
             <h2>
                 Vous n'avez encore reçu aucune commande.
             </h2>
 
             <p>
-                Les commandes de vos produits apparaîtront ici.
+                Les commandes de vos produits apparaîtront automatiquement
+                ici dès qu'un client effectuera un achat.
             </p>
 
         </div>
 
     {% endif %}
+
+
+    <div class="seller-orders-footer">
+
+        <a href="{% url 'dashboard' %}"
+           class="back-dashboard-btn">
+
+            ← Retour au dashboard
+
+        </a>
+
+    </div>
 
 </div>
 

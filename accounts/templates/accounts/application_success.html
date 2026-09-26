@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Candidature envoyée — FormaShop{% endblock %}
+
+{% block content %}
+
+<style>
+    .success-page {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 18px;
+    }
+
+    .success-card {
+        width: 100%;
+        max-width: 680px;
+        text-align: center;
+        padding: 45px 35px;
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(124,58,237,.18), transparent 35%),
+            linear-gradient(145deg, #151a2d, #0c101b);
+        border: 1px solid rgba(139,92,246,.25);
+        box-shadow: 0 25px 70px rgba(0,0,0,.35);
+    }
+
+    .success-icon {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        background: rgba(36,201,152,.12);
+        border: 1px solid rgba(36,201,152,.3);
+    }
+
+    .success-card h1 {
+        margin: 0 0 14px;
+        color: #fff;
+        font-size: 32px;
+    }
+
+    .success-card p {
+        color: #aaa5c7;
+        line-height: 1.7;
+        margin: 0 auto 28px;
+        max-width: 540px;
+    }
+
+    .success-message {
+        padding: 16px 18px;
+        margin-bottom: 28px;
+        border-radius: 14px;
+        background: rgba(124,58,237,.10);
+        border: 1px solid rgba(124,58,237,.22);
+        color: #d9d2ff;
+    }
+
+    .success-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .success-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 22px;
+        border-radius: 13px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: .2s ease;
+    }
+
+    .success-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .primary {
+        color: white;
+        background: linear-gradient(135deg, #6958f5, #8f70ff);
+        box-shadow: 0 10px 25px rgba(105,88,245,.25);
+    }
+
+    .secondary {
+        color: #ddd9f5;
+        background: #20243a;
+        border: 1px solid rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 600px) {
+        .success-page {
+            padding: 30px 14px;
+        }
+
+        .success-card {
+            padding: 32px 20px;
+            border-radius: 22px;
+        }
+
+        .success-card h1 {
+            font-size: 25px;
+        }
+
+        .success-actions {
+            flex-direction: column;
+        }
+
+        .success-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="success-page">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1>{{ success_title|default:"Votre candidature a bien été déposée !" }}</h1>
+
+        <p>
+            {{ success_message|default:"Votre demande a bien été enregistrée. Elle sera examinée par l'administration de FormaShop." }}
+        </p>
+
+        <div class="success-message">
+            🔔 Vous pourrez retrouver l'évolution de votre demande depuis votre espace FormaShop.
+        </div>
+
+        <div class="success-actions">
+
+            <a href="{% url 'dashboard' %}"
+               class="success-btn primary">
+                📊 Retour au tableau de bord
+            </a>
+
+            <a href="{% url 'home' %}"
+               class="success-btn secondary">
+                🏠 Retour à l'accueil
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,22 +1,30 @@
 {% extends "base.html" %}
 
+{% block title %}Commande #{{ order.id }} — FormaShop{% endblock %}
+
 {% block content %}
 
 <style>
     .order-detail-page {
         max-width: 1100px;
         margin: 40px auto;
-        padding: 0 18px 60px;
+        padding: 0 18px 70px;
         color: #f5f3ff;
     }
 
+    .order-header,
+    .detail-card,
+    .progress-card,
+    .actions-card {
+        background: linear-gradient(135deg, #171a31, #0f1320);
+        border: 1px solid rgba(143, 112, 255, .18);
+        box-shadow: 0 18px 45px rgba(0,0,0,.24);
+    }
+
     .order-header {
-        background: linear-gradient(135deg, #171a31, #111522);
-        border: 1px solid rgba(143, 112, 255, .25);
         border-radius: 24px;
         padding: 28px;
         margin-bottom: 20px;
-        box-shadow: 0 15px 40px rgba(0,0,0,.25);
     }
 
     .order-header-top {
@@ -63,16 +71,16 @@
     }
 
     .detail-card {
-        background: #111522;
-        border: 1px solid rgba(255,255,255,.07);
         border-radius: 22px;
         padding: 24px;
     }
 
-    .detail-card h2 {
+    .detail-card h2,
+    .progress-card h2,
+    .actions-card h2 {
         margin: 0 0 20px;
         font-size: 19px;
-        color: #ffffff;
+        color: #fff;
     }
 
     .info-row {
@@ -97,16 +105,11 @@
         color: #f4f2ff;
     }
 
-    .progress-card {
+    .progress-card,
+    .actions-card {
         margin-top: 20px;
-        background: #111522;
-        border: 1px solid rgba(255,255,255,.07);
         border-radius: 22px;
         padding: 25px;
-    }
-
-    .progress-card h2 {
-        margin-top: 0;
     }
 
     .steps {
@@ -143,22 +146,10 @@
         line-height: 1.5;
     }
 
-    .actions-card {
-        margin-top: 20px;
-        background: linear-gradient(135deg, #171a31, #121526);
-        border: 1px solid rgba(143,112,255,.22);
-        border-radius: 22px;
-        padding: 25px;
-    }
-
-    .actions-card h2 {
-        margin-top: 0;
-        margin-bottom: 8px;
-    }
-
     .actions-description {
         color: #9995b2;
         margin-bottom: 20px;
+        line-height: 1.6;
     }
 
     .actions {
@@ -195,6 +186,7 @@
     .success-btn {
         background: linear-gradient(135deg, #18a878, #24c998);
         color: white;
+        box-shadow: 0 8px 22px rgba(24,168,120,.20);
     }
 
     .danger-btn {
@@ -212,11 +204,36 @@
     .notice {
         padding: 15px 17px;
         border-radius: 14px;
-        margin-top: 15px;
+        margin-top: 18px;
         background: rgba(105,88,245,.10);
         border: 1px solid rgba(105,88,245,.2);
         color: #c9c3ef;
         line-height: 1.5;
+    }
+
+    .seller-action-highlight {
+        padding: 18px;
+        margin-bottom: 18px;
+        border-radius: 16px;
+        background: linear-gradient(
+            135deg,
+            rgba(24,168,120,.12),
+            rgba(36,201,152,.05)
+        );
+        border: 1px solid rgba(36,201,152,.25);
+    }
+
+    .seller-action-highlight strong {
+        display: block;
+        color: #71e0ba;
+        margin-bottom: 6px;
+    }
+
+    .seller-action-highlight p {
+        margin: 0;
+        color: #aaa5c7;
+        line-height: 1.5;
+        font-size: 14px;
     }
 
     .cancelled-box {
@@ -226,6 +243,10 @@
         padding: 18px;
         border-radius: 16px;
         margin-top: 20px;
+    }
+
+    .seller-action-form {
+        display: inline-block;
     }
 
     @media (max-width: 700px) {
@@ -393,12 +414,12 @@
             </div>
 
             {% if order.delivery_deadline %}
-            <div class="info-row">
-                <span class="info-label">Date limite</span>
-                <span class="info-value">
-                    {{ order.delivery_deadline|date:"d/m/Y H:i" }}
-                </span>
-            </div>
+                <div class="info-row">
+                    <span class="info-label">Date limite</span>
+                    <span class="info-value">
+                        {{ order.delivery_deadline|date:"d/m/Y H:i" }}
+                    </span>
+                </div>
             {% endif %}
         </div>
 
@@ -420,12 +441,12 @@
 
                 <div class="step-text">
                     {% if order.seller_confirmed %}
-                        Le vendeur a confirmé la livraison.
+                        Le vendeur a accepté la commande et confirmé sa livraison.
                         {% if order.seller_confirmed_at %}
-                            {{ order.seller_confirmed_at|date:"d/m/Y H:i" }}
+                            <br>{{ order.seller_confirmed_at|date:"d/m/Y H:i" }}
                         {% endif %}
                     {% else %}
-                        En attente de la confirmation du vendeur.
+                        En attente de l'acceptation du vendeur.
                     {% endif %}
                 </div>
             </div>
@@ -443,7 +464,7 @@
                     {% if order.customer_confirmed %}
                         Le client a confirmé avoir reçu la commande.
                         {% if order.customer_confirmed_at %}
-                            {{ order.customer_confirmed_at|date:"d/m/Y H:i" }}
+                            <br>{{ order.customer_confirmed_at|date:"d/m/Y H:i" }}
                         {% endif %}
                     {% else %}
                         En attente de la confirmation du client.
@@ -485,85 +506,128 @@
             <h2>⚡ Actions disponibles</h2>
 
             <div class="actions-description">
-                Les actions affichées dépendent de votre rôle et de l'état actuel de la commande.
+                Les actions disponibles dépendent de votre rôle et de l'état actuel de la commande.
             </div>
 
-            <div class="actions">
+            {# ========================================================= #}
+            {# VENDEUR                                                    #}
+            {# ========================================================= #}
 
-                {# VENDEUR : confirmer la livraison #}
-                {% if request.user == order.seller or order.product and request.user == order.product.seller %}
-                    {% if not order.seller_confirmed and not order.admin_validated %}
-                        <form method="post"
-                              action="{% url 'seller_confirm_delivery' order.id %}">
-                            {% csrf_token %}
-                            <button type="submit"
-                                    class="action-btn success-btn">
-                                🚚 Confirmer la livraison
-                            </button>
-                        </form>
-                    {% endif %}
+            {% if request.user == order.seller or order.product and request.user == order.product.seller %}
+
+                {% if order.status == "pending" and not order.seller_confirmed and not order.admin_validated %}
+
+                    <div class="seller-action-highlight">
+                        <strong>🛍️ Nouvelle commande à traiter</strong>
+                        <p>
+                            Cette commande vous est destinée. Vérifiez les informations
+                            de livraison puis acceptez-la pour lancer la livraison.
+                        </p>
+                    </div>
+
+                    <form method="post"
+                          action="{% url 'seller_confirm_delivery' order.id %}"
+                          class="seller-action-form">
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="action-btn success-btn">
+                            ✓ Accepter la commande
+                        </button>
+                    </form>
+
+                {% elif order.seller_confirmed %}
+
+                    <div class="notice">
+                        ✅ Vous avez déjà accepté cette commande et confirmé sa livraison.
+                        Le client doit maintenant confirmer la réception.
+                    </div>
+
                 {% endif %}
 
-                {# CLIENT : confirmer la réception #}
+            {% endif %}
+
+            <div class="actions" style="margin-top:18px;">
+
+                {# CLIENT : confirmer réception #}
                 {% if request.user == order.user %}
                     {% if order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
+
                         <form method="post"
                               action="{% url 'customer_confirm_receipt' order.id %}">
                             {% csrf_token %}
+
                             <button type="submit"
                                     class="action-btn success-btn">
                                 📦 Confirmer la réception
                             </button>
                         </form>
+
                     {% endif %}
                 {% endif %}
 
-                {# CLIENT : annuler avant confirmation #}
+                {# CLIENT : annuler #}
                 {% if request.user == order.user %}
                     {% if not order.seller_confirmed and not order.customer_confirmed and not order.admin_validated %}
+
                         <form method="post"
                               action="{% url 'cancel_order' order.id %}">
                             {% csrf_token %}
+
                             <button type="submit"
                                     class="action-btn danger-btn">
                                 ❌ Annuler la commande
                             </button>
                         </form>
+
                     {% endif %}
                 {% endif %}
 
                 {# ADMIN : validation finale #}
                 {% if request.user.is_staff %}
                     {% if order.seller_confirmed and order.customer_confirmed and not order.admin_validated %}
+
                         <form method="post"
                               action="{% url 'admin_validate_order' order.id %}">
                             {% csrf_token %}
+
                             <button type="submit"
                                     class="action-btn primary-btn">
                                 🛡️ Valider définitivement
                             </button>
                         </form>
+
                     {% endif %}
                 {% endif %}
 
             </div>
 
             {% if order.status == "pending" and not order.seller_confirmed %}
+
                 <div class="notice">
-                    ⏳ Le vendeur doit d'abord confirmer que la commande a été livrée.
+                    ⏳ La commande attend l'acceptation du vendeur.
                 </div>
+
             {% elif order.seller_confirmed and not order.customer_confirmed %}
+
                 <div class="notice">
-                    📦 La livraison est confirmée. Le client doit maintenant confirmer la réception.
+                    📦 La livraison a été acceptée par le vendeur.
+                    Le client doit maintenant confirmer la réception.
                 </div>
+
             {% elif order.customer_confirmed and not order.admin_validated %}
+
                 <div class="notice">
-                    🛡️ Les deux confirmations sont terminées. La commande attend la validation finale de l'administration.
+                    🛡️ Les confirmations vendeur et client sont terminées.
+                    La commande attend la validation finale de l'administration.
                 </div>
+
             {% elif order.admin_validated %}
+
                 <div class="notice">
                     🎉 Cette commande est complètement terminée.
                 </div>
+
             {% endif %}
 
         </div>
@@ -571,6 +635,7 @@
     {% endif %}
 
     <div class="actions" style="margin-top:20px;">
+
         <a href="{% url 'my_orders' %}"
            class="action-btn secondary-btn">
             ← Mes commandes
@@ -582,6 +647,7 @@
                 📦 Commandes vendeur
             </a>
         {% endif %}
+
     </div>
 
 </div>
