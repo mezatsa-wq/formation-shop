@@ -240,29 +240,84 @@ Finaliser ma commande — FormaShop
     .summary-meta {
         display: flex;
         justify-content: space-between;
+        align-items: flex-start;
         gap: 12px;
         margin-top: 6px;
         color: #858da5;
         font-size: 12px;
     }
 
-    .summary-total {
+    .summary-price-block {
         display: flex;
-        justify-content: space-between;
-        gap: 15px;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+        text-align: right;
+    }
+
+    .summary-price {
+        color: #c8c4ff;
+        font-weight: 700;
+    }
+
+    .checkout-item-delivery {
+        color: #8f98b1;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* =========================
+       TOTAL
+    ========================= */
+
+    .summary-total {
+        display: grid;
+        gap: 11px;
         margin-top: 17px;
         padding-top: 17px;
         border-top: 1px solid rgba(148, 163, 184, 0.16);
     }
 
-    .summary-total span {
-        color: #9ba2b7;
-        font-size: 14px;
+    .summary-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
     }
 
-    .summary-total strong {
+    .summary-row span {
+        color: #9ba2b7;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .summary-row strong {
+        color: #d7d4ff;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .summary-divider {
+        width: 100%;
+        height: 1px;
+        margin: 3px 0;
+        background: rgba(148, 163, 184, 0.10);
+    }
+
+    .summary-grand-total {
+        padding-top: 3px;
+    }
+
+    .summary-grand-total span {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .summary-grand-total strong {
         color: #aa9cff;
-        font-size: 18px;
+        font-size: 19px;
+        font-weight: 900;
     }
 
     .delivery-note {
@@ -274,6 +329,13 @@ Finaliser ma commande — FormaShop
         color: #969eb5;
         font-size: 12px;
         line-height: 1.6;
+    }
+
+    .delivery-note strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #c9c4ff;
+        font-size: 12px;
     }
 
     @media (max-width: 820px) {
@@ -337,7 +399,11 @@ Finaliser ma commande — FormaShop
             min-height: 52px;
         }
 
-        .summary-total strong {
+        .summary-row {
+            align-items: flex-start;
+        }
+
+        .summary-grand-total strong {
             font-size: 17px;
         }
     }
@@ -533,15 +599,32 @@ Finaliser ma commande — FormaShop
                             × {{ item.quantity }}
                         </span>
 
-                        <span>
+                        {% if item.product %}
 
-                            {% if item.product %}
-                                {{ item.product.price }} FCFA
-                            {% elif item.course %}
-                                {{ item.course.price }} FCFA
-                            {% endif %}
+                            <div class="summary-price-block">
 
-                        </span>
+                                <span class="summary-price">
+                                    {{ item.product.price|floatformat:0 }} FCFA
+                                </span>
+
+                                <span class="checkout-item-delivery">
+                                    Livraison :
+                                    {{ item.delivery_fee|floatformat:0 }} FCFA
+                                </span>
+
+                            </div>
+
+                        {% elif item.course %}
+
+                            <div class="summary-price-block">
+
+                                <span class="summary-price">
+                                    {{ item.course.price|floatformat:0 }} FCFA
+                                </span>
+
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
@@ -550,9 +633,11 @@ Finaliser ma commande — FormaShop
             {% empty %}
 
                 <div class="summary-item">
+
                     <div class="summary-product">
                         Aucun article
                     </div>
+
                 </div>
 
             {% endfor %}
@@ -560,21 +645,62 @@ Finaliser ma commande — FormaShop
 
             <div class="summary-total">
 
-                <span>
-                    Total
-                </span>
+                <div class="summary-row">
 
-                <strong>
-                    {{ cart.total_price|default:total|default:"0" }} FCFA
-                </strong>
+                    <span>
+                        Sous-total produits
+                    </span>
+
+                    <strong>
+                        {{ total|floatformat:0 }} FCFA
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        Frais de livraison
+                    </span>
+
+                    <strong>
+                        {{ delivery_fee|floatformat:0 }} FCFA
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-divider"></div>
+
+
+                <div class="summary-row summary-grand-total">
+
+                    <span>
+                        Total à payer à la livraison
+                    </span>
+
+                    <strong>
+                        {{ grand_total|floatformat:0 }} FCFA
+                    </strong>
+
+                </div>
 
             </div>
 
 
             <div class="delivery-note">
-                🚚 Le paiement sera effectué à la livraison.
+
+                <strong>
+                    🚚 Paiement à la livraison
+                </strong>
+
+                Le montant indiqué sera payé directement
+                au vendeur lors de la réception de votre commande.
+
                 Le vendeur dispose de 24 heures pour effectuer
                 la livraison après création de la commande.
+
             </div>
 
         </aside>

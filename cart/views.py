@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -19,6 +20,31 @@ def get_or_create_cart(request):
     return cart
 
 
+def calculate_delivery_fee(subtotal):
+    """
+    Calcule les frais de livraison selon la règle FormaShop :
+
+    - 20 % du sous-total
+    - minimum : 200 FCFA
+    - maximum : 500 FCFA
+    """
+
+    subtotal = Decimal(subtotal)
+
+    delivery_fee = subtotal * Decimal("0.20")
+
+    minimum_fee = Decimal("200")
+    maximum_fee = Decimal("500")
+
+    if delivery_fee < minimum_fee:
+        delivery_fee = minimum_fee
+
+    if delivery_fee > maximum_fee:
+        delivery_fee = maximum_fee
+
+    return delivery_fee.quantize(Decimal("0.01"))
+
+
 @login_required
 def cart_detail(request):
 
@@ -29,7 +55,7 @@ def cart_detail(request):
         "course"
     )
 
-    total = 0
+    total = Decimal("0")
 
     for item in items:
 
@@ -195,16 +221,38 @@ def create_order(request):
 
         return redirect("cart")
 
-    total = sum(
-        item.product.price * item.quantity
-        for item in product_items
-        if item.product
-    )
+    total = Decimal("0")
+    delivery_fee = Decimal("0")
+
+    # Préparation des montants affichés au checkout
+    for item in product_items:
+
+        if not item.product:
+            continue
+
+        line_subtotal = (
+            item.product.price * item.quantity
+        )
+
+        line_delivery_fee = calculate_delivery_fee(
+            line_subtotal
+        )
+
+        item.line_subtotal = line_subtotal
+        item.delivery_fee = line_delivery_fee
+        item.line_total = line_subtotal + line_delivery_fee
+
+        total += line_subtotal
+        delivery_fee += line_delivery_fee
+
+    grand_total = total + delivery_fee
 
     checkout_context = {
         "cart": cart,
         "items": product_items,
         "total": total,
+        "delivery_fee": delivery_fee,
+        "grand_total": grand_total,
     }
 
     if request.method == "POST":
@@ -230,12 +278,10 @@ def create_order(request):
         ).strip()
 
         if not full_name:
-
             messages.error(
                 request,
                 "Veuillez entrer votre nom complet."
             )
-
             return render(
                 request,
                 "cart/checkout.html",
@@ -243,12 +289,10 @@ def create_order(request):
             )
 
         if not phone_number:
-
             messages.error(
                 request,
                 "Veuillez entrer votre numéro de téléphone."
             )
-
             return render(
                 request,
                 "cart/checkout.html",
@@ -256,12 +300,10 @@ def create_order(request):
             )
 
         if not neighborhood:
-
             messages.error(
                 request,
                 "Veuillez entrer votre quartier."
             )
-
             return render(
                 request,
                 "cart/checkout.html",
@@ -269,12 +311,10 @@ def create_order(request):
             )
 
         if not delivery_address:
-
             messages.error(
                 request,
                 "Veuillez entrer votre adresse de livraison."
             )
-
             return render(
                 request,
                 "cart/checkout.html",
@@ -282,7 +322,7 @@ def create_order(request):
             )
 
         created_orders = []
-        grand_total = 0
+        grand_total_created = Decimal("0")
 
         for item in product_items:
 
@@ -294,12 +334,10 @@ def create_order(request):
             )
 
             if not product.seller:
-
                 messages.error(
                     request,
                     f"Le produit « {product.name} » n'a pas de vendeur."
                 )
-
                 return render(
                     request,
                     "cart/checkout.html",
@@ -307,12 +345,10 @@ def create_order(request):
                 )
 
             if product.stock <= 0:
-
                 messages.error(
                     request,
                     f"Le produit « {product.name} » n'est plus disponible."
                 )
-
                 return render(
                     request,
                     "cart/checkout.html",
@@ -320,124 +356,125 @@ def create_order(request):
                 )
 
             if product.stock < item.quantity:
-
                 messages.error(
                     request,
-                    (
-                        f"Stock insuffisant pour « {product.name} ». "
-                        f"Il reste seulement {product.stock} unité(s)."
-                    )
+                    f"Stock insuffisant pour « {product.name} ». "
+                    f"Il reste seulement {product.stock} unité(s)."
                 )
-
                 return render(
                     request,
                     "cart/checkout.html",
                     checkout_context
                 )
 
-            total_price = product.price * item.quantity
-
-            deadline = (
-                timezone.now()
-                + timedelta(hours=24)
+            # Sous-total réel du produit
+            product_subtotal = (
+                product.price * item.quantity
             )
 
+            # Frais de livraison calculés côté serveur
+            product_delivery_fee = calculate_delivery_fee(
+                product_subtotal
+            )
+
+            # Montant total réellement payé à la livraison
+            order_total = (
+                product_subtotal + product_delivery_fee
+            )
+
+            deadline = timezone.now() + timedelta(hours=24)
+
             order = Order.objects.create(
-
                 user=request.user,
-
                 seller=product.seller,
-
                 full_name=full_name,
-
                 phone_number=phone_number,
-
                 neighborhood=neighborhood,
-
                 delivery_address=delivery_address,
-
                 delivery_deadline=deadline,
-
                 product=product,
-
                 quantity=item.quantity,
-
-                total_price=total_price,
-
+                total_price=order_total,
+                delivery_fee=product_delivery_fee,
                 status="pending",
-
                 payment_status="pending",
-
                 seller_confirmed=False,
-
                 customer_confirmed=False,
-
                 admin_validated=False,
-
                 reward_given=False
             )
 
-            # Réduction réelle du stock
+            # Valeur utilisée par la page de confirmation
+            # pour afficher le sous-total réel du produit.
+            order.product_subtotal = product_subtotal
+
             product.stock -= item.quantity
 
             product.save(
                 update_fields=["stock"]
             )
 
-            # Notification du vendeur
             OrderNotification.objects.create(
-
                 recipient=product.seller,
-
                 order=order,
-
                 title="Nouvelle commande",
-
                 message=(
-                    f"Vous avez reçu une nouvelle commande "
-                    f"pour le produit « {product.name} ».\n\n"
+                    f"Vous avez reçu une nouvelle commande pour "
+                    f"le produit « {product.name} ».\n\n"
+
                     f"Client : {full_name}\n"
                     f"Téléphone : {phone_number}\n"
                     f"Quartier : {neighborhood}\n"
                     f"Adresse : {delivery_address}\n"
-                    f"Quantité : {item.quantity}\n"
-                    f"Montant : {total_price} FCFA\n\n"
-                    f"Vous devez effectuer la livraison dans les "
-                    f"24 heures suivant la commande."
+                    f"Quantité : {item.quantity}\n\n"
+
+                    f"Sous-total produit : "
+                    f"{product_subtotal} FCFA\n"
+
+                    f"Frais de livraison : "
+                    f"{product_delivery_fee} FCFA\n"
+
+                    f"Total à encaisser à la livraison : "
+                    f"{order_total} FCFA\n\n"
+
+                    f"Vous devez effectuer la livraison "
+                    f"dans les 24 heures suivant la commande."
                 )
             )
 
-            # Notification du client
             OrderNotification.objects.create(
-
                 recipient=request.user,
-
                 order=order,
-
                 title="Commande créée",
-
                 message=(
                     f"Votre commande pour « {product.name} » "
                     f"a été créée avec succès.\n\n"
+
+                    f"Sous-total produit : "
+                    f"{product_subtotal} FCFA\n"
+
+                    f"Frais de livraison : "
+                    f"{product_delivery_fee} FCFA\n"
+
+                    f"Total à payer à la livraison : "
+                    f"{order_total} FCFA\n\n"
+
                     f"Le vendeur doit effectuer la livraison "
                     f"dans les 24 heures."
                 )
             )
 
             created_orders.append(order)
+            grand_total_created += order_total
 
-            grand_total += total_price
-
-            # Retirer l'article du panier
             item.delete()
 
-        # Page de confirmation
         return render(
             request,
             "cart/order_success.html",
             {
                 "orders": created_orders,
-                "grand_total": grand_total,
+                "grand_total": grand_total_created,
                 "created_count": len(created_orders),
             }
         )
@@ -447,13 +484,14 @@ def create_order(request):
         "cart/checkout.html",
         checkout_context
     )
+
+
 @login_required
 def clear_cart(request):
 
     cart = get_or_create_cart(request)
 
     if request.method == "POST":
-
         cart.items.all().delete()
 
         messages.success(

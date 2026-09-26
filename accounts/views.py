@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -6,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.db.models import Q, Sum
 from django.conf import settings
+
 from .models import SellerNotification
 from documents.models import DocumentPurchase
 
@@ -15,6 +18,7 @@ from .models import (
     TrainerWallet,
     TrainerEarning,
     TrainerNotification,
+    WithdrawalRequest,
     TokenWallet,
     SellerApplication,
     SellerSubscription,
@@ -570,6 +574,7 @@ def become_trainer(request):
         }
     )
 
+
 # =========================================================
 # DASHBOARD FORMATEUR
 # =========================================================
@@ -588,6 +593,7 @@ def trainer_dashboard(request):
     unread_notifications = 0
     earnings = []
     trainer_courses = []
+    withdrawal_requests = []
 
     if trainer_profile:
 
@@ -624,6 +630,12 @@ def trainer_dashboard(request):
             .order_by("-created_at")
         )
 
+        withdrawal_requests = (
+            WithdrawalRequest.objects
+            .filter(trainer=request.user)
+            .order_by("-created_at")
+        )
+
     wallet, created = TokenWallet.objects.get_or_create(
         user=request.user
     )
@@ -639,6 +651,251 @@ def trainer_dashboard(request):
             "unread_notifications": unread_notifications,
             "earnings": earnings,
             "trainer_courses": trainer_courses,
+            "withdrawal_requests": withdrawal_requests,
+        }
+    )
+
+
+# =========================================================
+# RETRAIT DES REVENUS FORMATEUR
+# =========================================================
+
+@login_required
+def trainer_withdrawal(request):
+
+    trainer_profile = (
+        TrainerProfile.objects
+        .filter(user=request.user)
+        .first()
+    )
+
+    if not trainer_profile:
+        messages.error(
+            request,
+            "Votre compte n'est pas configuré comme formateur."
+        )
+        return redirect("dashboard")
+
+    trainer_wallet, created = (
+        TrainerWallet.objects.get_or_create(
+            user=request.user
+        )
+    )
+
+    withdrawal_requests = (
+        WithdrawalRequest.objects
+        .filter(trainer=request.user)
+        .order_by("-created_at")
+    )
+
+    # -----------------------------------------------------
+    # NOM COMPLET PAR DÉFAUT
+    # -----------------------------------------------------
+
+    trainer_application = (
+        TrainerApplication.objects
+        .filter(user=request.user)
+        .first()
+    )
+
+    default_full_name = ""
+
+    if trainer_application:
+        default_full_name = trainer_application.full_name
+
+    if not default_full_name:
+        default_full_name = request.user.get_full_name()
+
+    if not default_full_name:
+        default_full_name = request.user.username
+
+    # -----------------------------------------------------
+    # TRAITEMENT DU FORMULAIRE
+    # -----------------------------------------------------
+
+    if request.method == "POST":
+
+        full_name = request.POST.get(
+            "full_name",
+            ""
+        ).strip()
+
+        phone_number = request.POST.get(
+            "phone_number",
+            ""
+        ).strip()
+
+        method = request.POST.get(
+            "method",
+            ""
+        ).strip()
+
+        amount_raw = request.POST.get(
+            "amount",
+            ""
+        ).strip()
+
+        # ---------------------------------------------
+        # VALIDATION NOM
+        # ---------------------------------------------
+
+        if not full_name:
+
+            messages.error(
+                request,
+                "Veuillez entrer votre nom complet."
+            )
+
+            return render(
+                request,
+                "accounts/trainer_withdrawal.html",
+                {
+                    "trainer_wallet": trainer_wallet,
+                    "withdrawal_requests": withdrawal_requests,
+                    "default_full_name": default_full_name,
+                }
+            )
+
+        # ---------------------------------------------
+        # VALIDATION TÉLÉPHONE
+        # ---------------------------------------------
+
+        if not phone_number:
+
+            messages.error(
+                request,
+                "Veuillez entrer le numéro qui recevra le paiement."
+            )
+
+            return render(
+                request,
+                "accounts/trainer_withdrawal.html",
+                {
+                    "trainer_wallet": trainer_wallet,
+                    "withdrawal_requests": withdrawal_requests,
+                    "default_full_name": default_full_name,
+                }
+            )
+
+        # ---------------------------------------------
+        # VALIDATION MÉTHODE
+        # ---------------------------------------------
+
+        if method not in ["mtn", "orange"]:
+
+            messages.error(
+                request,
+                "Veuillez choisir MTN Mobile Money ou Orange Money."
+            )
+
+            return render(
+                request,
+                "accounts/trainer_withdrawal.html",
+                {
+                    "trainer_wallet": trainer_wallet,
+                    "withdrawal_requests": withdrawal_requests,
+                    "default_full_name": default_full_name,
+                }
+            )
+
+        # ---------------------------------------------
+        # VALIDATION MONTANT
+        # ---------------------------------------------
+
+        try:
+            amount = Decimal(amount_raw)
+        except (InvalidOperation, TypeError):
+            amount = Decimal("0")
+
+        if amount <= 0:
+
+            messages.error(
+                request,
+                "Veuillez entrer un montant de retrait valide."
+            )
+
+            return render(
+                request,
+                "accounts/trainer_withdrawal.html",
+                {
+                    "trainer_wallet": trainer_wallet,
+                    "withdrawal_requests": withdrawal_requests,
+                    "default_full_name": default_full_name,
+                }
+            )
+
+        # ---------------------------------------------
+        # MONTANT SUPÉRIEUR AU SOLDE
+        # ---------------------------------------------
+
+        if amount > trainer_wallet.balance:
+
+            messages.error(
+                request,
+                "Le montant demandé dépasse votre solde disponible."
+            )
+
+            return render(
+                request,
+                "accounts/trainer_withdrawal.html",
+                {
+                    "trainer_wallet": trainer_wallet,
+                    "withdrawal_requests": withdrawal_requests,
+                    "default_full_name": default_full_name,
+                }
+            )
+
+        # ---------------------------------------------
+        # CRÉATION DE LA DEMANDE
+        # ---------------------------------------------
+
+        withdrawal = WithdrawalRequest.objects.create(
+            trainer=request.user,
+            amount=amount,
+            method=method,
+            phone_number=phone_number,
+            status="pending",
+        )
+
+        # ---------------------------------------------
+        # NOTIFICATION FORMATEUR
+        # ---------------------------------------------
+
+        method_label = (
+            "MTN Mobile Money"
+            if method == "mtn"
+            else "Orange Money"
+        )
+
+        TrainerNotification.objects.create(
+            trainer=request.user,
+            title="Demande de retrait envoyée",
+            message=(
+                f"Votre demande de retrait de {amount} FCFA "
+                f"vers le numéro {phone_number} via {method_label} "
+                f"a bien été envoyée.\n\n"
+                f"L'administration va vérifier votre demande et "
+                f"effectuer le paiement manuellement."
+            )
+        )
+
+        messages.success(
+            request,
+            "Votre demande de retrait a bien été envoyée. "
+            "L’administration va vérifier votre demande et effectuer "
+            "le paiement. Vous recevrez une notification lorsque "
+            "votre retrait sera confirmé."
+        )
+
+        return redirect("trainer_withdrawal")
+
+    return render(
+        request,
+        "accounts/trainer_withdrawal.html",
+        {
+            "trainer_wallet": trainer_wallet,
+            "withdrawal_requests": withdrawal_requests,
+            "default_full_name": default_full_name,
         }
     )
 
@@ -649,26 +906,33 @@ def trainer_dashboard(request):
 
 @login_required
 def become_seller(request):
+
     existing_application = SellerApplication.objects.filter(
         user=request.user
     ).first()
 
     if existing_application:
+
         if existing_application.status == "pending":
+
             messages.info(
                 request,
                 "Votre candidature vendeur est déjà en attente de validation par l'administration."
             )
+
             return redirect("dashboard")
 
         if existing_application.status == "approved":
+
             messages.success(
                 request,
                 "Votre candidature vendeur a déjà été approuvée."
             )
+
             return redirect("dashboard")
 
         if existing_application.status == "rejected":
+
             messages.error(
                 request,
                 "Votre précédente candidature vendeur a été refusée."
@@ -676,20 +940,66 @@ def become_seller(request):
 
     if request.method == "POST":
 
-        plan = request.POST.get("plan", "standard").strip()
+        plan = request.POST.get(
+            "plan",
+            "standard"
+        ).strip()
 
-        full_name = request.POST.get("full_name", "").strip()
-        phone = request.POST.get("phone", "").strip()
-        address = request.POST.get("address", "").strip()
-        neighborhood = request.POST.get("neighborhood", "").strip()
-        city = request.POST.get("city", "").strip()
-        activity = request.POST.get("activity", "").strip()
-        description = request.POST.get("description", "").strip()
+        full_name = request.POST.get(
+            "full_name",
+            ""
+        ).strip()
 
-        payment_method = request.POST.get("payment_method", "").strip()
-        payment_phone = request.POST.get("payment_phone", "").strip()
+        phone = request.POST.get(
+            "phone",
+            ""
+        ).strip()
 
-        if not full_name or not phone or not address or not neighborhood or not city or not activity or not description:
+        address = request.POST.get(
+            "address",
+            ""
+        ).strip()
+
+        neighborhood = request.POST.get(
+            "neighborhood",
+            ""
+        ).strip()
+
+        city = request.POST.get(
+            "city",
+            ""
+        ).strip()
+
+        activity = request.POST.get(
+            "activity",
+            ""
+        ).strip()
+
+        description = request.POST.get(
+            "description",
+            ""
+        ).strip()
+
+        payment_method = request.POST.get(
+            "payment_method",
+            ""
+        ).strip()
+
+        payment_phone = request.POST.get(
+            "payment_phone",
+            ""
+        ).strip()
+
+        if (
+            not full_name
+            or not phone
+            or not address
+            or not neighborhood
+            or not city
+            or not activity
+            or not description
+        ):
+
             messages.error(
                 request,
                 "Veuillez remplir tous les champs obligatoires."
@@ -700,12 +1010,20 @@ def become_seller(request):
                 "accounts/become_seller.html"
             )
 
-        if plan not in ["standard", "premium"]:
+        if plan not in [
+            "standard",
+            "premium"
+        ]:
+
             plan = "standard"
 
         if plan == "premium":
 
-            if payment_method not in ["mtn", "orange"]:
+            if payment_method not in [
+                "mtn",
+                "orange"
+            ]:
+
                 messages.error(
                     request,
                     "Veuillez choisir MTN Mobile Money ou Orange Money pour votre dépôt Premium."
@@ -717,6 +1035,7 @@ def become_seller(request):
                 )
 
             if not payment_phone:
+
                 messages.error(
                     request,
                     "Veuillez indiquer le numéro utilisé pour effectuer le dépôt Premium."
@@ -741,6 +1060,7 @@ def become_seller(request):
         )
 
         if plan == "premium":
+
             SellerSubscription.objects.create(
                 seller=request.user,
                 amount=1000,
@@ -763,9 +1083,11 @@ def become_seller(request):
         "accounts/become_seller.html"
     )
 
+
 # =========================================================
 # PASSER VENDEUR PREMIUM
 # =========================================================
+
 @login_required
 def upgrade_to_premium(request):
 
@@ -802,7 +1124,10 @@ def upgrade_to_premium(request):
             ""
         ).strip()
 
-        if method not in ["mtn", "orange"]:
+        if method not in [
+            "mtn",
+            "orange"
+        ]:
 
             messages.error(
                 request,
@@ -813,8 +1138,10 @@ def upgrade_to_premium(request):
                 request,
                 "accounts/upgrade_premium.html",
                 {
-                    "premium_mtn_number": premium_mtn_number,
-                    "premium_orange_number": premium_orange_number,
+                    "premium_mtn_number":
+                        premium_mtn_number,
+                    "premium_orange_number":
+                        premium_orange_number,
                 }
             )
 
@@ -829,8 +1156,10 @@ def upgrade_to_premium(request):
                 request,
                 "accounts/upgrade_premium.html",
                 {
-                    "premium_mtn_number": premium_mtn_number,
-                    "premium_orange_number": premium_orange_number,
+                    "premium_mtn_number":
+                        premium_mtn_number,
+                    "premium_orange_number":
+                        premium_orange_number,
                 }
             )
 
@@ -851,21 +1180,18 @@ def upgrade_to_premium(request):
                 {
                     "submitted": True,
                     "already_pending": True,
-                    "premium_mtn_number": premium_mtn_number,
-                    "premium_orange_number": premium_orange_number,
+                    "premium_mtn_number":
+                        premium_mtn_number,
+                    "premium_orange_number":
+                        premium_orange_number,
                 }
             )
 
         SellerSubscription.objects.create(
-
             seller=request.user,
-
             amount=1000,
-
             method=method,
-
             phone_number=phone_number,
-
             status="pending",
         )
 
@@ -874,8 +1200,10 @@ def upgrade_to_premium(request):
             "accounts/upgrade_premium.html",
             {
                 "submitted": True,
-                "premium_mtn_number": premium_mtn_number,
-                "premium_orange_number": premium_orange_number,
+                "premium_mtn_number":
+                    premium_mtn_number,
+                "premium_orange_number":
+                    premium_orange_number,
             }
         )
 
@@ -883,21 +1211,35 @@ def upgrade_to_premium(request):
         request,
         "accounts/upgrade_premium.html",
         {
-            "premium_mtn_number": premium_mtn_number,
-            "premium_orange_number": premium_orange_number,
+            "premium_mtn_number":
+                premium_mtn_number,
+            "premium_orange_number":
+                premium_orange_number,
         }
     )
 
+
+# =========================================================
+# NOTIFICATIONS VENDEUR
+# =========================================================
+
 @login_required
 def seller_notifications(request):
-    notifications = SellerNotification.objects.filter(
-        user=request.user
-    ).order_by("-created_at")
+
+    notifications = (
+        SellerNotification.objects
+        .filter(
+            user=request.user
+        )
+        .order_by("-created_at")
+    )
 
     SellerNotification.objects.filter(
         user=request.user,
         is_read=False
-    ).update(is_read=True)
+    ).update(
+        is_read=True
+    )
 
     return render(
         request,

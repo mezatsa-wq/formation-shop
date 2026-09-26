@@ -504,7 +504,18 @@
                     </strong>
 
                 </div>
+               <a
+    href="{% url 'trainer_withdrawal' %}"
+    class="wallet-withdraw-btn"
+>
+    <span>
+        Retirer mes revenus
+    </span>
 
+    <strong>
+        →
+    </strong>
+</a>
             </section>
 
 
@@ -1711,6 +1722,69 @@
         display: none;
     }
 
+}
+.wallet-withdraw-btn {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    width: 100%;
+    min-height: 46px;
+
+    margin-top: 20px;
+    padding: 0 15px;
+
+    box-sizing: border-box;
+
+    border-radius: 13px;
+
+    color: #ffffff;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,58,237,.75),
+            rgba(37,99,235,.75)
+        );
+
+    border: 1px solid rgba(196,181,253,.18);
+
+    text-decoration: none;
+
+    font-size: .72rem;
+    font-weight: 850;
+
+    box-shadow:
+        0 10px 25px rgba(76,29,149,.16);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+
+.wallet-withdraw-btn:hover {
+    transform: translateY(-3px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #2563eb
+        );
+
+    box-shadow:
+        0 15px 35px rgba(76,29,149,.28);
+}
+
+
+.wallet-withdraw-btn strong {
+    font-size: 1rem;
+    color: #ddd6fe;
 }
 
 </style>

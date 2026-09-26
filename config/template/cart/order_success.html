@@ -102,7 +102,7 @@
 
     .order-details {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 15px;
     }
 
@@ -125,6 +125,18 @@
         color: #fff;
         font-size: 15px;
         font-weight: 700;
+    }
+
+    .detail-value.delivery {
+        color: #a78bfa;
+    }
+
+    .detail-value.subtotal {
+        color: #cbd5e1;
+    }
+
+    .detail-value.total {
+        color: #8f70ff;
     }
 
     .total-card {
@@ -217,6 +229,12 @@
     .success-btn-secondary:hover {
         background: rgba(255, 255, 255, 0.09);
         transform: translateY(-2px);
+    }
+
+    @media (max-width: 850px) {
+        .order-details {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
     @media (max-width: 700px) {
@@ -326,11 +344,11 @@
                                 <div class="detail-box">
 
                                     <span class="detail-label">
-                                        Montant
+                                        Sous-total produit
                                     </span>
 
-                                    <span class="detail-value">
-                                        {{ order.total_price }} FCFA
+                                    <span class="detail-value subtotal">
+                                        {{ order.product_subtotal|floatformat:0 }} FCFA
                                     </span>
 
                                 </div>
@@ -342,8 +360,21 @@
                                         Livraison
                                     </span>
 
-                                    <span class="detail-value">
-                                        Sous 24 heures
+                                    <span class="detail-value delivery">
+                                        {{ order.delivery_fee|floatformat:0 }} FCFA
+                                    </span>
+
+                                </div>
+
+
+                                <div class="detail-box">
+
+                                    <span class="detail-label">
+                                        Total
+                                    </span>
+
+                                    <span class="detail-value total">
+                                        {{ order.total_price|floatformat:0 }} FCFA
                                     </span>
 
                                 </div>
@@ -362,11 +393,11 @@
             <div class="total-card">
 
                 <span class="total-label">
-                    Montant total de la commande
+                    Montant total à payer à la livraison
                 </span>
 
                 <span class="total-value">
-                    {{ grand_total }} FCFA
+                    {{ grand_total|floatformat:0 }} FCFA
                 </span>
 
             </div>
@@ -387,6 +418,12 @@
                     <strong>✓</strong>
                     Le vendeur dispose de <strong>24 heures</strong>
                     pour effectuer la livraison.
+                </p>
+
+                <p>
+                    <strong>✓</strong>
+                    Le montant total affiché sera payé directement
+                    au vendeur lors de la réception.
                 </p>
 
                 <p>

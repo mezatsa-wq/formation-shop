@@ -87,7 +87,11 @@ urlpatterns = [
         views.trainer_dashboard,
         name="trainer_dashboard"
     ),
-
+path(
+    "trainer-withdrawal/",
+    views.trainer_withdrawal,
+    name="trainer_withdrawal"
+),
     path(
         "dashboard/",
         views.dashboard,
