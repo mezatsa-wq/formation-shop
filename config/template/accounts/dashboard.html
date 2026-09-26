@@ -948,7 +948,95 @@
 
         margin-top: 20px;
     }
+    /* =========================
+   PREMIUM SELLER STATUS
+========================= */
 
+.premium-status-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 9px 15px;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245, 158, 11, .16),
+            rgba(124, 58, 237, .16)
+        );
+
+    border: 1px solid rgba(245, 158, 11, .35);
+
+    box-shadow:
+        0 8px 25px rgba(245, 158, 11, .08),
+        inset 0 0 20px rgba(124, 58, 237, .05);
+}
+
+.premium-status-icon {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    color: #fde68a;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #7c3aed
+        );
+
+    box-shadow:
+        0 6px 18px rgba(245, 158, 11, .22);
+
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.premium-status-dashboard strong {
+    display: block;
+    color: #fde68a;
+    font-size: .82rem;
+    font-weight: 900;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+.premium-status-dashboard small {
+    display: block;
+    margin-top: 2px;
+    color: #aaa5c7;
+    font-size: .72rem;
+}
+
+.premium-upgrade-action {
+    border-color: rgba(245, 158, 11, .25);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245, 158, 11, .12),
+            rgba(124, 58, 237, .12)
+        );
+    color: #fde68a;
+}
+
+.premium-upgrade-action:hover {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245, 158, 11, .20),
+            rgba(124, 58, 237, .20)
+        );
+    border-color: rgba(245, 158, 11, .40);
+    color: #fff;
+}
     /* =========================================================
        RESPONSIVE
     ========================================================= */
@@ -1494,14 +1582,24 @@
                 </a>
 
 
-                {% if not seller_is_premium %}
+                {% if seller_profile.plan == "premium" %}
 
-                    <a
-                        href="{% url 'upgrade_to_premium' %}"
-                        class="role-action"
-                    >
-                        ✦ Passer Premium
-                    </a>
+    <div class="premium-status-dashboard">
+        <span class="premium-status-icon">✦</span>
+
+        <div>
+            <strong>Vendeur Premium</strong>
+            <small>Votre compte bénéficie actuellement du statut Premium.</small>
+        </div>
+    </div>
+
+{% else %}
+
+    <a href="{% url 'upgrade_to_premium' %}" class="role-action premium-upgrade-action">
+        ✦ Passer Premium
+    </a>
+
+{% endif %}
 
                 {% endif %}
 

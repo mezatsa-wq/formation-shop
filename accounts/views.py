@@ -738,19 +738,25 @@ def upgrade_to_premium(request):
         "694452058"
     )
 
+    seller_profile = SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    # Si le compte est déjà Premium, inutile de proposer
+    # une nouvelle souscription.
+    if seller_profile and seller_profile.plan == "premium":
+        messages.info(
+            request,
+            "Votre compte vendeur est déjà Premium."
+        )
+        return redirect("dashboard")
+
     if request.method == "POST":
 
-        payment_method = request.POST.get(
-            "payment_method",
-            ""
-        ).strip()
+        method = request.POST.get("payment_method", "").strip()
+        phone_number = request.POST.get("payment_phone", "").strip()
 
-        payment_phone = request.POST.get(
-            "payment_phone",
-            ""
-        ).strip()
-
-        if payment_method not in ["mtn", "orange"]:
+        if method not in ["mtn", "orange"]:
             messages.error(
                 request,
                 "Veuillez choisir MTN Mobile Money ou Orange Money."
@@ -765,7 +771,7 @@ def upgrade_to_premium(request):
                 }
             )
 
-        if not payment_phone:
+        if not phone_number:
             messages.error(
                 request,
                 "Veuillez entrer le numéro utilisé pour effectuer le dépôt."
@@ -780,9 +786,9 @@ def upgrade_to_premium(request):
                 }
             )
 
+        # Une seule demande Premium en attente à la fois.
         existing_subscription = SellerSubscription.objects.filter(
-            user=request.user,
-            plan="premium",
+            seller=request.user,
             status="pending"
         ).first()
 
@@ -795,11 +801,10 @@ def upgrade_to_premium(request):
             return redirect("dashboard")
 
         SellerSubscription.objects.create(
-            user=request.user,
-            plan="premium",
+            seller=request.user,
             amount=1000,
-            payment_method=payment_method,
-            payment_phone=payment_phone,
+            method=method,
+            phone_number=phone_number,
             status="pending",
         )
 
