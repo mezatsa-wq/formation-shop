@@ -662,56 +662,23 @@ def trainer_dashboard(request):
 
 @login_required
 def trainer_withdrawal(request):
+    """
+    Permet à un formateur approuvé de demander un retrait.
 
-    trainer_profile = (
-        TrainerProfile.objects
-        .filter(user=request.user)
-        .first()
-    )
+    Les demandes déjà en attente sont considérées comme des montants
+    réservés afin d'empêcher plusieurs demandes dépassant le solde réel.
+    """
+
+    trainer_profile = TrainerProfile.objects.filter(
+        user=request.user
+    ).first()
 
     if not trainer_profile:
         messages.error(
             request,
-            "Votre compte n'est pas configuré comme formateur."
+            "Vous devez être un formateur approuvé pour effectuer un retrait."
         )
         return redirect("dashboard")
-
-    trainer_wallet, created = (
-        TrainerWallet.objects.get_or_create(
-            user=request.user
-        )
-    )
-
-    withdrawal_requests = (
-        WithdrawalRequest.objects
-        .filter(trainer=request.user)
-        .order_by("-created_at")
-    )
-
-    # -----------------------------------------------------
-    # NOM COMPLET PAR DÉFAUT
-    # -----------------------------------------------------
-
-    trainer_application = (
-        TrainerApplication.objects
-        .filter(user=request.user)
-        .first()
-    )
-
-    default_full_name = ""
-
-    if trainer_application:
-        default_full_name = trainer_application.full_name
-
-    if not default_full_name:
-        default_full_name = request.user.get_full_name()
-
-    if not default_full_name:
-        default_full_name = request.user.username
-
-    # -----------------------------------------------------
-    # TRAITEMENT DU FORMULAIRE
-    # -----------------------------------------------------
 
     if request.method == "POST":
 
@@ -735,167 +702,159 @@ def trainer_withdrawal(request):
             ""
         ).strip()
 
-        # ---------------------------------------------
-        # VALIDATION NOM
-        # ---------------------------------------------
-
         if not full_name:
-
             messages.error(
                 request,
                 "Veuillez entrer votre nom complet."
             )
-
-            return render(
-                request,
-                "accounts/trainer_withdrawal.html",
-                {
-                    "trainer_wallet": trainer_wallet,
-                    "withdrawal_requests": withdrawal_requests,
-                    "default_full_name": default_full_name,
-                }
-            )
-
-        # ---------------------------------------------
-        # VALIDATION TÉLÉPHONE
-        # ---------------------------------------------
+            return redirect("trainer_withdrawal")
 
         if not phone_number:
-
             messages.error(
                 request,
-                "Veuillez entrer le numéro qui recevra le paiement."
+                "Veuillez entrer votre numéro de téléphone."
             )
-
-            return render(
-                request,
-                "accounts/trainer_withdrawal.html",
-                {
-                    "trainer_wallet": trainer_wallet,
-                    "withdrawal_requests": withdrawal_requests,
-                    "default_full_name": default_full_name,
-                }
-            )
-
-        # ---------------------------------------------
-        # VALIDATION MÉTHODE
-        # ---------------------------------------------
+            return redirect("trainer_withdrawal")
 
         if method not in ["mtn", "orange"]:
-
             messages.error(
                 request,
-                "Veuillez choisir MTN Mobile Money ou Orange Money."
+                "Veuillez sélectionner un moyen de paiement valide."
             )
-
-            return render(
-                request,
-                "accounts/trainer_withdrawal.html",
-                {
-                    "trainer_wallet": trainer_wallet,
-                    "withdrawal_requests": withdrawal_requests,
-                    "default_full_name": default_full_name,
-                }
-            )
-
-        # ---------------------------------------------
-        # VALIDATION MONTANT
-        # ---------------------------------------------
+            return redirect("trainer_withdrawal")
 
         try:
-            amount = Decimal(amount_raw)
-        except (InvalidOperation, TypeError):
-            amount = Decimal("0")
+            amount = Decimal(
+                amount_raw.replace(",", ".")
+            )
+        except (InvalidOperation, ValueError):
+            messages.error(
+                request,
+                "Veuillez entrer un montant valide."
+            )
+            return redirect("trainer_withdrawal")
 
         if amount <= 0:
-
             messages.error(
                 request,
-                "Veuillez entrer un montant de retrait valide."
+                "Le montant du retrait doit être supérieur à 0 FCFA."
+            )
+            return redirect("trainer_withdrawal")
+
+        with transaction.atomic():
+
+            wallet = (
+                TrainerWallet.objects
+                .select_for_update()
+                .filter(user=request.user)
+                .first()
             )
 
-            return render(
-                request,
-                "accounts/trainer_withdrawal.html",
-                {
-                    "trainer_wallet": trainer_wallet,
-                    "withdrawal_requests": withdrawal_requests,
-                    "default_full_name": default_full_name,
-                }
+            if not wallet:
+                wallet = TrainerWallet.objects.create(
+                    user=request.user,
+                    balance=Decimal("0")
+                )
+
+            # Montant déjà réservé par les demandes en attente
+            pending_amount = (
+                WithdrawalRequest.objects
+                .filter(
+                    trainer=request.user,
+                    status="pending"
+                )
+                .aggregate(
+                    total=Sum("amount")
+                )["total"]
+                or Decimal("0")
             )
 
-        # ---------------------------------------------
-        # MONTANT SUPÉRIEUR AU SOLDE
-        # ---------------------------------------------
-
-        if amount > trainer_wallet.balance:
-
-            messages.error(
-                request,
-                "Le montant demandé dépasse votre solde disponible."
+            # Argent réellement disponible pour une nouvelle demande
+            available_balance = (
+                wallet.balance - pending_amount
             )
 
-            return render(
-                request,
-                "accounts/trainer_withdrawal.html",
-                {
-                    "trainer_wallet": trainer_wallet,
-                    "withdrawal_requests": withdrawal_requests,
-                    "default_full_name": default_full_name,
-                }
+            if available_balance < 0:
+                available_balance = Decimal("0")
+
+            if amount > available_balance:
+                messages.error(
+                    request,
+                    (
+                        f"Solde disponible pour une nouvelle demande : "
+                        f"{available_balance:.0f} FCFA. "
+                        f"Vous ne pouvez pas demander "
+                        f"{amount:.0f} FCFA."
+                    )
+                )
+                return redirect("trainer_withdrawal")
+
+            WithdrawalRequest.objects.create(
+                trainer=request.user,
+                full_name=full_name,
+                amount=amount,
+                method=method,
+                phone_number=phone_number,
+                status="pending"
             )
-
-        # ---------------------------------------------
-        # CRÉATION DE LA DEMANDE
-        # ---------------------------------------------
-
-        withdrawal = WithdrawalRequest.objects.create(
-            trainer=request.user,
-            amount=amount,
-            method=method,
-            phone_number=phone_number,
-            status="pending",
-        )
-
-        # ---------------------------------------------
-        # NOTIFICATION FORMATEUR
-        # ---------------------------------------------
-
-        method_label = (
-            "MTN Mobile Money"
-            if method == "mtn"
-            else "Orange Money"
-        )
-
-        TrainerNotification.objects.create(
-            trainer=request.user,
-            title="Demande de retrait envoyée",
-            message=(
-                f"Votre demande de retrait de {amount} FCFA "
-                f"vers le numéro {phone_number} via {method_label} "
-                f"a bien été envoyée.\n\n"
-                f"L'administration va vérifier votre demande et "
-                f"effectuer le paiement manuellement."
-            )
-        )
 
         messages.success(
             request,
-            "Votre demande de retrait a bien été envoyée. "
-            "L’administration va vérifier votre demande et effectuer "
-            "le paiement. Vous recevrez une notification lorsque "
-            "votre retrait sera confirmé."
+            (
+                "Votre demande de retrait a bien été envoyée. "
+                "L’administration va vérifier votre demande et effectuer "
+                "le paiement. Vous recevrez une notification lorsque "
+                "votre retrait sera confirmé."
+            )
         )
 
         return redirect("trainer_withdrawal")
+
+    wallet = TrainerWallet.objects.filter(
+        user=request.user
+    ).first()
+
+    if not wallet:
+        wallet = TrainerWallet.objects.create(
+            user=request.user,
+            balance=Decimal("0")
+        )
+
+    pending_amount = (
+        WithdrawalRequest.objects
+        .filter(
+            trainer=request.user,
+            status="pending"
+        )
+        .aggregate(
+            total=Sum("amount")
+        )["total"]
+        or Decimal("0")
+    )
+
+    available_balance = (
+        wallet.balance - pending_amount
+    )
+
+    if available_balance < 0:
+        available_balance = Decimal("0")
+
+    withdrawal_requests = (
+        WithdrawalRequest.objects
+        .filter(
+            trainer=request.user
+        )
+        .order_by("-created_at")
+    )
 
     return render(
         request,
         "accounts/trainer_withdrawal.html",
         {
-            "trainer_wallet": trainer_wallet,
+            "wallet": wallet,
+            "available_balance": available_balance,
+            "pending_amount": pending_amount,
             "withdrawal_requests": withdrawal_requests,
-            "default_full_name": default_full_name,
         }
     )
 
