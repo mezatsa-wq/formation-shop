@@ -3821,3 +3821,470 @@ form button:not(.mobile-menu-button) {
     font-weight: 800;
     letter-spacing: 0.4px;
 }
+/* =========================================================
+   FORMASHOP — FORMULAIRES PREMIUM
+   Dernière finition
+========================================================= */
+
+.form-page,
+.application-page,
+.form-page-wrapper {
+    min-height: calc(100vh - 80px);
+    padding: 55px 20px 80px;
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(124, 58, 237, .14),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(37, 99, 235, .12),
+            transparent 30%
+        ),
+        #070a12;
+
+    color: #fff;
+}
+
+.form-container,
+.application-container,
+.form-page > .container,
+.application-page > .container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-header,
+.application-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header span,
+.application-header span {
+    display: inline-block;
+    margin-bottom: 9px;
+
+    color: #a78bfa;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.7px;
+}
+
+.form-header h1,
+.application-header h1 {
+    margin: 0;
+
+    color: #fff;
+    font-size: clamp(30px, 5vw, 46px);
+    font-weight: 900;
+    letter-spacing: -.8px;
+}
+
+.form-header p,
+.application-header p {
+    max-width: 650px;
+    margin: 12px auto 0;
+
+    color: #8993a6;
+    line-height: 1.65;
+}
+
+.form-card,
+.application-card {
+    padding: 34px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 23, 37, .98),
+            rgba(10, 14, 24, .98)
+        );
+
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 24px;
+
+    box-shadow:
+        0 30px 70px rgba(0,0,0,.35);
+}
+
+.form-section,
+.application-section {
+    margin-bottom: 30px;
+}
+
+.form-section:last-child,
+.application-section:last-child {
+    margin-bottom: 0;
+}
+
+.form-section-title,
+.application-section-title {
+    margin-bottom: 18px;
+}
+
+.form-section-title h2,
+.application-section-title h2 {
+    margin: 0;
+
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.form-section-title p,
+.application-section-title p {
+    margin: 6px 0 0;
+
+    color: #7f8ba0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.form-grid,
+.application-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-group,
+.application-group {
+    min-width: 0;
+}
+
+.form-group.full,
+.application-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label,
+.application-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #d8dee9;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.form-control,
+.form-group input,
+.form-group select,
+.form-group textarea,
+.application-group input,
+.application-group select,
+.application-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 15px;
+
+    color: #fff;
+    background: #0d1220;
+
+    border: 1px solid #2b3446;
+    border-radius: 11px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.form-group input,
+.form-group select,
+.application-group input,
+.application-group select {
+    min-height: 48px;
+}
+
+.form-group textarea,
+.application-group textarea {
+    min-height: 125px;
+    resize: vertical;
+}
+
+.form-control::placeholder,
+.form-group input::placeholder,
+.form-group textarea::placeholder,
+.application-group input::placeholder,
+.application-group textarea::placeholder {
+    color: #596579;
+}
+
+.form-control:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.application-group input:focus,
+.application-group select:focus,
+.application-group textarea:focus {
+    border-color: #7c3aed;
+
+    background: #0f1525;
+
+    box-shadow:
+        0 0 0 3px rgba(124,58,237,.12),
+        0 8px 25px rgba(0,0,0,.15);
+}
+
+.form-help,
+.application-help {
+    margin-top: 6px;
+
+    color: #68758a;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+
+/* CHOIX / RADIO */
+
+.form-choice-group,
+.application-choice-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.form-choice,
+.application-choice {
+    position: relative;
+}
+
+.form-choice input,
+.application-choice input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.form-choice label,
+.application-choice label {
+    display: block;
+
+    height: 100%;
+    box-sizing: border-box;
+
+    padding: 18px;
+
+    cursor: pointer;
+
+    border-radius: 15px;
+    border: 1px solid #293346;
+
+    background: rgba(255,255,255,.025);
+
+    transition: .2s ease;
+}
+
+.form-choice label strong,
+.application-choice label strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #fff;
+    font-size: 15px;
+}
+
+.form-choice label span,
+.application-choice label span {
+    color: #7f8ba0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-choice input:checked + label,
+.application-choice input:checked + label {
+    border-color: #7c3aed;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,58,237,.17),
+            rgba(37,99,235,.08)
+        );
+
+    box-shadow:
+        0 10px 30px rgba(124,58,237,.10);
+}
+
+
+/* BOUTONS */
+
+.form-actions,
+.application-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 28px;
+    padding-top: 24px;
+
+    border-top: 1px solid rgba(148,163,184,.09);
+}
+
+.form-submit,
+.application-submit,
+.form-card button[type="submit"],
+.application-card button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 12px 23px;
+
+    border: 0;
+    border-radius: 11px;
+
+    color: #fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #2563eb
+        );
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 28px rgba(37,99,235,.16);
+
+    transition: .2s ease;
+}
+
+.form-submit:hover,
+.application-submit:hover,
+.form-card button[type="submit"]:hover,
+.application-card button[type="submit"]:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 32px rgba(124,58,237,.24);
+}
+
+.form-secondary,
+.application-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 12px 20px;
+
+    color: #cbd5e1;
+    text-decoration: none;
+
+    background: rgba(255,255,255,.035);
+    border: 1px solid #2b3446;
+    border-radius: 11px;
+
+    font-size: 14px;
+    font-weight: 750;
+
+    transition: .2s ease;
+}
+
+.form-secondary:hover,
+.application-secondary:hover {
+    color: white;
+    border-color: #596579;
+    background: rgba(255,255,255,.06);
+}
+
+
+/* MESSAGES */
+
+.form-alert,
+.application-alert {
+    margin-bottom: 20px;
+    padding: 13px 15px;
+
+    border-radius: 11px;
+
+    color: #dbeafe;
+    background: rgba(37,99,235,.10);
+    border: 1px solid rgba(37,99,235,.25);
+
+    font-size: 13px;
+}
+
+.form-error,
+.application-error {
+    color: #fecaca;
+    background: rgba(239,68,68,.08);
+    border-color: rgba(239,68,68,.25);
+}
+
+
+/* ERREURS DJANGO */
+
+.errorlist {
+    margin: 6px 0 0;
+    padding: 0;
+
+    list-style: none;
+
+    color: #fca5a5;
+    font-size: 12px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .form-page,
+    .application-page,
+    .form-page-wrapper {
+        padding: 30px 13px 55px;
+    }
+
+    .form-card,
+    .application-card {
+        padding: 21px 16px;
+        border-radius: 18px;
+    }
+
+    .form-grid,
+    .application-grid,
+    .form-choice-group,
+    .application-choice-group {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full,
+    .application-group.full {
+        grid-column: auto;
+    }
+
+    .form-actions,
+    .application-actions {
+        flex-direction: column;
+    }
+
+    .form-submit,
+    .application-submit,
+    .form-secondary,
+    .application-secondary {
+        width: 100%;
+    }
+
+}

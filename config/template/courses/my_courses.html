@@ -1,70 +1,609 @@
 {% extends "base.html" %}
 
-{% block title %}Mes formations{% endblock %}
+{% block title %}Mes formations - FormaShop{% endblock %}
 
 {% block content %}
 
-<section class="page-header">
-    <h1>Mes formations</h1>
-    <p>Retrouvez ici toutes les formations que vous avez achetées.</p>
-</section>
+<section class="fs-my-courses-page">
 
-<section class="products-grid">
+    <div class="fs-my-courses-container">
 
-    {% for enrollment in enrollments %}
+        <!-- HEADER -->
+        <header class="fs-my-courses-header">
 
-        <article class="product-card">
+            <div>
 
-            {% if enrollment.course.image %}
-                <img
-                    src="{{ enrollment.course.image.url }}"
-                    alt="{{ enrollment.course.title }}"
-                >
-            {% endif %}
-
-            <div class="product-card-content">
-
-                <span class="category">
-                    Formation
+                <span class="fs-my-courses-eyebrow">
+                    MON APPRENTISSAGE
                 </span>
 
-                <h2>
-                    {{ enrollment.course.title }}
-                </h2>
+                <h1>
+                    Mes formations
+                </h1>
 
                 <p>
-                    {{ enrollment.course.description|truncatewords:20 }}
+                    Retrouvez ici toutes les formations que vous avez achetées
+                    et continuez votre apprentissage à votre rythme.
                 </p>
-
-                <a
-                    href="{% url 'course_learning' enrollment.course.slug %}"
-                    class="btn-primary"
-                >
-                    ▶️ Continuer la formation
-                </a>
 
             </div>
 
-        </article>
-
-    {% empty %}
-
-        <div class="empty-state">
-
-            <h2>Vous n'avez aucune formation</h2>
-
-            <p>
-                Découvrez nos formations et commencez votre apprentissage.
-            </p>
-
-            <a href="{% url 'course_list' %}" class="btn-primary">
-                Voir les formations
+            <a
+                href="{% url 'course_list' %}"
+                class="fs-my-courses-discover"
+            >
+                Découvrir les formations
+                <span>→</span>
             </a>
+
+        </header>
+
+
+        <!-- FORMATIONS -->
+        <div class="fs-my-courses-grid">
+
+            {% for enrollment in enrollments %}
+
+                <article class="fs-course-card">
+
+                    <!-- IMAGE -->
+                    <div class="fs-course-image-wrapper">
+
+                        {% if enrollment.course.image %}
+
+                            <img
+                                src="{{ enrollment.course.image.url }}"
+                                alt="{{ enrollment.course.title }}"
+                                class="fs-course-image"
+                            >
+
+                        {% else %}
+
+                            <div class="fs-course-placeholder">
+                                🎓
+                            </div>
+
+                        {% endif %}
+
+                        <span class="fs-course-badge">
+                            Formation
+                        </span>
+
+                    </div>
+
+
+                    <!-- CONTENU -->
+                    <div class="fs-course-content">
+
+                        <span class="fs-course-category">
+                            FORMATION
+                        </span>
+
+                        <h2>
+                            {{ enrollment.course.title }}
+                        </h2>
+
+                        <p>
+                            {{ enrollment.course.description|truncatewords:22 }}
+                        </p>
+
+                        <div class="fs-course-bottom">
+
+                            <span class="fs-course-status">
+                                ✓ Inscrit
+                            </span>
+
+                            <a
+                                href="{% url 'course_learning' enrollment.course.slug %}"
+                                class="fs-course-button"
+                            >
+                                Continuer
+                                <span>→</span>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <!-- VIDE -->
+                <div class="fs-courses-empty">
+
+                    <div class="fs-courses-empty-icon">
+                        📚
+                    </div>
+
+                    <span>
+                        VOTRE APPRENTISSAGE
+                    </span>
+
+                    <h2>
+                        Vous n'avez aucune formation
+                    </h2>
+
+                    <p>
+                        Découvrez notre catalogue de formations et commencez
+                        votre apprentissage dès aujourd'hui.
+                    </p>
+
+                    <a
+                        href="{% url 'course_list' %}"
+                        class="fs-course-button fs-empty-button"
+                    >
+                        Voir les formations
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+            {% endfor %}
 
         </div>
 
-    {% endfor %}
+    </div>
 
 </section>
+
+
+<style>
+
+/* =========================================================
+   FORMASHOP — MES FORMATIONS
+   CSS FORTEMENT SCOPÉ
+   Remplace le comportement horizontal existant
+========================================================= */
+
+.fs-my-courses-page {
+    width: 100% !important;
+    min-height: calc(100vh - 80px) !important;
+    box-sizing: border-box !important;
+
+    padding: 55px 20px 80px !important;
+
+    background:
+        radial-gradient(
+            circle at 8% 0%,
+            rgba(124,58,237,.14),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 92% 15%,
+            rgba(37,99,235,.10),
+            transparent 30%
+        ),
+        #070a12 !important;
+
+    color: #fff !important;
+}
+
+.fs-my-courses-container {
+    width: 100% !important;
+    max-width: 1100px !important;
+    margin: 0 auto !important;
+}
+
+
+/* HEADER */
+
+.fs-my-courses-header {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    gap: 25px !important;
+
+    margin-bottom: 35px !important;
+}
+
+.fs-my-courses-eyebrow {
+    display: inline-block !important;
+
+    margin-bottom: 9px !important;
+
+    color: #a78bfa !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.7px !important;
+}
+
+.fs-my-courses-header h1 {
+    margin: 0 !important;
+
+    color: #fff !important;
+
+    font-size: clamp(30px,5vw,43px) !important;
+    font-weight: 900 !important;
+
+    letter-spacing: -.8px !important;
+}
+
+.fs-my-courses-header p {
+    max-width: 650px !important;
+
+    margin: 10px 0 0 !important;
+
+    color: #8993a6 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+}
+
+.fs-my-courses-discover {
+    flex-shrink: 0 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+
+    padding: 11px 15px !important;
+
+    color: #ddd6fe !important;
+    text-decoration: none !important;
+
+    background: rgba(124,58,237,.10) !important;
+    border: 1px solid rgba(124,58,237,.25) !important;
+    border-radius: 10px !important;
+
+    font-size: 12px !important;
+    font-weight: 800 !important;
+
+    transition: .2s ease !important;
+}
+
+.fs-my-courses-discover:hover {
+    color: #fff !important;
+    background: rgba(124,58,237,.18) !important;
+    border-color: #7c3aed !important;
+    transform: translateY(-2px) !important;
+}
+
+
+/* GRID
+   IMPORTANT :
+   cette classe domine .products-grid existant
+*/
+
+.fs-my-courses-page .fs-my-courses-grid {
+    width: 100% !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr)) !important;
+
+    gap: 20px !important;
+
+    align-items: stretch !important;
+}
+
+
+/* CARTE */
+
+.fs-my-courses-page .fs-course-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    overflow: hidden !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18,23,37,.98),
+            rgba(10,14,24,.98)
+        ) !important;
+
+    border: 1px solid rgba(148,163,184,.12) !important;
+    border-radius: 18px !important;
+
+    box-shadow:
+        0 16px 38px rgba(0,0,0,.22) !important;
+
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease !important;
+}
+
+.fs-my-courses-page .fs-course-card:hover {
+    transform: translateY(-5px) !important;
+
+    border-color: rgba(124,58,237,.45) !important;
+
+    box-shadow:
+        0 22px 45px rgba(0,0,0,.30),
+        0 8px 30px rgba(124,58,237,.08) !important;
+}
+
+
+/* IMAGE */
+
+.fs-course-image-wrapper {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 185px !important;
+
+    overflow: hidden !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #17122b,
+            #101b32
+        ) !important;
+}
+
+.fs-course-image {
+    width: 100% !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+    object-position: center !important;
+
+    transition: transform .35s ease !important;
+}
+
+.fs-course-card:hover .fs-course-image {
+    transform: scale(1.04) !important;
+}
+
+.fs-course-placeholder {
+    width: 100% !important;
+    height: 100% !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 48px !important;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(124,58,237,.20),
+            transparent 60%
+        ) !important;
+}
+
+.fs-course-badge {
+    position: absolute !important;
+
+    top: 12px !important;
+    left: 12px !important;
+
+    padding: 6px 10px !important;
+
+    color: #fff !important;
+
+    background: rgba(7,10,18,.82) !important;
+
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 20px !important;
+
+    backdrop-filter: blur(8px) !important;
+
+    font-size: 10px !important;
+    font-weight: 800 !important;
+}
+
+
+/* CONTENU */
+
+.fs-course-content {
+    min-width: 0 !important;
+
+    flex: 1 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    padding: 20px !important;
+}
+
+.fs-course-category {
+    color: #a78bfa !important;
+
+    font-size: 9px !important;
+    font-weight: 900 !important;
+
+    letter-spacing: 1.3px !important;
+}
+
+.fs-course-content h2 {
+    margin: 8px 0 9px !important;
+
+    color: #fff !important;
+
+    font-size: 18px !important;
+    font-weight: 850 !important;
+
+    line-height: 1.3 !important;
+
+    overflow-wrap: anywhere !important;
+}
+
+.fs-course-content > p {
+    margin: 0 !important;
+
+    color: #8993a6 !important;
+
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+
+    overflow-wrap: anywhere !important;
+}
+
+
+/* BAS */
+
+.fs-course-bottom {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+
+    margin-top: auto !important;
+    padding-top: 18px !important;
+
+    border-top: 1px solid rgba(148,163,184,.08) !important;
+}
+
+.fs-course-status {
+    color: #86efac !important;
+
+    font-size: 10px !important;
+    font-weight: 800 !important;
+}
+
+.fs-course-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+
+    padding: 9px 12px !important;
+
+    color: #fff !important;
+    text-decoration: none !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #2563eb
+        ) !important;
+
+    border-radius: 9px !important;
+
+    font-size: 11px !important;
+    font-weight: 850 !important;
+
+    transition: .2s ease !important;
+}
+
+.fs-course-button:hover {
+    color: #fff !important;
+
+    transform: translateY(-2px) !important;
+
+    box-shadow:
+        0 9px 22px rgba(124,58,237,.22) !important;
+}
+
+
+/* VIDE */
+
+.fs-courses-empty {
+    grid-column: 1 / -1 !important;
+
+    padding: 65px 25px !important;
+
+    text-align: center !important;
+
+    border-radius: 20px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18,23,37,.98),
+            rgba(10,14,24,.98)
+        ) !important;
+
+    border: 1px dashed rgba(148,163,184,.17) !important;
+}
+
+.fs-courses-empty-icon {
+    margin-bottom: 15px !important;
+
+    font-size: 45px !important;
+}
+
+.fs-courses-empty > span {
+    color: #a78bfa !important;
+
+    font-size: 10px !important;
+    font-weight: 900 !important;
+
+    letter-spacing: 1.5px !important;
+}
+
+.fs-courses-empty h2 {
+    margin: 9px 0 8px !important;
+
+    color: #fff !important;
+    font-size: 23px !important;
+}
+
+.fs-courses-empty p {
+    max-width: 500px !important;
+
+    margin: 0 auto 22px !important;
+
+    color: #7f8ba0 !important;
+    line-height: 1.55 !important;
+}
+
+.fs-empty-button {
+    display: inline-flex !important;
+}
+
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+    .fs-my-courses-page .fs-my-courses-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+    .fs-my-courses-page {
+        padding: 30px 12px 55px !important;
+    }
+
+    .fs-my-courses-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .fs-my-courses-discover {
+        justify-content: center !important;
+    }
+
+    .fs-my-courses-page .fs-my-courses-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    .fs-course-image-wrapper {
+        height: 190px !important;
+    }
+
+    .fs-course-content {
+        padding: 18px !important;
+    }
+
+}
+
+</style>
 
 {% endblock %}

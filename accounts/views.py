@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.db.models import Q, Sum
 from django.conf import settings
-from django.conf import settings
 
 from courses.models import Course
 from documents.models import DocumentPurchase
@@ -172,12 +171,11 @@ def profile_view(request):
             "Veuillez sélectionner une image."
         )
 
-    document_purchases = DocumentPurchase.objects.filter(
-        user=request.user
-    ).select_related(
-        "document"
-    ).order_by(
-        "-purchased_at"
+    document_purchases = (
+        DocumentPurchase.objects
+        .filter(user=request.user)
+        .select_related("document")
+        .order_by("-purchased_at")
     )
 
     return render(
@@ -195,12 +193,9 @@ def profile_view(request):
 # TABLEAU DE BORD PRINCIPAL
 # =========================================================
 
-# =========================================================
-# TABLEAU DE BORD PRINCIPAL
-# =========================================================
-
 @login_required
 def dashboard(request):
+
     user = request.user
 
     # =====================================================
@@ -210,6 +205,7 @@ def dashboard(request):
     wallet, created = TokenWallet.objects.get_or_create(
         user=user
     )
+    wallet.give_daily_reward()
 
     user_orders = (
         Order.objects
@@ -234,11 +230,15 @@ def dashboard(request):
         status="cancelled"
     )
 
-    unread_order_notifications = OrderNotification.objects.filter(
-        recipient=user,
-        is_read=False
-    ).count()
-
+    # Notifications reçues par le client
+    unread_order_notifications = (
+        OrderNotification.objects
+        .filter(
+            recipient=user,
+            is_read=False
+        )
+        .count()
+    )
 
     # =====================================================
     # VENDEUR
@@ -293,12 +293,25 @@ def dashboard(request):
         admin_validated=False
     )
 
-    seller_late_orders = seller_orders.filter(
-        delivery_deadline__isnull=False,
-        delivery_deadline__lt=timezone.now()
-    ).exclude(
-        status__in=["delivered", "cancelled"]
+    seller_orders_to_deliver_count = (
+        seller_orders_to_deliver.count()
     )
+
+    seller_late_orders = (
+        seller_orders
+        .filter(
+            delivery_deadline__isnull=False,
+            delivery_deadline__lt=timezone.now()
+        )
+        .exclude(
+            status__in=[
+                "delivered",
+                "cancelled"
+            ]
+        )
+    )
+
+    seller_late_orders_count = seller_late_orders.count()
 
     seller_earnings = (
         SellerEarning.objects
@@ -308,10 +321,14 @@ def dashboard(request):
     )
 
     seller_revenue = (
-        seller_earnings.aggregate(
-            total=Sum("amount")
-        )["total"] or 0
+        seller_earnings
+        .aggregate(total=Sum("amount"))["total"]
+        or 0
     )
+
+    # =====================================================
+    # NOTIFICATIONS VENDEUR
+    # =====================================================
 
     seller_notifications = (
         OrderNotification.objects
@@ -319,32 +336,28 @@ def dashboard(request):
         .order_by("-created_at")
     )
 
-    unread_seller_notifications = (
+    seller_unread_notifications = (
         seller_notifications
         .filter(is_read=False)
-    )
-
-    seller_unread_notifications = (
-        unread_seller_notifications.count()
+        .count()
     )
 
     seller_is_premium = is_premium_seller(user)
-
 
     # =====================================================
     # FORMATEUR
     # =====================================================
 
-    trainer_profile = TrainerProfile.objects.filter(
-        user=user
-    ).first()
+    trainer_profile = (
+        TrainerProfile.objects
+        .filter(user=user)
+        .first()
+    )
 
     trainer_courses = []
-
     trainer_wallet = None
-
     trainer_revenue = 0
-
+    trainer_notifications = []
     trainer_unread_notifications = 0
 
     if trainer_profile:
@@ -384,15 +397,18 @@ def dashboard(request):
             .count()
         )
 
-
     # =====================================================
     # CONTEXTE
     # =====================================================
 
     context = {
 
+        # -------------------------
         # CLIENT
+        # -------------------------
+
         "wallet": wallet,
+
         "user_orders": user_orders,
         "my_orders": my_orders,
 
@@ -405,10 +421,18 @@ def dashboard(request):
             unread_order_notifications,
 
 
+        # -------------------------
         # VENDEUR
-        "seller_profile": seller_profile,
-        "seller_products": seller_products,
-        "seller_orders": seller_orders,
+        # -------------------------
+
+        "seller_profile":
+            seller_profile,
+
+        "seller_products":
+            seller_products,
+
+        "seller_orders":
+            seller_orders,
 
         "seller_pending_orders":
             seller_pending_orders,
@@ -425,8 +449,14 @@ def dashboard(request):
         "seller_orders_to_deliver":
             seller_orders_to_deliver,
 
+        "seller_orders_to_deliver_count":
+            seller_orders_to_deliver_count,
+
         "seller_late_orders":
             seller_late_orders,
+
+        "seller_late_orders_count":
+            seller_late_orders_count,
 
         "seller_earnings":
             seller_earnings,
@@ -437,9 +467,6 @@ def dashboard(request):
         "seller_notifications":
             seller_notifications,
 
-        "unread_seller_notifications":
-            unread_seller_notifications,
-
         "seller_unread_notifications":
             seller_unread_notifications,
 
@@ -447,7 +474,10 @@ def dashboard(request):
             seller_is_premium,
 
 
+        # -------------------------
         # FORMATEUR
+        # -------------------------
+
         "trainer_profile":
             trainer_profile,
 
@@ -460,6 +490,9 @@ def dashboard(request):
         "trainer_revenue":
             trainer_revenue,
 
+        "trainer_notifications":
+            trainer_notifications,
+
         "trainer_unread_notifications":
             trainer_unread_notifications,
     }
@@ -469,15 +502,20 @@ def dashboard(request):
         "accounts/dashboard.html",
         context
     )
+
+
+# =========================================================
 # DEVENIR FORMATEUR
 # =========================================================
 
 @login_required
 def become_trainer(request):
 
-    existing_application = TrainerApplication.objects.filter(
-        user=request.user
-    ).first()
+    existing_application = (
+        TrainerApplication.objects
+        .filter(user=request.user)
+        .first()
+    )
 
     if existing_application:
 
@@ -575,9 +613,11 @@ def become_trainer(request):
 @login_required
 def trainer_dashboard(request):
 
-    trainer_profile = TrainerProfile.objects.filter(
-        user=request.user
-    ).first()
+    trainer_profile = (
+        TrainerProfile.objects
+        .filter(user=request.user)
+        .first()
+    )
 
     trainer_wallet = None
     notifications = []
@@ -587,29 +627,37 @@ def trainer_dashboard(request):
 
     if trainer_profile:
 
-        trainer_wallet, created = TrainerWallet.objects.get_or_create(
-            user=request.user
+        trainer_wallet, created = (
+            TrainerWallet.objects.get_or_create(
+                user=request.user
+            )
         )
 
-        notifications = TrainerNotification.objects.filter(
-            trainer=request.user
-        ).order_by(
-            "-created_at"
-        )[:5]
-
-        unread_notifications = TrainerNotification.objects.filter(
-            trainer=request.user,
-            is_read=False
-        ).count()
-
-        earnings = TrainerEarning.objects.filter(
-            trainer=request.user
-        ).order_by(
-            "-created_at"
+        notifications = (
+            TrainerNotification.objects
+            .filter(trainer=request.user)
+            .order_by("-created_at")[:5]
         )
 
-        trainer_courses = request.user.courses.all().order_by(
-            "-created_at"
+        unread_notifications = (
+            TrainerNotification.objects
+            .filter(
+                trainer=request.user,
+                is_read=False
+            )
+            .count()
+        )
+
+        earnings = (
+            TrainerEarning.objects
+            .filter(trainer=request.user)
+            .order_by("-created_at")
+        )
+
+        trainer_courses = (
+            request.user.courses
+            .all()
+            .order_by("-created_at")
         )
 
     wallet, created = TokenWallet.objects.get_or_create(
@@ -638,9 +686,11 @@ def trainer_dashboard(request):
 @login_required
 def become_seller(request):
 
-    existing_application = SellerApplication.objects.filter(
-        user=request.user
-    ).first()
+    existing_application = (
+        SellerApplication.objects
+        .filter(user=request.user)
+        .first()
+    )
 
     if existing_application:
 
@@ -839,9 +889,11 @@ def become_seller(request):
 @login_required
 def upgrade_to_premium(request):
 
-    seller_profile = SellerProfile.objects.filter(
-        user=request.user
-    ).first()
+    seller_profile = (
+        SellerProfile.objects
+        .filter(user=request.user)
+        .first()
+    )
 
     if not seller_profile:
 
@@ -861,13 +913,8 @@ def upgrade_to_premium(request):
 
         return redirect("dashboard")
 
-    # Numéro officiel de dépôt configuré dans les variables
-    # d'environnement / settings.py.
-    premium_deposit_number = getattr(
-        settings,
-        "PREMIUM_DEPOSIT_NUMBER",
-        ""
-    )
+    premium_mtn_number = settings.PREMIUM_MTN_NUMBER
+    premium_orange_number = settings.PREMIUM_ORANGE_NUMBER
 
     if request.method == "POST":
 
@@ -896,7 +943,8 @@ def upgrade_to_premium(request):
                 "accounts/upgrade_premium.html",
                 {
                     "seller_profile": seller_profile,
-                    "premium_deposit_number": premium_deposit_number,
+                    "premium_mtn_number": premium_mtn_number,
+                    "premium_orange_number": premium_orange_number,
                     "selected_method": payment_method,
                     "payment_phone": payment_phone,
                 }
@@ -914,16 +962,21 @@ def upgrade_to_premium(request):
                 "accounts/upgrade_premium.html",
                 {
                     "seller_profile": seller_profile,
-                    "premium_deposit_number": premium_deposit_number,
+                    "premium_mtn_number": premium_mtn_number,
+                    "premium_orange_number": premium_orange_number,
                     "selected_method": payment_method,
                     "payment_phone": payment_phone,
                 }
             )
 
-        existing_pending = SellerSubscription.objects.filter(
-            seller=request.user,
-            status="pending"
-        ).exists()
+        existing_pending = (
+            SellerSubscription.objects
+            .filter(
+                seller=request.user,
+                status="pending"
+            )
+            .exists()
+        )
 
         if existing_pending:
 
@@ -955,7 +1008,7 @@ def upgrade_to_premium(request):
         "accounts/upgrade_premium.html",
         {
             "seller_profile": seller_profile,
-            "premium_mtn_number": settings.PREMIUM_MTN_NUMBER,
-            "premium_orange_number": settings.PREMIUM_ORANGE_NUMBER,
+            "premium_mtn_number": premium_mtn_number,
+            "premium_orange_number": premium_orange_number,
         }
     )

@@ -4,267 +4,440 @@
 
 {% block content %}
 
-<section>
+<section class="fs-seller-page">
 
-    <h1>Devenir vendeur</h1>
+    <div class="fs-seller-container">
 
-    <p>
-        Choisissez la formule qui vous convient.
-    </p>
+        <!-- EN-TÊTE -->
+        <div class="fs-seller-header">
 
-    <!-- CHOIX DU PLAN -->
+            <span class="fs-seller-eyebrow">
+                FORMASHOP MARKETPLACE
+            </span>
 
-    <div>
-
-        <h2>Choisissez votre formule</h2>
-
-        <label>
-            <input
-                type="radio"
-                name="plan_choice"
-                value="standard"
-                checked
-                onclick="selectPlan('standard')"
-            >
-
-            Vendeur Standard
-        </label>
-
-        <p>
-            Gratuit — 0 FCFA
-        </p>
-
-        <ul>
-            <li>Créer des produits</li>
-            <li>Modifier vos produits</li>
-            <li>Gérer votre stock</li>
-            <li>Recevoir des commandes</li>
-            <li>Voir les informations de livraison</li>
-            <li>Gérer vos livraisons</li>
-            <li>Voir vos ventes</li>
-            <li>Recevoir vos notifications</li>
-        </ul>
-
-
-        <label>
-            <input
-                type="radio"
-                name="plan_choice"
-                value="premium"
-                onclick="selectPlan('premium')"
-            >
-
-            Vendeur Premium
-        </label>
-
-        <p>
-            1 000 FCFA / mois
-        </p>
-
-        <ul>
-            <li>Tout ce qui est inclus dans Standard</li>
-            <li>Badge Premium</li>
-            <li>Meilleure visibilité des produits</li>
-            <li>Possibilité de mettre des produits en avant</li>
-            <li>Fonctionnalités commerciales avancées à venir</li>
-            <li>Fonctionnalités promotionnelles à venir</li>
-        </ul>
-
-    </div>
-
-
-    <!-- FORMULAIRE -->
-
-    <form method="POST">
-
-        {% csrf_token %}
-
-        <input
-            type="hidden"
-            name="plan"
-            id="plan"
-            value="standard"
-        >
-
-
-        <h2>Informations du vendeur</h2>
-
-        <div>
-
-            <label for="full_name">
-                Nom complet
-            </label>
-
-            <input
-                type="text"
-                id="full_name"
-                name="full_name"
-                required
-            >
-
-        </div>
-
-
-        <div>
-
-            <label for="phone">
-                Téléphone
-            </label>
-
-            <input
-                type="text"
-                id="phone"
-                name="phone"
-                required
-            >
-
-        </div>
-
-
-        <div>
-
-            <label for="address">
-                Adresse
-            </label>
-
-            <textarea
-                id="address"
-                name="address"
-                required
-            ></textarea>
-
-        </div>
-
-
-        <div>
-
-            <label for="neighborhood">
-                Quartier
-            </label>
-
-            <input
-                type="text"
-                id="neighborhood"
-                name="neighborhood"
-                required
-            >
-
-        </div>
-
-
-        <div>
-
-            <label for="city">
-                Ville
-            </label>
-
-            <input
-                type="text"
-                id="city"
-                name="city"
-                required
-            >
-
-        </div>
-
-
-        <div>
-
-            <label for="activity">
-                Activité
-            </label>
-
-            <input
-                type="text"
-                id="activity"
-                name="activity"
-                required
-            >
-
-        </div>
-
-
-        <div>
-
-            <label for="description">
-                Présentez votre activité
-            </label>
-
-            <textarea
-                id="description"
-                name="description"
-                required
-            ></textarea>
-
-        </div>
-
-
-        <!-- PAIEMENT PREMIUM -->
-
-        <div id="premium-payment" style="display: none;">
-
-            <h2>Paiement Premium</h2>
+            <h1>
+                Devenir vendeur
+            </h1>
 
             <p>
-                Montant à payer :
-                <strong>1 000 FCFA</strong>
+                Développez votre activité sur FormaShop et commencez
+                à vendre vos produits à notre communauté.
             </p>
 
-            <div>
+        </div>
 
-                <label for="payment_method">
-                    Moyen de paiement
-                </label>
 
-                <select
-                    id="payment_method"
-                    name="payment_method"
-                >
+        <!-- FORMULES -->
+        <div class="fs-seller-plans">
 
-                    <option value="">
-                        Choisir
-                    </option>
+            <div class="fs-seller-section-heading">
+                <span>01</span>
+                <div>
+                    <h2>Choisissez votre formule</h2>
+                    <p>
+                        Sélectionnez l'offre qui correspond à votre activité.
+                    </p>
+                </div>
+            </div>
 
-                    <option value="mtn">
-                        MTN Mobile Money
-                    </option>
 
-                    <option value="orange">
-                        Orange Money
-                    </option>
+            <div class="fs-seller-plan-grid">
 
-                </select>
+                <!-- STANDARD -->
+                <div class="fs-seller-plan fs-seller-plan-standard">
+
+                    <label
+                        for="seller-plan-standard"
+                        class="fs-seller-plan-label"
+                    >
+
+                        <input
+                            type="radio"
+                            id="seller-plan-standard"
+                            name="plan_choice"
+                            value="standard"
+                            checked
+                            onclick="selectPlan('standard')"
+                        >
+
+                        <div class="fs-seller-radio"></div>
+
+                        <div class="fs-seller-plan-top">
+
+                            <div>
+                                <span class="fs-seller-plan-name">
+                                    Vendeur Standard
+                                </span>
+
+                                <span class="fs-seller-plan-price">
+                                    Gratuit
+                                </span>
+                            </div>
+
+                            <span class="fs-seller-plan-badge">
+                                0 FCFA
+                            </span>
+
+                        </div>
+
+                        <p class="fs-seller-plan-description">
+                            L'essentiel pour commencer à vendre
+                            et gérer votre activité.
+                        </p>
+
+                        <ul class="fs-seller-features">
+
+                            <li>Créer des produits</li>
+                            <li>Modifier vos produits</li>
+                            <li>Gérer votre stock</li>
+                            <li>Recevoir des commandes</li>
+                            <li>Voir les informations de livraison</li>
+                            <li>Gérer vos livraisons</li>
+                            <li>Voir vos ventes</li>
+                            <li>Recevoir vos notifications</li>
+
+                        </ul>
+
+                    </label>
+
+                </div>
+
+
+                <!-- PREMIUM -->
+                <div class="fs-seller-plan fs-seller-plan-premium">
+
+                    <label
+                        for="seller-plan-premium"
+                        class="fs-seller-plan-label"
+                    >
+
+                        <input
+                            type="radio"
+                            id="seller-plan-premium"
+                            name="plan_choice"
+                            value="premium"
+                            onclick="selectPlan('premium')"
+                        >
+
+                        <div class="fs-seller-radio"></div>
+
+                        <div class="fs-seller-plan-top">
+
+                            <div>
+                                <span class="fs-seller-plan-name">
+                                    Vendeur Premium
+                                </span>
+
+                                <span class="fs-seller-plan-price">
+                                    1 000 FCFA
+                                </span>
+                            </div>
+
+                            <span class="fs-seller-plan-badge premium">
+                                PREMIUM
+                            </span>
+
+                        </div>
+
+                        <p class="fs-seller-plan-description">
+                            Plus de visibilité et des fonctionnalités
+                            supplémentaires pour développer vos ventes.
+                        </p>
+
+                        <ul class="fs-seller-features">
+
+                            <li>Tout ce qui est inclus dans Standard</li>
+                            <li>Badge Premium</li>
+                            <li>Meilleure visibilité des produits</li>
+                            <li>Possibilité de mettre des produits en avant</li>
+                            <li>Fonctionnalités commerciales avancées à venir</li>
+                            <li>Fonctionnalités promotionnelles à venir</li>
+
+                        </ul>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FORMULAIRE -->
+        <div class="fs-seller-form-card">
+
+            <div class="fs-seller-section-heading">
+
+                <span>02</span>
+
+                <div>
+                    <h2>Informations du vendeur</h2>
+                    <p>
+                        Ces informations permettront à FormaShop
+                        de traiter votre candidature.
+                    </p>
+                </div>
 
             </div>
 
 
-            <div>
+            <form method="POST" class="fs-seller-form">
 
-                <label for="payment_phone">
-                    Numéro utilisé pour le paiement
-                </label>
+                {% csrf_token %}
 
                 <input
-                    type="text"
-                    id="payment_phone"
-                    name="payment_phone"
+                    type="hidden"
+                    name="plan"
+                    id="plan"
+                    value="standard"
                 >
 
-            </div>
 
-            <p>
-                Après votre demande, l'administrateur vérifiera
-                le paiement avant d'activer votre abonnement Premium.
-            </p>
+                <div class="fs-seller-fields">
+
+                    <!-- NOM -->
+                    <div class="fs-seller-field">
+
+                        <label for="full_name">
+                            Nom complet
+                        </label>
+
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            placeholder="Votre nom complet"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TELEPHONE -->
+                    <div class="fs-seller-field">
+
+                        <label for="phone">
+                            Téléphone
+                        </label>
+
+                        <input
+                            type="text"
+                            id="phone"
+                            name="phone"
+                            placeholder="Ex : 6XXXXXXXX"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ADRESSE -->
+                    <div class="fs-seller-field fs-seller-field-full">
+
+                        <label for="address">
+                            Adresse
+                        </label>
+
+                        <textarea
+                            id="address"
+                            name="address"
+                            placeholder="Votre adresse complète"
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- QUARTIER -->
+                    <div class="fs-seller-field">
+
+                        <label for="neighborhood">
+                            Quartier
+                        </label>
+
+                        <input
+                            type="text"
+                            id="neighborhood"
+                            name="neighborhood"
+                            placeholder="Votre quartier"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- VILLE -->
+                    <div class="fs-seller-field">
+
+                        <label for="city">
+                            Ville
+                        </label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            placeholder="Votre ville"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ACTIVITE -->
+                    <div class="fs-seller-field fs-seller-field-full">
+
+                        <label for="activity">
+                            Activité
+                        </label>
+
+                        <input
+                            type="text"
+                            id="activity"
+                            name="activity"
+                            placeholder="Ex : Vente de vêtements, accessoires, informatique..."
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+                    <div class="fs-seller-field fs-seller-field-full">
+
+                        <label for="description">
+                            Présentez votre activité
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            class="fs-seller-description"
+                            placeholder="Présentez votre activité, vos produits et ce que vous souhaitez proposer sur FormaShop..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PAIEMENT PREMIUM -->
+                <div
+                    id="premium-payment"
+                    class="fs-seller-premium-payment"
+                    style="display: none;"
+                >
+
+                    <div class="fs-seller-payment-header">
+
+                        <div class="fs-seller-payment-icon">
+                            💳
+                        </div>
+
+                        <div>
+                            <span>
+                                FORMULE PREMIUM
+                            </span>
+
+                            <h2>
+                                Paiement Premium
+                            </h2>
+                        </div>
+
+                    </div>
+
+
+                    <div class="fs-seller-payment-price">
+                        <span>Montant à payer</span>
+                        <strong>1 000 FCFA</strong>
+                    </div>
+
+
+                    <div class="fs-seller-payment-fields">
+
+                        <div class="fs-seller-field">
+
+                            <label for="payment_method">
+                                Moyen de paiement
+                            </label>
+
+                            <select
+                                id="payment_method"
+                                name="payment_method"
+                            >
+
+                                <option value="">
+                                    Choisir un moyen de paiement
+                                </option>
+
+                                <option value="mtn">
+                                    MTN Mobile Money
+                                </option>
+
+                                <option value="orange">
+                                    Orange Money
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="fs-seller-field">
+
+                            <label for="payment_phone">
+                                Numéro utilisé pour le paiement
+                            </label>
+
+                            <input
+                                type="text"
+                                id="payment_phone"
+                                name="payment_phone"
+                                placeholder="Numéro Mobile Money"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="fs-seller-payment-info">
+
+                        <span>ℹ️</span>
+
+                        <p>
+                            Après votre demande, l'administrateur vérifiera
+                            le paiement avant d'activer votre abonnement Premium.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="fs-seller-submit-area">
+
+                    <button
+                        type="submit"
+                        class="fs-seller-submit"
+                    >
+                        Envoyer ma candidature
+                        <span>→</span>
+                    </button>
+
+                    <p>
+                        Votre candidature sera examinée par l'équipe FormaShop.
+                    </p>
+
+                </div>
+
+            </form>
 
         </div>
 
-
-        <button type="submit">
-            Envoyer ma candidature
-        </button>
-
-    </form>
+    </div>
 
 </section>
 
@@ -297,9 +470,568 @@ function selectPlan(plan) {
 
         paymentMethod.value = "";
         paymentPhone.value = "";
+
     }
 }
 
 </script>
+
+
+<style>
+
+/* =========================================================
+   FORMASHOP — DEVENIR VENDEUR
+   CSS SCOPÉ — PRIORITAIRE
+========================================================= */
+
+.fs-seller-page {
+    width: 100% !important;
+    min-height: calc(100vh - 80px) !important;
+    box-sizing: border-box !important;
+    padding: 55px 20px 80px !important;
+
+    background:
+        radial-gradient(
+            circle at 8% 0%,
+            rgba(124,58,237,.16),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 92% 15%,
+            rgba(37,99,235,.13),
+            transparent 30%
+        ),
+        #070a12 !important;
+
+    color: #fff !important;
+}
+
+.fs-seller-container {
+    width: 100% !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+}
+
+.fs-seller-header {
+    text-align: center !important;
+    margin-bottom: 38px !important;
+}
+
+.fs-seller-eyebrow {
+    display: inline-block !important;
+    margin-bottom: 10px !important;
+
+    color: #a78bfa !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.8px !important;
+}
+
+.fs-seller-header h1 {
+    margin: 0 !important;
+
+    color: #fff !important;
+    font-size: clamp(32px, 5vw, 48px) !important;
+    font-weight: 900 !important;
+    letter-spacing: -.8px !important;
+}
+
+.fs-seller-header p {
+    max-width: 650px !important;
+    margin: 12px auto 0 !important;
+
+    color: #8993a6 !important;
+    line-height: 1.65 !important;
+    font-size: 15px !important;
+}
+
+
+/* SECTION */
+
+.fs-seller-plans,
+.fs-seller-form-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.fs-seller-section-heading {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    margin-bottom: 20px !important;
+}
+
+.fs-seller-section-heading > span {
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 9px !important;
+
+    color: #c4b5fd !important;
+    background: rgba(124,58,237,.15) !important;
+    border: 1px solid rgba(124,58,237,.25) !important;
+
+    font-size: 11px !important;
+    font-weight: 900 !important;
+}
+
+.fs-seller-section-heading h2 {
+    margin: 0 !important;
+    color: #fff !important;
+    font-size: 21px !important;
+    font-weight: 850 !important;
+}
+
+.fs-seller-section-heading p {
+    margin: 5px 0 0 !important;
+    color: #718096 !important;
+    font-size: 13px !important;
+}
+
+
+/* PLANS */
+
+.fs-seller-plan-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 18px !important;
+    margin-bottom: 30px !important;
+}
+
+.fs-seller-plan {
+    min-width: 0 !important;
+}
+
+.fs-seller-plan-label {
+    position: relative !important;
+    display: block !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+
+    padding: 24px !important;
+
+    cursor: pointer !important;
+
+    border-radius: 19px !important;
+    border: 1px solid #293346 !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18,23,37,.98),
+            rgba(10,14,24,.98)
+        ) !important;
+
+    transition: .2s ease !important;
+}
+
+.fs-seller-plan-label:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(124,58,237,.55) !important;
+}
+
+.fs-seller-plan-label input {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.fs-seller-plan-label:has(input:checked) {
+    border-color: #7c3aed !important;
+
+    box-shadow:
+        0 20px 45px rgba(124,58,237,.12),
+        inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+
+.fs-seller-radio {
+    position: absolute !important;
+    top: 22px !important;
+    right: 22px !important;
+
+    width: 18px !important;
+    height: 18px !important;
+
+    border-radius: 50% !important;
+    border: 2px solid #4b5563 !important;
+}
+
+.fs-seller-plan-label:has(input:checked) .fs-seller-radio {
+    border-color: #8b5cf6 !important;
+    box-shadow: inset 0 0 0 4px #111827 !important;
+    background: #8b5cf6 !important;
+}
+
+.fs-seller-plan-top {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 15px !important;
+    padding-right: 35px !important;
+}
+
+.fs-seller-plan-name {
+    display: block !important;
+    color: #fff !important;
+    font-size: 17px !important;
+    font-weight: 850 !important;
+}
+
+.fs-seller-plan-price {
+    display: block !important;
+    margin-top: 5px !important;
+    color: #a78bfa !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+}
+
+.fs-seller-plan-badge {
+    height: fit-content !important;
+    padding: 5px 9px !important;
+    border-radius: 20px !important;
+
+    color: #cbd5e1 !important;
+    background: rgba(148,163,184,.08) !important;
+
+    font-size: 9px !important;
+    font-weight: 900 !important;
+}
+
+.fs-seller-plan-badge.premium {
+    color: #ddd6fe !important;
+    background: rgba(124,58,237,.15) !important;
+    border: 1px solid rgba(124,58,237,.25) !important;
+}
+
+.fs-seller-plan-description {
+    margin: 18px 0 !important;
+
+    color: #8792a5 !important;
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+}
+
+.fs-seller-features {
+    margin: 0 !important;
+    padding: 17px 0 0 0 !important;
+
+    list-style: none !important;
+
+    border-top: 1px solid rgba(148,163,184,.09) !important;
+}
+
+.fs-seller-features li {
+    position: relative !important;
+
+    margin: 9px 0 !important;
+    padding-left: 22px !important;
+
+    color: #aeb7c7 !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+}
+
+.fs-seller-features li::before {
+    content: "✓" !important;
+    position: absolute !important;
+    left: 0 !important;
+
+    color: #a78bfa !important;
+    font-weight: 900 !important;
+}
+
+
+/* FORM */
+
+.fs-seller-form-card {
+    padding: 32px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18,23,37,.98),
+            rgba(10,14,24,.98)
+        ) !important;
+
+    border: 1px solid rgba(148,163,184,.12) !important;
+    border-radius: 23px !important;
+
+    box-shadow: 0 28px 70px rgba(0,0,0,.35) !important;
+}
+
+.fs-seller-fields {
+    display: grid !important;
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 18px !important;
+}
+
+.fs-seller-field {
+    min-width: 0 !important;
+}
+
+.fs-seller-field-full {
+    grid-column: 1 / -1 !important;
+}
+
+.fs-seller-field label {
+    display: block !important;
+    margin-bottom: 8px !important;
+
+    color: #d7deea !important;
+    font-size: 13px !important;
+    font-weight: 750 !important;
+}
+
+.fs-seller-field input,
+.fs-seller-field textarea,
+.fs-seller-field select {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+
+    padding: 13px 14px !important;
+
+    color: #fff !important;
+    background: #0b101c !important;
+
+    border: 1px solid #30394b !important;
+    border-radius: 11px !important;
+
+    outline: none !important;
+
+    font-family: inherit !important;
+    font-size: 14px !important;
+
+    transition: .2s ease !important;
+}
+
+.fs-seller-field input,
+.fs-seller-field select {
+    min-height: 48px !important;
+}
+
+.fs-seller-field textarea {
+    min-height: 110px !important;
+    resize: vertical !important;
+}
+
+.fs-seller-field .fs-seller-description {
+    min-height: 145px !important;
+}
+
+.fs-seller-field input::placeholder,
+.fs-seller-field textarea::placeholder {
+    color: #566276 !important;
+}
+
+.fs-seller-field input:focus,
+.fs-seller-field textarea:focus,
+.fs-seller-field select:focus {
+    border-color: #7c3aed !important;
+    background: #0e1422 !important;
+
+    box-shadow:
+        0 0 0 3px rgba(124,58,237,.12) !important;
+}
+
+
+/* PREMIUM */
+
+.fs-seller-premium-payment {
+    margin-top: 27px !important;
+    padding: 24px !important;
+
+    border-radius: 17px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,58,237,.12),
+            rgba(37,99,235,.07)
+        ) !important;
+
+    border: 1px solid rgba(124,58,237,.30) !important;
+}
+
+.fs-seller-payment-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 13px !important;
+}
+
+.fs-seller-payment-icon {
+    width: 45px !important;
+    height: 45px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 12px !important;
+    background: rgba(124,58,237,.20) !important;
+
+    font-size: 20px !important;
+}
+
+.fs-seller-payment-header span {
+    color: #a78bfa !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.2px !important;
+}
+
+.fs-seller-payment-header h2 {
+    margin: 3px 0 0 !important;
+    color: #fff !important;
+    font-size: 19px !important;
+}
+
+.fs-seller-payment-price {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+
+    margin: 20px 0 !important;
+    padding: 15px !important;
+
+    border-radius: 11px !important;
+    background: rgba(0,0,0,.20) !important;
+}
+
+.fs-seller-payment-price span {
+    color: #8993a6 !important;
+    font-size: 13px !important;
+}
+
+.fs-seller-payment-price strong {
+    color: #c4b5fd !important;
+    font-size: 18px !important;
+}
+
+.fs-seller-payment-fields {
+    display: grid !important;
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 18px !important;
+}
+
+.fs-seller-payment-info {
+    display: flex !important;
+    gap: 10px !important;
+
+    margin-top: 18px !important;
+    padding: 13px !important;
+
+    border-radius: 10px !important;
+    background: rgba(37,99,235,.07) !important;
+}
+
+.fs-seller-payment-info p {
+    margin: 0 !important;
+    color: #8da0ba !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+
+
+/* SUBMIT */
+
+.fs-seller-submit-area {
+    margin-top: 30px !important;
+    padding-top: 24px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 18px !important;
+
+    border-top: 1px solid rgba(148,163,184,.09) !important;
+}
+
+.fs-seller-submit {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+
+    min-height: 50px !important;
+    padding: 13px 23px !important;
+
+    border: 0 !important;
+    border-radius: 11px !important;
+
+    color: #fff !important;
+
+    background:
+        linear-gradient(135deg,#7c3aed,#2563eb) !important;
+
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 850 !important;
+
+    cursor: pointer !important;
+
+    box-shadow: 0 12px 28px rgba(37,99,235,.18) !important;
+
+    transition: .2s ease !important;
+}
+
+.fs-seller-submit:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 16px 35px rgba(124,58,237,.25) !important;
+}
+
+.fs-seller-submit-area p {
+    margin: 0 !important;
+    color: #68758a !important;
+    font-size: 11px !important;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 720px) {
+
+    .fs-seller-page {
+        padding: 30px 12px 55px !important;
+    }
+
+    .fs-seller-plan-grid,
+    .fs-seller-fields,
+    .fs-seller-payment-fields {
+        grid-template-columns: 1fr !important;
+    }
+
+    .fs-seller-field-full {
+        grid-column: auto !important;
+    }
+
+    .fs-seller-form-card {
+        padding: 22px 16px !important;
+    }
+
+    .fs-seller-plan-label {
+        padding: 20px !important;
+    }
+
+    .fs-seller-submit-area {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .fs-seller-submit {
+        width: 100% !important;
+    }
+
+    .fs-seller-submit-area p {
+        text-align: center !important;
+    }
+
+}
+
+</style>
 
 {% endblock %}

@@ -20,15 +20,19 @@ from app.views import (
 
 urlpatterns = [
 
-    # Django Admin classique
+    # =========================================================
+    # ADMIN DJANGO
+    # =========================================================
+
     path(
         "admin/",
         admin.site.urls
     ),
 
-    # =========================
-    # ADMINISTRATION FORMSHOP
-    # =========================
+
+    # =========================================================
+    # ADMINISTRATION FORMASHOP
+    # =========================================================
 
     path(
         "admin-dashboard/",
@@ -60,9 +64,10 @@ urlpatterns = [
         name="admin_trainer_reject"
     ),
 
-    # =========================
-    # SITE
-    # =========================
+
+    # =========================================================
+    # SITE PRINCIPAL
+    # =========================================================
 
     path(
         "",
@@ -70,30 +75,60 @@ urlpatterns = [
         name="home"
     ),
 
+
+    # =========================================================
+    # COMPTES / PROFIL / DASHBOARD
+    # =========================================================
+
     path(
         "accounts/",
         include("accounts.urls")
     ),
+
+
+    # =========================================================
+    # FORMATIONS
+    # =========================================================
 
     path(
         "courses/",
         include("courses.urls")
     ),
 
+
+    # =========================================================
+    # PRODUITS
+    # =========================================================
+
     path(
         "products/",
         include("products.urls")
     ),
+
+
+    # =========================================================
+    # COMMANDES / PAIEMENTS
+    # =========================================================
 
     path(
         "orders/",
         include("orders.urls")
     ),
 
+
+    # =========================================================
+    # PANIER
+    # =========================================================
+
     path(
         "cart/",
         include("cart.urls")
     ),
+
+
+    # =========================================================
+    # DOCUMENTS
+    # =========================================================
 
     path(
         "documents/",
@@ -102,7 +137,20 @@ urlpatterns = [
 ]
 
 
-urlpatterns += static(
-    settings.MEDIA_URL,
-    document_root=settings.MEDIA_ROOT
-)
+# =============================================================
+# FICHIERS MEDIA
+# =============================================================
+#
+# Permet à Django de servir les images/photos/fichiers présents
+# dans MEDIA_ROOT pendant le développement.
+#
+# MEDIA_URL  = /media/
+# MEDIA_ROOT = BASE_DIR / "media/"
+#
+# =============================================================
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
