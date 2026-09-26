@@ -1582,24 +1582,27 @@
                 </a>
 
 
-                {% if seller_profile.plan == "premium" %}
+              {% if seller_is_premium %}
 
-    <div class="premium-status-dashboard">
-        <span class="premium-status-icon">✦</span>
+                    <div class="premium-status-dashboard">
+                        <span class="premium-status-icon">✦</span>
 
-        <div>
-            <strong>Vendeur Premium</strong>
-            <small>Votre compte bénéficie actuellement du statut Premium.</small>
-        </div>
-    </div>
+                        <div>
+                            <strong>Vendeur Premium</strong>
+                            <small>
+                                Votre compte bénéficie actuellement du statut Premium.
+                            </small>
+                        </div>
+                    </div>
 
-{% else %}
+                {% else %}
 
-    <a href="{% url 'upgrade_to_premium' %}" class="role-action premium-upgrade-action">
-        ✦ Passer Premium
-    </a>
-
-{% endif %}
+                    <a
+                        href="{% url 'upgrade_to_premium' %}"
+                        class="role-action premium-upgrade-action"
+                    >
+                        ✦ Passer Premium
+                    </a>
 
                 {% endif %}
 

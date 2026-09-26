@@ -195,6 +195,18 @@ def create_order(request):
 
         return redirect("cart")
 
+    total = sum(
+        item.product.price * item.quantity
+        for item in product_items
+        if item.product
+    )
+
+    checkout_context = {
+        "cart": cart,
+        "items": product_items,
+        "total": total,
+    }
+
     if request.method == "POST":
 
         full_name = request.POST.get(
@@ -218,6 +230,7 @@ def create_order(request):
         ).strip()
 
         if not full_name:
+
             messages.error(
                 request,
                 "Veuillez entrer votre nom complet."
@@ -226,13 +239,11 @@ def create_order(request):
             return render(
                 request,
                 "cart/checkout.html",
-                {
-                    "cart": cart,
-                    "items": product_items,
-                }
+                checkout_context
             )
 
         if not phone_number:
+
             messages.error(
                 request,
                 "Veuillez entrer votre numéro de téléphone."
@@ -241,13 +252,11 @@ def create_order(request):
             return render(
                 request,
                 "cart/checkout.html",
-                {
-                    "cart": cart,
-                    "items": product_items,
-                }
+                checkout_context
             )
 
         if not neighborhood:
+
             messages.error(
                 request,
                 "Veuillez entrer votre quartier."
@@ -256,13 +265,11 @@ def create_order(request):
             return render(
                 request,
                 "cart/checkout.html",
-                {
-                    "cart": cart,
-                    "items": product_items,
-                }
+                checkout_context
             )
 
         if not delivery_address:
+
             messages.error(
                 request,
                 "Veuillez entrer votre adresse de livraison."
@@ -271,20 +278,19 @@ def create_order(request):
             return render(
                 request,
                 "cart/checkout.html",
-                {
-                    "cart": cart,
-                    "items": product_items,
-                }
+                checkout_context
             )
 
-        created_orders = 0
+        created_orders = []
+        grand_total = 0
 
         for item in product_items:
 
-            product = Product.objects.select_for_update().select_related(
-                "seller"
-            ).get(
-                id=item.product.id
+            product = (
+                Product.objects
+                .select_for_update()
+                .select_related("seller")
+                .get(id=item.product.id)
             )
 
             if not product.seller:
@@ -297,10 +303,7 @@ def create_order(request):
                 return render(
                     request,
                     "cart/checkout.html",
-                    {
-                        "cart": cart,
-                        "items": product_items,
-                    }
+                    checkout_context
                 )
 
             if product.stock <= 0:
@@ -313,10 +316,7 @@ def create_order(request):
                 return render(
                     request,
                     "cart/checkout.html",
-                    {
-                        "cart": cart,
-                        "items": product_items,
-                    }
+                    checkout_context
                 )
 
             if product.stock < item.quantity:
@@ -332,10 +332,7 @@ def create_order(request):
                 return render(
                     request,
                     "cart/checkout.html",
-                    {
-                        "cart": cart,
-                        "items": product_items,
-                    }
+                    checkout_context
                 )
 
             total_price = product.price * item.quantity
@@ -380,13 +377,14 @@ def create_order(request):
                 reward_given=False
             )
 
-            # DIMINUTION RÉELLE DU STOCK
+            # Réduction réelle du stock
             product.stock -= item.quantity
 
             product.save(
                 update_fields=["stock"]
             )
 
+            # Notification du vendeur
             OrderNotification.objects.create(
 
                 recipient=product.seller,
@@ -409,6 +407,7 @@ def create_order(request):
                 )
             )
 
+            # Notification du client
             OrderNotification.objects.create(
 
                 recipient=request.user,
@@ -425,30 +424,29 @@ def create_order(request):
                 )
             )
 
+            created_orders.append(order)
+
+            grand_total += total_price
+
+            # Retirer l'article du panier
             item.delete()
 
-            created_orders += 1
-
-        messages.success(
+        # Page de confirmation
+        return render(
             request,
-            (
-                f"{created_orders} commande(s) créée(s) avec succès. "
-                f"Le paiement sera effectué à la livraison."
-            )
+            "cart/order_success.html",
+            {
+                "orders": created_orders,
+                "grand_total": grand_total,
+                "created_count": len(created_orders),
+            }
         )
-
-        return redirect("my_orders")
 
     return render(
         request,
         "cart/checkout.html",
-        {
-            "cart": cart,
-            "items": product_items,
-        }
+        checkout_context
     )
-
-
 @login_required
 def clear_cart(request):
 
