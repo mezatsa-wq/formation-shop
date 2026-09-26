@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends “base.html” %}
 
 {% block title %}Tableau de bord — FormaShop{% endblock %}
 
@@ -14,12 +14,10 @@
             #070b16;
         color: #fff;
     }
-
     .dashboard-container {
         width: min(1200px, 100%);
         margin: 0 auto;
     }
-
     .dashboard-header {
         display: flex;
         justify-content: space-between;
@@ -38,26 +36,22 @@
         border: 1px solid rgba(139, 92, 246, .22);
         box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
     }
-
     .dashboard-header h1 {
         margin: 0 0 7px;
         font-size: clamp(25px, 4vw, 38px);
         font-weight: 800;
         letter-spacing: -.8px;
     }
-
     .dashboard-header p {
         margin: 0;
         color: #94a3b8;
         font-size: 15px;
     }
-
     .dashboard-header-actions {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
     }
-
     .dashboard-btn {
         display: inline-flex;
         align-items: center;
@@ -74,27 +68,22 @@
         background: rgba(255, 255, 255, .05);
         transition: .2s ease;
     }
-
     .dashboard-btn:hover {
         transform: translateY(-2px);
         background: rgba(255, 255, 255, .09);
         color: #fff;
     }
-
     .dashboard-btn.primary {
         background: linear-gradient(135deg, #7c3aed, #2563eb);
         border-color: transparent;
         box-shadow: 0 10px 28px rgba(124, 58, 237, .22);
     }
-
     .dashboard-btn.primary:hover {
         box-shadow: 0 14px 34px rgba(124, 58, 237, .32);
     }
-
     .messages-box {
         margin-bottom: 24px;
     }
-
     .dashboard-message {
         padding: 14px 17px;
         margin-bottom: 10px;
@@ -103,18 +92,15 @@
         border: 1px solid rgba(124, 58, 237, .25);
         color: #e9d5ff;
     }
-
     /* =====================================================
        STATISTIQUES
        ===================================================== */
-
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 16px;
         margin-bottom: 30px;
     }
-
     .stat-card {
         padding: 22px;
         border-radius: 20px;
@@ -122,7 +108,6 @@
         border: 1px solid rgba(148, 163, 184, .12);
         box-shadow: 0 15px 40px rgba(0, 0, 0, .20);
     }
-
     .stat-icon {
         width: 44px;
         height: 44px;
@@ -138,28 +123,23 @@
         );
         font-size: 21px;
     }
-
     .stat-label {
         display: block;
         margin-bottom: 5px;
         color: #94a3b8;
         font-size: 13px;
     }
-
     .stat-value {
         display: block;
         font-size: 27px;
         font-weight: 800;
     }
-
     /* =====================================================
        SECTIONS
        ===================================================== */
-
     .dashboard-section {
         margin-bottom: 30px;
     }
-
     .section-title {
         display: flex;
         justify-content: space-between;
@@ -167,34 +147,28 @@
         gap: 15px;
         margin-bottom: 15px;
     }
-
     .section-title h2 {
         margin: 0;
         font-size: 21px;
         font-weight: 800;
     }
-
     .section-title a {
         color: #a78bfa;
         text-decoration: none;
         font-size: 13px;
         font-weight: 700;
     }
-
     .section-title a:hover {
         color: #c4b5fd;
     }
-
     /* =====================================================
        ACCÈS RAPIDES
        ===================================================== */
-
     .quick-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 15px;
     }
-
     .quick-card {
         display: block;
         padding: 21px;
@@ -205,40 +179,33 @@
         border: 1px solid rgba(148, 163, 184, .11);
         transition: .2s ease;
     }
-
     .quick-card:hover {
         transform: translateY(-3px);
         border-color: rgba(124, 58, 237, .42);
         background: rgba(20, 28, 49, .95);
         color: #fff;
     }
-
     .quick-icon {
         font-size: 26px;
         margin-bottom: 12px;
     }
-
     .quick-card h3 {
         margin: 0 0 5px;
         font-size: 15px;
     }
-
     .quick-card p {
         margin: 0;
         color: #94a3b8;
         font-size: 13px;
     }
-
     /* =====================================================
        CARTES
        ===================================================== */
-
     .cards-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 18px;
     }
-
     .dashboard-card {
         padding: 23px;
         border-radius: 20px;
@@ -246,11 +213,9 @@
         border: 1px solid rgba(148, 163, 184, .12);
         box-shadow: 0 15px 45px rgba(0, 0, 0, .18);
     }
-
     .dashboard-card.full {
         grid-column: 1 / -1;
     }
-
     .card-header {
         display: flex;
         align-items: flex-start;
@@ -258,13 +223,11 @@
         gap: 15px;
         margin-bottom: 18px;
     }
-
     .card-title {
         display: flex;
         align-items: center;
         gap: 11px;
     }
-
     .card-title-icon {
         width: 42px;
         height: 42px;
@@ -279,18 +242,15 @@
         );
         font-size: 20px;
     }
-
     .card-title h3 {
         margin: 0;
         font-size: 17px;
     }
-
     .card-title p {
         margin: 4px 0 0;
         color: #94a3b8;
         font-size: 12px;
     }
-
     .badge {
         display: inline-flex;
         align-items: center;
@@ -304,30 +264,25 @@
         font-size: 12px;
         font-weight: 800;
     }
-
     .card-value {
         font-size: 31px;
         font-weight: 800;
         margin: 10px 0;
     }
-
     .card-description {
         color: #94a3b8;
         font-size: 13px;
         line-height: 1.6;
     }
-
     .card-actions {
         display: flex;
         flex-wrap: wrap;
         gap: 9px;
         margin-top: 18px;
     }
-
     /* =====================================================
        VENDEUR
        ===================================================== */
-
     .seller-banner {
         padding: 24px;
         border-radius: 21px;
@@ -341,19 +296,16 @@
         border: 1px solid rgba(124, 58, 237, .20);
         margin-bottom: 18px;
     }
-
     .seller-banner h2 {
         margin: 0 0 7px;
         font-size: 21px;
     }
-
     .seller-banner p {
         margin: 0;
         color: #94a3b8;
         line-height: 1.6;
         font-size: 14px;
     }
-
     .seller-premium {
         display: inline-flex;
         align-items: center;
@@ -366,7 +318,6 @@
         font-size: 12px;
         font-weight: 800;
     }
-
     .seller-standard {
         display: inline-flex;
         align-items: center;
@@ -379,35 +330,29 @@
         font-size: 12px;
         font-weight: 800;
     }
-
     .mini-stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 12px;
     }
-
     .mini-stat {
         padding: 17px;
         border-radius: 15px;
         background: rgba(2, 6, 23, .42);
         border: 1px solid rgba(148, 163, 184, .08);
     }
-
     .mini-stat span {
         display: block;
         color: #94a3b8;
         font-size: 11px;
         margin-bottom: 7px;
     }
-
     .mini-stat strong {
         font-size: 22px;
     }
-
     /* =====================================================
        FORMATEUR
        ===================================================== */
-
     .trainer-banner {
         padding: 24px;
         border-radius: 21px;
@@ -421,28 +366,23 @@
         border: 1px solid rgba(37, 99, 235, .18);
         margin-bottom: 18px;
     }
-
     .trainer-banner h2 {
         margin: 0 0 7px;
         font-size: 21px;
     }
-
     .trainer-banner p {
         margin: 0;
         color: #94a3b8;
         line-height: 1.6;
         font-size: 14px;
     }
-
     /* =====================================================
        LISTES
        ===================================================== */
-
     .dashboard-list {
         display: grid;
         gap: 10px;
     }
-
     .dashboard-list-item {
         display: flex;
         justify-content: space-between;
@@ -453,43 +393,35 @@
         background: rgba(2, 6, 23, .40);
         border: 1px solid rgba(148, 163, 184, .07);
     }
-
     .dashboard-list-item strong {
         display: block;
         font-size: 13px;
     }
-
     .dashboard-list-item span {
         color: #94a3b8;
         font-size: 11px;
     }
-
     .empty-state {
         padding: 25px 15px;
         text-align: center;
         color: #64748b;
     }
-
     .empty-state-icon {
         font-size: 30px;
         margin-bottom: 8px;
     }
-
     .empty-state p {
         margin: 0;
         font-size: 13px;
     }
-
     /* =====================================================
        ONBOARDING
        ===================================================== */
-
     .onboarding-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
     }
-
     .onboarding-card {
         padding: 22px;
         border-radius: 18px;
@@ -502,811 +434,591 @@
             rgba(15, 23, 42, .80);
         border: 1px solid rgba(124, 58, 237, .16);
     }
-
     .onboarding-card h3 {
         margin: 0 0 8px;
         font-size: 17px;
     }
-
     .onboarding-card p {
         margin: 0 0 16px;
         color: #94a3b8;
         font-size: 13px;
         line-height: 1.6;
     }
-
     /* =====================================================
        RESPONSIVE
        ===================================================== */
-
     @media (max-width: 950px) {
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-
         .quick-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-
         .mini-stats {
             grid-template-columns: repeat(2, 1fr);
         }
     }
-
     @media (max-width: 720px) {
         .dashboard-page {
             padding: 20px 12px 45px;
         }
-
         .dashboard-header {
             padding: 21px;
             flex-direction: column;
             align-items: flex-start;
         }
-
         .dashboard-header-actions {
             width: 100%;
         }
-
         .dashboard-header-actions .dashboard-btn {
             flex: 1;
         }
-
         .stats-grid,
         .cards-grid,
         .onboarding-grid {
             grid-template-columns: 1fr;
         }
-
         .dashboard-card.full {
             grid-column: auto;
         }
-
         .quick-grid {
             grid-template-columns: 1fr 1fr;
         }
-
         .mini-stats {
             grid-template-columns: 1fr 1fr;
         }
     }
-
     @media (max-width: 480px) {
         .quick-grid {
             grid-template-columns: 1fr;
         }
-
         .mini-stats {
             grid-template-columns: 1fr 1fr;
         }
-
         .dashboard-header-actions {
             flex-direction: column;
         }
-
         .dashboard-header-actions .dashboard-btn {
             width: 100%;
         }
-
         .dashboard-list-item {
             align-items: flex-start;
             flex-direction: column;
         }
     }
 </style>
-
 <div class="dashboard-page">
     <div class="dashboard-container">
-
-        <!-- =================================================
-             EN-TÊTE
-        ================================================== -->
-
-        <div class="dashboard-header">
-
-            <div>
-                <h1>Bonjour, {{ request.user.username }} 👋</h1>
+    <!-- =================================================
+         EN-TÊTE
+    ================================================== -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Bonjour, {{ request.user.username }} 👋</h1>
+            <p>
+                Bienvenue dans votre espace personnel FormaShop.
+            </p>
+        </div>
+        <div class="dashboard-header-actions">
+            <a href="{% url 'profile' %}" class="dashboard-btn">
+                👤 Mon profil
+            </a>
+            <a href="{% url 'my_orders' %}" class="dashboard-btn primary">
+                🛒 Mes commandes
+            </a>
+        </div>
+    </div>
+    <!-- =================================================
+         MESSAGES
+    ================================================== -->
+    {% if messages %}
+        <div class="messages-box">
+            {% for message in messages %}
+                <div class="dashboard-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- =================================================
+         STATISTIQUES PRINCIPALES
+    ================================================== -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🪙</div>
+            <span class="stat-label">Mes jetons</span>
+            <span class="stat-value">
+                {{ wallet.balance|default:"0" }}
+            </span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <span class="stat-label">Mes commandes</span>
+            <span class="stat-value">
+                {{ total_orders|default:"0" }}
+            </span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <span class="stat-label">Commandes en attente</span>
+            <span class="stat-value">
+                {{ pending_orders|length }}
+            </span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🔔</div>
+            <span class="stat-label">Notifications</span>
+            <span class="stat-value">
+                {{ unread_order_notifications|default:"0" }}
+            </span>
+        </div>
+    </div>
+    <!-- =================================================
+         ACCÈS RAPIDES
+    ================================================== -->
+    <section class="dashboard-section">
+        <div class="section-title">
+            <h2>Accès rapides</h2>
+        </div>
+        <div class="quick-grid">
+            <a href="{% url 'my_orders' %}" class="quick-card">
+                <div class="quick-icon">🛒</div>
+                <h3>Mes commandes</h3>
                 <p>
-                    Bienvenue dans votre espace personnel FormaShop.
+                    {{ my_orders|length }} commande{{ my_orders|length|pluralize }}
                 </p>
-            </div>
-
-            <div class="dashboard-header-actions">
-
-                <a href="{% url 'profile' %}" class="dashboard-btn">
-                    👤 Mon profil
-                </a>
-
-                <a href="{% url 'my_orders' %}" class="dashboard-btn primary">
-                    🛒 Mes commandes
-                </a>
-
-            </div>
-
+            </a>
+            <a href="{% url 'order_notifications' %}" class="quick-card">
+                <div class="quick-icon">🔔</div>
+                <h3>Notifications</h3>
+                <p>
+                    {{ unread_order_notifications|default:"0" }} non lue{{ unread_order_notifications|pluralize }}
+                </p>
+            </a>
+            <a href="{% url 'product_list' %}" class="quick-card">
+                <div class="quick-icon">🛍️</div>
+                <h3>Boutique</h3>
+                <p>
+                    Découvrir les produits
+                </p>
+            </a>
+            <a href="{% url 'course_list' %}" class="quick-card">
+                <div class="quick-icon">📚</div>
+                <h3>Formations</h3>
+                <p>
+                    Apprendre et progresser
+                </p>
+            </a>
         </div>
-
-
-        <!-- =================================================
-             MESSAGES
-        ================================================== -->
-
-        {% if messages %}
-            <div class="messages-box">
-                {% for message in messages %}
-                    <div class="dashboard-message">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-
-        <!-- =================================================
-             STATISTIQUES PRINCIPALES
-        ================================================== -->
-
-        <div class="stats-grid">
-
-            <div class="stat-card">
-                <div class="stat-icon">🪙</div>
-                <span class="stat-label">Mes jetons</span>
-                <span class="stat-value">
-                    {{ wallet.balance|default:"0" }}
-                </span>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">🛒</div>
-                <span class="stat-label">Mes commandes</span>
-                <span class="stat-value">
-                    {{ total_orders|default:"0" }}
-                </span>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">⏳</div>
-                <span class="stat-label">Commandes en attente</span>
-                <span class="stat-value">
-                    {{ pending_orders|length }}
-                </span>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">🔔</div>
-                <span class="stat-label">Notifications</span>
-                <span class="stat-value">
-                    {{ unread_order_notifications|default:"0" }}
-                </span>
-            </div>
-
+    </section>
+    <!-- =================================================
+         ESPACE CLIENT
+    ================================================== -->
+    <section class="dashboard-section">
+        <div class="section-title">
+            <h2>👤 Mon espace client</h2>
+            <a href="{% url 'my_orders' %}">
+                Voir mes commandes →
+            </a>
         </div>
-
-
-        <!-- =================================================
-             ACCÈS RAPIDES
-        ================================================== -->
-
-        <section class="dashboard-section">
-
-            <div class="section-title">
-                <h2>Accès rapides</h2>
-            </div>
-
-            <div class="quick-grid">
-
-                <a href="{% url 'my_orders' %}" class="quick-card">
-                    <div class="quick-icon">🛒</div>
-                    <h3>Mes commandes</h3>
-                    <p>
-                        {{ my_orders|length }} commande{{ my_orders|length|pluralize }}
-                    </p>
-                </a>
-
-                <a href="{% url 'order_notifications' %}" class="quick-card">
-                    <div class="quick-icon">🔔</div>
-                    <h3>Notifications</h3>
-                    <p>
-                        {{ unread_order_notifications|default:"0" }} non lue{{ unread_order_notifications|pluralize }}
-                    </p>
-                </a>
-
-                <a href="{% url 'product_list' %}" class="quick-card">
-                    <div class="quick-icon">🛍️</div>
-                    <h3>Boutique</h3>
-                    <p>
-                        Découvrir les produits
-                    </p>
-                </a>
-
-                <a href="{% url 'course_list' %}" class="quick-card">
-                    <div class="quick-icon">📚</div>
-                    <h3>Formations</h3>
-                    <p>
-                        Apprendre et progresser
-                    </p>
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             ESPACE CLIENT
-        ================================================== -->
-
-        <section class="dashboard-section">
-
-            <div class="section-title">
-                <h2>👤 Mon espace client</h2>
-                <a href="{% url 'my_orders' %}">
-                    Voir mes commandes →
-                </a>
-            </div>
-
-            <div class="cards-grid">
-
-                <div class="dashboard-card">
-
-                    <div class="card-header">
-
-                        <div class="card-title">
-
-                            <div class="card-title-icon">
-                                🛒
-                            </div>
-
-                            <div>
-                                <h3>Mes commandes</h3>
-                                <p>Suivez vos achats</p>
-                            </div>
-
+        <div class="cards-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-title-icon">
+                            🛒
                         </div>
-
-                        <span class="badge">
-                            {{ total_orders|default:"0" }}
-                        </span>
-
+                        <div>
+                            <h3>Mes commandes</h3>
+                            <p>Suivez vos achats</p>
+                        </div>
                     </div>
-
-                    <div class="card-value">
+                    <span class="badge">
                         {{ total_orders|default:"0" }}
-                    </div>
-
-                    <div class="card-description">
-                        Vous pouvez consulter le statut de chaque commande,
-                        suivre la livraison et confirmer la réception.
-                    </div>
-
-                    <div class="card-actions">
-
-                        <a
-                            href="{% url 'my_orders' %}"
-                            class="dashboard-btn primary"
-                        >
-                            Voir mes commandes
-                        </a>
-
-                    </div>
-
+                    </span>
                 </div>
-
-
-                <div class="dashboard-card">
-
-                    <div class="card-header">
-
-                        <div class="card-title">
-
-                            <div class="card-title-icon">
-                                🪙
-                            </div>
-
-                            <div>
-                                <h3>Portefeuille de jetons</h3>
-                                <p>Vos récompenses FormaShop</p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="card-value">
-                        🪙 {{ wallet.balance|default:"0" }}
-                    </div>
-
-                    <div class="card-description">
-                        Vos jetons sont disponibles dans votre compte et
-                        peuvent être utilisés pour les fonctionnalités
-                        prévues sur FormaShop.
-                    </div>
-
-                    <div class="card-actions">
-
-                        <a
-                            href="{% url 'profile' %}"
-                            class="dashboard-btn"
-                        >
-                            Voir mon profil
-                        </a>
-
-                    </div>
-
+                <div class="card-value">
+                    {{ total_orders|default:"0" }}
                 </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             ESPACE VENDEUR
-        ================================================== -->
-
-        {% if seller_profile %}
-
-            <section class="dashboard-section">
-
-                <div class="section-title">
-                    <h2>🛍️ Espace vendeur</h2>
-
-                    <a href="{% url 'seller_orders' %}">
-                        Voir les commandes →
+                <div class="card-description">
+                    Vous pouvez consulter le statut de chaque commande,
+                    suivre la livraison et confirmer la réception.
+                </div>
+                <div class="card-actions">
+                    <a
+                        href="{% url 'my_orders' %}"
+                        class="dashboard-btn primary"
+                    >
+                        Voir mes commandes
                     </a>
                 </div>
-
-                <div class="seller-banner">
-
-                    <h2>
-                        Votre espace vendeur
-                    </h2>
-
-                    <p>
-                        Gérez vos produits, vos commandes, vos livraisons
-                        et suivez vos revenus depuis cet espace.
-                    </p>
-
-                    {% if seller_is_premium %}
-
-                        <span class="seller-premium">
-                            ⭐ Vendeur Premium
-                        </span>
-
-                    {% else %}
-
-                        <span class="seller-standard">
-                            Vendeur Standard
-                        </span>
-
-                    {% endif %}
-
-                </div>
-
-
-                <div class="dashboard-card full">
-
-                    <div class="mini-stats">
-
-                        <div class="mini-stat">
-                            <span>Produits</span>
-                            <strong>
-                                {{ seller_products|length }}
-                            </strong>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-title-icon">
+                            🪙
                         </div>
-
-                        <div class="mini-stat">
-                            <span>À livrer</span>
-                            <strong>
-                                {{ seller_orders_to_deliver_count|default:"0" }}
-                            </strong>
+                        <div>
+                            <h3>Portefeuille de jetons</h3>
+                            <p>Vos récompenses FormaShop</p>
                         </div>
-
-                        <div class="mini-stat">
-                            <span>Livraisons en retard</span>
-                            <strong>
-                                {{ seller_late_orders_count|default:"0" }}
-                            </strong>
-                        </div>
-
-                        <div class="mini-stat">
-                            <span>Revenus</span>
-                            <strong>
-                                {{ seller_revenue|default:"0" }} FCFA
-                            </strong>
-                        </div>
-
                     </div>
-
-
-                    <div class="card-actions">
-
+                </div>
+                <div class="card-value">
+                    🪙 {{ wallet.balance|default:"0" }}
+                </div>
+                <div class="card-description">
+                    Vos jetons sont disponibles dans votre compte et
+                    peuvent être utilisés pour les fonctionnalités
+                    prévues sur FormaShop.
+                </div>
+                <div class="card-actions">
+                    <a
+                        href="{% url 'profile' %}"
+                        class="dashboard-btn"
+                    >
+                        Voir mon profil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- =================================================
+         ESPACE VENDEUR
+    ================================================== -->
+    {% if seller_profile %}
+        <section class="dashboard-section">
+            <div class="section-title">
+                <h2>🛍️ Espace vendeur</h2>
+                <a href="{% url 'seller_orders' %}">
+                    Voir les commandes →
+                </a>
+            </div>
+            <div class="seller-banner">
+                <h2>
+                    Votre espace vendeur
+                </h2>
+                <p>
+                    Gérez vos produits, vos commandes, vos livraisons
+                    et suivez vos revenus depuis cet espace.
+                </p>
+                {% if seller_is_premium %}
+                    <span class="seller-premium">
+                        ⭐ Vendeur Premium
+                    </span>
+                {% else %}
+                    <span class="seller-standard">
+                        Vendeur Standard
+                    </span>
+                {% endif %}
+            </div>
+            <div class="dashboard-card full">
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <span>Produits</span>
+                        <strong>
+                            {{ seller_products|length }}
+                        </strong>
+                    </div>
+                    <div class="mini-stat">
+                        <span>À livrer</span>
+                        <strong>
+                            {{ seller_orders_to_deliver_count|default:"0" }}
+                        </strong>
+                    </div>
+                    <div class="mini-stat">
+                        <span>Livraisons en retard</span>
+                        <strong>
+                            {{ seller_late_orders_count|default:"0" }}
+                        </strong>
+                    </div>
+                    <div class="mini-stat">
+                        <span>Revenus</span>
+                        <strong>
+                            {{ seller_revenue|default:"0" }} FCFA
+                        </strong>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a
+                        href="{% url 'my_products' %}"
+                        class="dashboard-btn primary"
+                    >
+                        📦 Mes produits
+                    </a>
+                    <a
+                        href="{% url 'seller_orders' %}"
+                        class="dashboard-btn"
+                    >
+                        🚚 Mes commandes vendeur
+                    </a>
+                    <a
+                        href="{% url 'seller_notifications' %}"
+                        class="dashboard-btn"
+                    >
+                        🔔 Notifications
+                        {% if seller_unread_notifications %}
+                            ({{ seller_unread_notifications }})
+                        {% endif %}
+                    </a>
+                    {% if not seller_is_premium %}
                         <a
-                            href="{% url 'my_products' %}"
-                            class="dashboard-btn primary"
+                            href="{% url 'upgrade_to_premium' %}"
+                            class="dashboard-btn"
                         >
-                            📦 Mes produits
+                            ⭐ Passer Premium
                         </a>
-
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Commandes vendeur -->
+            <div class="cards-grid" style="margin-top:18px;">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-title-icon">
+                                📦
+                            </div>
+                            <div>
+                                <h3>Commandes à traiter</h3>
+                                <p>
+                                    Commandes nécessitant votre action
+                                </p>
+                            </div>
+                        </div>
+                        <span class="badge">
+                            {{ seller_orders_to_deliver_count|default:"0" }}
+                        </span>
+                    </div>
+                    {% if seller_orders_to_deliver_count %}
+                        <div class="card-value">
+                            {{ seller_orders_to_deliver_count }}
+                        </div>
+                        <div class="card-description">
+                            Des commandes attendent encore votre
+                            acceptation et votre confirmation de livraison.
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✅</div>
+                            <p>
+                                Aucune commande en attente.
+                            </p>
+                        </div>
+                    {% endif %}
+                    <div class="card-actions">
                         <a
                             href="{% url 'seller_orders' %}"
-                            class="dashboard-btn"
+                            class="dashboard-btn primary"
                         >
-                            🚚 Mes commandes vendeur
+                            Gérer les commandes
                         </a>
-
-                        <a
-                            href="{% url 'seller_notifications' %}"
-                            class="dashboard-btn"
-                        >
-                            🔔 Notifications
-                            {% if seller_unread_notifications %}
-                                ({{ seller_unread_notifications }})
-                            {% endif %}
-                        </a>
-
-                        {% if not seller_is_premium %}
-                            <a
-                                href="{% url 'upgrade_to_premium' %}"
-                                class="dashboard-btn"
-                            >
-                                ⭐ Passer Premium
-                            </a>
-                        {% endif %}
-
                     </div>
-
                 </div>
-
-
-                <!-- Commandes vendeur -->
-
-                <div class="cards-grid" style="margin-top:18px;">
-
-                    <div class="dashboard-card">
-
-                        <div class="card-header">
-
-                            <div class="card-title">
-
-                                <div class="card-title-icon">
-                                    📦
-                                </div>
-
-                                <div>
-                                    <h3>Commandes à traiter</h3>
-                                    <p>
-                                        Commandes nécessitant votre action
-                                    </p>
-                                </div>
-
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-title-icon">
+                                💰
                             </div>
-
-                            <span class="badge">
-                                {{ seller_orders_to_deliver_count|default:"0" }}
-                            </span>
-
-                        </div>
-
-                        {% if seller_orders_to_deliver_count %}
-
-                            <div class="card-value">
-                                {{ seller_orders_to_deliver_count }}
-                            </div>
-
-                            <div class="card-description">
-                                Des commandes attendent encore votre
-                                acceptation et votre confirmation de livraison.
-                            </div>
-
-                        {% else %}
-
-                            <div class="empty-state">
-                                <div class="empty-state-icon">✅</div>
+                            <div>
+                                <h3>Revenus vendeur</h3>
                                 <p>
-                                    Aucune commande en attente.
+                                    Revenus des commandes validées
                                 </p>
                             </div>
-
-                        {% endif %}
-
-                        <div class="card-actions">
-
-                            <a
-                                href="{% url 'seller_orders' %}"
-                                class="dashboard-btn primary"
-                            >
-                                Gérer les commandes
-                            </a>
-
                         </div>
-
                     </div>
-
-
-                    <div class="dashboard-card">
-
-                        <div class="card-header">
-
-                            <div class="card-title">
-
-                                <div class="card-title-icon">
-                                    💰
-                                </div>
-
-                                <div>
-                                    <h3>Revenus vendeur</h3>
-                                    <p>
-                                        Revenus des commandes validées
-                                    </p>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="card-value">
-                            {{ seller_revenue|default:"0" }} FCFA
-                        </div>
-
-                        <div class="card-description">
-                            Le revenu d'une commande est enregistré lorsque
-                            l'administrateur valide définitivement celle-ci.
-                        </div>
-
-                        <div class="card-actions">
-
-                            <a
-                                href="{% url 'seller_orders' %}"
-                                class="dashboard-btn primary"
-                            >
-                                Voir mes ventes
-                            </a>
-
-                        </div>
-
+                    <div class="card-value">
+                        {{ seller_revenue|default:"0" }} FCFA
                     </div>
-
+                    <div class="card-description">
+                        Le revenu d'une commande est enregistré lorsque
+                        l'administrateur valide définitivement celle-ci.
+                    </div>
+                    <div class="card-actions">
+                        <a
+                            href="{% url 'seller_orders' %}"
+                            class="dashboard-btn primary"
+                        >
+                            Voir mes ventes
+                        </a>
+                    </div>
                 </div>
-
-            </section>
-
-        {% endif %}
-
-
-        <!-- =================================================
-             ESPACE FORMATEUR
-        ================================================== -->
-
-        {% if trainer_profile %}
-
-            <section class="dashboard-section">
-
-                <div class="section-title">
-                    <h2>🎓 Espace formateur</h2>
-
-                    <a href="{% url 'trainer_dashboard' %}">
-                        Ouvrir l'espace formateur →
+            </div>
+        </section>
+    {% endif %}
+    <!-- =================================================
+         ESPACE FORMATEUR
+    ================================================== -->
+    {% if trainer_profile %}
+        <section class="dashboard-section">
+            <div class="section-title">
+                <h2>🎓 Espace formateur</h2>
+                <a href="{% url 'trainer_dashboard' %}">
+                    Ouvrir l'espace formateur →
+                </a>
+            </div>
+            <div class="trainer-banner">
+                <h2>
+                    Bienvenue dans votre espace formateur
+                </h2>
+                <p>
+                    Publiez vos formations, consultez vos revenus,
+                    vos notifications et gérez votre activité de formateur.
+                </p>
+            </div>
+            <div class="dashboard-card full">
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <span>Formations</span>
+                        <strong>
+                            {{ trainer_courses|length }}
+                        </strong>
+                    </div>
+                    <div class="mini-stat">
+                        <span>Revenus</span>
+                        <strong>
+                            {{ trainer_revenue|default:"0" }} FCFA
+                        </strong>
+                    </div>
+                    <div class="mini-stat">
+                        <span>Portefeuille</span>
+                        <strong>
+                            {{ trainer_wallet.balance|default:"0" }} FCFA
+                        </strong>
+                    </div>
+                    <div class="mini-stat">
+                        <span>Notifications</span>
+                        <strong>
+                            {{ trainer_unread_notifications|default:"0" }}
+                        </strong>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a
+                        href="{% url 'trainer_dashboard' %}"
+                        class="dashboard-btn primary"
+                    >
+                        🎓 Tableau de bord formateur
+                    </a>
+                    <a
+                        href="{% url 'trainer_courses' %}"
+                        class="dashboard-btn"
+                    >
+                        📚 Mes formations
+                    </a>
+                    <a
+                        href="{% url 'trainer_dashboard' %}"
+                        class="dashboard-btn"
+                    >
+                        💰 Mes revenus
+                    </a>
+                    <a
+                        href="{% url 'trainer_dashboard' %}"
+                        class="dashboard-btn"
+                    >
+                        💳 Mon portefeuille
+                    </a>
+                    <a
+                        href="{% url 'seller_notifications' %}"
+                        class="dashboard-btn"
+                    >
+                        🔔 Notifications
+                        {% if trainer_unread_notifications %}
+                            ({{ trainer_unread_notifications }})
+                        {% endif %}
                     </a>
                 </div>
-
-                <div class="trainer-banner">
-
-                    <h2>
-                        Bienvenue dans votre espace formateur
-                    </h2>
-
-                    <p>
-                        Publiez vos formations, consultez vos revenus,
-                        vos notifications et gérez votre activité de formateur.
-                    </p>
-
-                </div>
-
-
-                <div class="dashboard-card full">
-
-                    <div class="mini-stats">
-
-                        <div class="mini-stat">
-                            <span>Formations</span>
-                            <strong>
-                                {{ trainer_courses|length }}
-                            </strong>
+            </div>
+        </section>
+    {% endif %}
+    <!-- =================================================
+         ADMINISTRATION
+    ================================================== -->
+    {% if request.user.is_staff %}
+        <section class="dashboard-section">
+            <div class="section-title">
+                <h2>⚙️ Administration</h2>
+            </div>
+            <div class="dashboard-card full">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-title-icon">
+                            ⚙️
                         </div>
-
-                        <div class="mini-stat">
-                            <span>Revenus</span>
-                            <strong>
-                                {{ trainer_revenue|default:"0" }} FCFA
-                            </strong>
+                        <div>
+                            <h3>Espace administrateur</h3>
+                            <p>
+                                Gestion générale de FormaShop
+                            </p>
                         </div>
-
-                        <div class="mini-stat">
-                            <span>Portefeuille</span>
-                            <strong>
-                                {{ trainer_wallet.balance|default:"0" }} FCFA
-                            </strong>
-                        </div>
-
-                        <div class="mini-stat">
-                            <span>Notifications</span>
-                            <strong>
-                                {{ trainer_unread_notifications|default:"0" }}
-                            </strong>
-                        </div>
-
                     </div>
-
-
-                    <div class="card-actions">
-
-                        <a
-                            href="{% url 'trainer_dashboard' %}"
-                            class="dashboard-btn primary"
-                        >
-                            🎓 Tableau de bord formateur
-                        </a>
-
-                        <a
-                            href="{% url 'trainer_courses' %}"
-                            class="dashboard-btn"
-                        >
-                            📚 Mes formations
-                        </a>
-
-                        <a
-                            href="{% url 'trainer_earnings' %}"
-                            class="dashboard-btn"
-                        >
-                            💰 Mes revenus
-                        </a>
-
-                        <a
-                            href="{% url 'trainer_wallet' %}"
-                            class="dashboard-btn"
-                        >
-                            💳 Mon portefeuille
-                        </a>
-
-                        <a
-                            href="{% url 'trainer_notifications' %}"
-                            class="dashboard-btn"
-                        >
-                            🔔 Notifications
-                            {% if trainer_unread_notifications %}
-                                ({{ trainer_unread_notifications }})
-                            {% endif %}
-                        </a>
-
-                    </div>
-
                 </div>
-
-            </section>
-
-        {% endif %}
-
-
-        <!-- =================================================
-             ADMINISTRATION
-        ================================================== -->
-
-        {% if request.user.is_staff %}
-
-            <section class="dashboard-section">
-
-                <div class="section-title">
-                    <h2>⚙️ Administration</h2>
+                <div class="card-description">
+                    Accédez à l'administration FormaShop pour gérer les
+                    utilisateurs, formateurs, vendeurs, commandes,
+                    paiements et validations.
                 </div>
-
-                <div class="dashboard-card full">
-
-                    <div class="card-header">
-
-                        <div class="card-title">
-
-                            <div class="card-title-icon">
-                                ⚙️
-                            </div>
-
-                            <div>
-                                <h3>Espace administrateur</h3>
-                                <p>
-                                    Gestion générale de FormaShop
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="card-description">
-                        Accédez à l'administration FormaShop pour gérer les
-                        utilisateurs, formateurs, vendeurs, commandes,
-                        paiements et validations.
-                    </div>
-
-                    <div class="card-actions">
-
-                        <a
-                            href="{% url 'admin_dashboard' %}"
-                            class="dashboard-btn primary"
-                        >
-                            ⚙️ Ouvrir l'administration
-                        </a>
-
-                    </div>
-
+                <div class="card-actions">
+                    <a
+                        href="{% url 'admin_dashboard' %}"
+                        class="dashboard-btn primary"
+                    >
+                        ⚙️ Ouvrir l'administration
+                    </a>
                 </div>
-
-            </section>
-
-        {% endif %}
-
-
-        <!-- =================================================
-             DEVENIR FORMATEUR / VENDEUR
-        ================================================== -->
-
-        {% if not seller_profile and not trainer_profile %}
-
-            <section class="dashboard-section">
-
-                <div class="section-title">
-                    <h2>🚀 Développez votre activité</h2>
-                </div>
-
-                <div class="onboarding-grid">
-
+            </div>
+        </section>
+    {% endif %}
+    <!-- =================================================
+         DEVENIR FORMATEUR / VENDEUR
+    ================================================== -->
+    {% if not trainer_profile or not seller_profile %}
+        <section class="dashboard-section">
+            <div class="section-title">
+                <h2>🚀 Développez votre activité</h2>
+            </div>
+            <div class="onboarding-grid">
+                {% if not trainer_profile %}
                     <div class="onboarding-card">
-
                         <h3>
                             👨‍🏫 Devenir formateur
                         </h3>
-
                         <p>
                             Proposez vos propres formations sur FormaShop
                             et développez votre activité de formateur.
                         </p>
-
                         <a
                             href="{% url 'become_trainer' %}"
                             class="dashboard-btn primary"
                         >
                             Devenir formateur
                         </a>
-
                     </div>
-
-
+                {% endif %}
+                {% if not seller_profile %}
                     <div class="onboarding-card">
-
                         <h3>
                             🛍️ Devenir vendeur
                         </h3>
-
                         <p>
                             Vendez vos produits sur FormaShop et profitez
                             de votre espace vendeur.
                         </p>
-
                         <a
                             href="{% url 'become_seller' %}"
                             class="dashboard-btn primary"
                         >
                             Devenir vendeur
                         </a>
-
                     </div>
-
-                </div>
-
-            </section>
-
-        {% endif %}
-
-
-    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+</div>
 </div>
 
 {% endblock %}
