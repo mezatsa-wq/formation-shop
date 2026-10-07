@@ -8,6 +8,8 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.db.models import Q, Sum
 from django.conf import settings
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .models import SellerNotification
 from documents.models import DocumentPurchase
@@ -35,7 +37,7 @@ from products.models import Product
 # =========================================================
 # INSCRIPTION
 # =========================================================
-
+@ensure_csrf_cookie
 def register_view(request):
 
     if request.user.is_authenticated:
