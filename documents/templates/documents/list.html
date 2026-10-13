@@ -1,78 +1,197 @@
 {% extends "base.html" %}
-
 {% block title %}
 Documents — FormaShop
 {% endblock %}
-
 {% block content %}
-
+<style>
+    .documents-search {
+        width: 100%;
+        max-width: 720px;
+        margin: 24px 0 30px;
+        padding: 20px;
+        background: linear-gradient(145deg, #111827, #0b1020);
+        border: 1px solid rgba(124, 58, 237, 0.28);
+        border-radius: 18px;
+        box-sizing: border-box;
+    }
+    .documents-search label {
+        display: block;
+        margin-bottom: 10px;
+        color: #e5e7eb;
+        font-weight: 600;
+    }
+    .documents-search-row {
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .documents-search input {
+        flex: 1;
+        min-width: 0;
+        padding: 13px 15px;
+        color: #f9fafb;
+        background: #070b16;
+        border: 1px solid #374151;
+        border-radius: 10px;
+        outline: none;
+        font-size: 15px;
+    }
+    .documents-search input:focus {
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    }
+    .documents-search button {
+        padding: 12px 18px;
+        color: white;
+        font-weight: 600;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    .documents-search button:hover {
+        opacity: 0.9;
+    }
+    .documents-search-reset {
+        display: inline-block;
+        margin-top: 12px;
+        color: #c4b5fd;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .documents-search-reset:hover {
+        text-decoration: underline;
+    }
+    .documents-results {
+        margin: 0 0 20px;
+        color: #cbd5e1;
+        font-size: 14px;
+    }
+    .documents-empty {
+        grid-column: 1 / -1;
+        padding: 35px 20px;
+        text-align: center;
+        background: #0b1020;
+        border: 1px solid #263047;
+        border-radius: 16px;
+    }
+    .documents-empty h3 {
+        margin-bottom: 10px;
+        color: #f9fafb;
+    }
+    .documents-empty p {
+        color: #9ca3af;
+    }
+    @media (max-width: 480px) {
+        .documents-search {
+            padding: 15px;
+        }
+        .documents-search-row {
+            flex-direction: column;
+        }
+        .documents-search button {
+            width: 100%;
+            min-height: 45px;
+        }
+    }
+</style>
 <section class="section">
-
     <div class="section-heading">
-
         <div>
             <span class="section-label">
                 RESSOURCES
             </span>
-
             <h2>
                 Documents disponibles
             </h2>
+            <p>
+                Recherchez rapidement les documents dont vous avez besoin.
+            </p>
         </div>
-
     </div>
-
-
+    <form method="get" action="{% url 'document_list' %}"
+          class="documents-search">
+        <label for="document-search">
+            Rechercher un document
+        </label>
+        <div class="documents-search-row">
+            <input
+                type="search"
+                id="document-search"
+                name="q"
+                value="{{ search_query }}"
+                placeholder="Titre ou description du document..."
+                aria-label="Rechercher un document"
+            >
+            <button type="submit">
+                🔍 Rechercher
+            </button>
+        </div>
+        {% if search_query %}
+            <a
+                href="{% url 'document_list' %}"
+                class="documents-search-reset"
+            >
+                ✕ Effacer la recherche
+            </a>
+        {% endif %}
+    </form>
+    {% if search_query %}
+        <p class="documents-results">
+            Résultats pour « {{ search_query }} » :
+            {{ documents|length }} document(s) trouvé(s).
+        </p>
+    {% endif %}
     <div class="cards">
-
         {% for document in documents %}
-
             <article class="course-card">
-
                 <div class="placeholder-image">
                     📄
                 </div>
-
                 <div class="card-content">
-
                     <span class="category">
                         Document
                     </span>
-
                     <h3>
                         {{ document.title }}
                     </h3>
-
                     <p>
                         {{ document.description|truncatewords:20 }}
                     </p>
-
                     <div class="card-bottom">
-
                         <strong>
                             {{ document.token_price }} jetons
                         </strong>
-
                         <a href="{% url 'document_detail' document.id %}">
                             Voir →
                         </a>
-
                     </div>
-
                 </div>
-
             </article>
-
         {% empty %}
-
-            <p>
-                Aucun document disponible pour le moment.
-            </p>
-
+            <div class="documents-empty">
+                {% if search_query %}
+                    <h3>
+                        Aucun document trouvé
+                    </h3>
+                    <p>
+                        Aucun document ne correspond à
+                        « {{ search_query }} ».
+                        Essayez un autre titre ou mot-clé.
+                    </p>
+                    <a href="{% url 'document_list' %}">
+                        Voir tous les documents
+                    </a>
+                {% else %}
+                    <h3>
+                        Aucun document disponible
+                    </h3>
+                    <p>
+                        Les documents apparaîtront ici dès qu'ils seront publiés.
+                    </p>
+                {% endif %}
+            </div>
         {% endfor %}
-
     </div>
-
 </section>
-
 {% endblock %}

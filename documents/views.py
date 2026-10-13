@@ -1,5 +1,8 @@
+from idlelib import search
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -9,17 +12,26 @@ from .models import Document, DocumentPurchase
 
 
 def document_list(request):
+    search_query = request.GET.get("q", "").strip()
 
-    documents = Document.objects.all().order_by("-created_at")
+    documents = Document.objects.all()
+
+    if search_query:
+        documents = documents.filter(
+            Q(title__icontains=search_query)
+            | Q(description__icontains=search_query)
+        )
+
+    documents = documents.order_by("-created_at")
 
     return render(
         request,
         "documents/list.html",
         {
             "documents": documents,
+            "search_query": search_query,
         }
     )
-
 
 def document_detail(request, document_id):
 

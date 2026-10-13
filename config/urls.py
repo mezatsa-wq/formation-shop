@@ -6,8 +6,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
-from .views import home
+from .pwa import service_worker, offline_page
+from .views import (
+    home,
+    about,
+    privacy_policy,
+    terms_of_use,
+)
 
 from app.views import (
     admin_dashboard,
@@ -19,138 +24,68 @@ from app.views import (
 
 
 urlpatterns = [
-
-    # =========================================================
     # ADMIN DJANGO
-    # =========================================================
+    path("admin/", admin.site.urls),
 
-    path(
-        "admin/",
-        admin.site.urls
-    ),
-
-
-    # =========================================================
     # ADMINISTRATION FORMASHOP
-    # =========================================================
-
-    path(
-        "admin-dashboard/",
-        admin_dashboard,
-        name="admin_dashboard"
-    ),
-
-    path(
-        "admin-dashboard/formateurs/",
-        admin_trainers,
-        name="admin_trainers"
-    ),
-
+    path("admin-dashboard/", admin_dashboard, name="admin_dashboard"),
+    path("admin-dashboard/formateurs/", admin_trainers, name="admin_trainers"),
     path(
         "admin-dashboard/formateurs/<int:application_id>/",
         admin_trainer_detail,
-        name="admin_trainer_detail"
+        name="admin_trainer_detail",
     ),
-
     path(
         "admin-dashboard/formateurs/<int:application_id>/accepter/",
         admin_trainer_approve,
-        name="admin_trainer_approve"
+        name="admin_trainer_approve",
     ),
-
     path(
         "admin-dashboard/formateurs/<int:application_id>/refuser/",
         admin_trainer_reject,
-        name="admin_trainer_reject"
+        name="admin_trainer_reject",
     ),
 
-
-    # =========================================================
     # SITE PRINCIPAL
-    # =========================================================
+    path("", home, name="home"),
 
+    # PAGES INFORMATIVES ET JURIDIQUES
+    path("a-propos/", about, name="about"),
     path(
-        "",
-        home,
-        name="home"
+        "politique-confidentialite/",
+        privacy_policy,
+        name="privacy_policy",
+    ),
+    path(
+        "conditions-utilisation/",
+        terms_of_use,
+        name="terms_of_use",
     ),
 
-
-    # =========================================================
     # COMPTES / PROFIL / DASHBOARD
-    # =========================================================
+    path("accounts/", include("accounts.urls")),
 
-    path(
-        "accounts/",
-        include("accounts.urls")
-    ),
-
-
-    # =========================================================
     # FORMATIONS
-    # =========================================================
+    path("courses/", include("courses.urls")),
 
-    path(
-        "courses/",
-        include("courses.urls")
-    ),
-
-
-    # =========================================================
     # PRODUITS
-    # =========================================================
+    path("products/", include("products.urls")),
 
-    path(
-        "products/",
-        include("products.urls")
-    ),
-
-
-    # =========================================================
     # COMMANDES / PAIEMENTS
-    # =========================================================
+    path("orders/", include("orders.urls")),
 
-    path(
-        "orders/",
-        include("orders.urls")
-    ),
-
-
-    # =========================================================
     # PANIER
-    # =========================================================
+    path("cart/", include("cart.urls")),
 
-    path(
-        "cart/",
-        include("cart.urls")
-    ),
-
-
-    # =========================================================
     # DOCUMENTS
-    # =========================================================
-
-    path(
-        "documents/",
-        include("documents.urls")
-    ),
+    path("documents/", include("documents.urls")),
 ]
+path("service-worker.js", service_worker, name="service_worker"),
+path("offline/", offline_page, name="offline"),
 
-
-# =============================================================
-# FICHIERS MEDIA
-# =============================================================
-#
-# Permet à Django de servir les images/photos/fichiers présents
-# dans MEDIA_ROOT pendant le développement.
-#
-# MEDIA_URL  = /media/
-# MEDIA_ROOT = BASE_DIR / "media/"
-#
-# =============================================================
 
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
+        document_root=settings.MEDIA_ROOT,
     )

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Politique de confidentialité — FormaShop{% endblock %}
+
+{% block content %}
+<style>
+.legal-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 35px 20px 60px;
+    color: #cbd5e1;
+    line-height: 1.85;
+}
+.legal-page .legal-hero {
+    padding: 28px;
+    border: 1px solid #392766;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #111827, #17112f);
+}
+.legal-page h1, .legal-page h2 { color: #fff; }
+.legal-page h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); }
+.legal-page h2 { margin-top: 28px; font-size: 1.25rem; }
+.legal-page a { color: #c4b5fd; }
+.legal-date { color: #a78bfa; font-size: .9rem; }
+</style>
+
+<article class="legal-page">
+    <header class="legal-hero">
+        <h1>Politique de confidentialité</h1>
+        <p class="legal-date">Dernière mise à jour : 13 octobre 2026</p>
+        <p>
+            Cette politique explique comment FormaShop traite les données
+            personnelles associées à l'utilisation de sa plateforme.
+        </p>
+    </header>
+
+    <h2>1. Responsable du traitement</h2>
+    <p>
+        FormaShop est la plateforme concernée par les traitements décrits
+        dans cette politique. Les coordonnées officielles permettant
+        de joindre le responsable doivent être consultées dans la rubrique
+        Contact du site.
+    </p>
+
+    <h2>2. Données concernées</h2>
+    <p>Selon les services utilisés, les données peuvent comprendre :</p>
+    <ul>
+        <li>Les informations de compte et de profil.</li>
+        <li>Les coordonnées fournies pour les commandes et livraisons.</li>
+        <li>Les informations relatives aux achats, jetons et commandes.</li>
+        <li>Les candidatures de formateurs ou de vendeurs.</li>
+        <li>Les données techniques nécessaires à la sécurité et au fonctionnement.</li>
+    </ul>
+
+    <h2>3. Finalités</h2>
+    <p>
+        Les données sont utilisées pour gérer les comptes, fournir les services,
+        traiter les commandes, suivre les achats et paiements, répondre aux
+        demandes d'assistance et prévenir les utilisations abusives.
+    </p>
+
+    <h2>4. Accès et communication</h2>
+    <p>
+        Les données ne sont accessibles qu'aux personnes autorisées ou aux
+        prestataires qui en ont besoin pour une finalité légitime.
+        Les informations nécessaires à une commande ou à une livraison
+        peuvent être communiquées aux intervenants concernés.
+    </p>
+
+    <h2>5. Paiements</h2>
+    <p>
+        Les informations relatives aux transactions peuvent être conservées
+        pour leur suivi et la gestion des contestations. Ne communiquez jamais
+        votre code PIN Mobile Money ou votre mot de passe à une autre personne.
+    </p>
+
+    <h2>6. Conservation et sécurité</h2>
+    <p>
+        FormaShop doit mettre en œuvre des mesures raisonnables pour protéger
+        les données contre la perte, l'accès non autorisé et la divulgation.
+        Les données sont conservées pendant la durée nécessaire aux finalités
+        prévues et aux obligations légales applicables.
+    </p>
+
+    <h2>7. Droits des utilisateurs</h2>
+    <p>
+        Selon la législation applicable, vous pouvez demander l'accès à vos
+        données, leur rectification, leur suppression ou exercer d'autres droits
+        prévus par la loi. Contactez le service client pour présenter votre
+        demande.
+    </p>
+
+    <h2>8. Cookies</h2>
+    <p>
+        Des cookies techniques peuvent être utilisés pour les sessions,
+        l'authentification et la protection des formulaires. Leur désactivation
+        peut affecter certaines fonctionnalités.
+    </p>
+
+    <h2>9. Mineurs</h2>
+    <p>
+        Les mineurs doivent utiliser les services conformément aux règles
+        applicables et obtenir une autorisation parentale lorsque nécessaire.
+    </p>
+
+    <h2>10. Modifications</h2>
+    <p>
+        Cette politique peut être mise à jour lorsque les services ou les
+        obligations applicables évoluent. La date de mise à jour sera indiquée
+        en haut de la page.
+    </p>
+
+    <h2>11. Contact</h2>
+    <p>
+        Pour toute question relative à vos données personnelles, utilisez
+        les coordonnées officielles disponibles dans la rubrique Contact
+        de FormaShop.
+    </p>
+
+    <p><a href="{% url 'about' %}">Retour à la page À propos</a></p>
+</article>
+{% endblock %}

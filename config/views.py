@@ -49,3 +49,13 @@ def home(request):
             "products_count": products_count,
         }
     )
+def about(request):
+    return render(request, "about.html")
+
+
+def privacy_policy(request):
+    return render(request, "privacy_policy.html")
+
+
+def terms_of_use(request):
+    return render(request, "terms_of_use.html")

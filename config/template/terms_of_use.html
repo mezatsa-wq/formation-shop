@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Conditions d'utilisation — FormaShop{% endblock %}
+
+{% block content %}
+<style>
+.legal-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 35px 20px 60px;
+    color: #cbd5e1;
+    line-height: 1.85;
+}
+.legal-hero {
+    padding: 28px;
+    border: 1px solid #392766;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #111827, #17112f);
+}
+.legal-page h1, .legal-page h2 { color: #fff; }
+.legal-page h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); }
+.legal-page h2 { margin-top: 28px; font-size: 1.25rem; }
+.legal-page a { color: #c4b5fd; }
+.legal-date { color: #a78bfa; font-size: .9rem; }
+</style>
+
+<article class="legal-page">
+    <header class="legal-hero">
+        <h1>Conditions d'utilisation</h1>
+        <p class="legal-date">Dernière mise à jour : 13 octobre 2026</p>
+        <p>
+            Ces conditions encadrent l'accès et l'utilisation de FormaShop.
+            En utilisant la plateforme, vous vous engagez à respecter
+            les règles applicables et les présentes conditions.
+        </p>
+    </header>
+
+    <h2>1. Services proposés</h2>
+    <p>
+        FormaShop propose notamment des formations, des documents numériques,
+        des produits et des espaces de gestion destinés aux utilisateurs,
+        formateurs et vendeurs.
+    </p>
+
+    <h2>2. Compte utilisateur</h2>
+    <p>
+        Vous devez fournir des informations exactes, préserver la
+        confidentialité de vos identifiants et signaler toute utilisation
+        suspecte de votre compte.
+    </p>
+
+    <h2>3. Utilisation autorisée</h2>
+    <p>
+        Il est interdit d'utiliser la plateforme à des fins frauduleuses,
+        de perturber son fonctionnement, de tenter d'accéder à des comptes
+        sans autorisation ou de porter atteinte aux droits d'autrui.
+    </p>
+
+    <h2>4. Formateurs et vendeurs</h2>
+    <p>
+        Les personnes qui publient des formations ou des produits doivent
+        disposer des droits nécessaires sur les contenus proposés et fournir
+        des informations sincères. Certaines activités sont soumises à
+        validation par l'administration de FormaShop.
+    </p>
+
+    <h2>5. Documents et contenus</h2>
+    <p>
+        Les contenus numériques sont soumis aux droits de leurs auteurs
+        et titulaires. Un achat ou un accès sur la plateforme ne transfère
+        pas automatiquement les droits d'auteur. Toute reproduction ou
+        redistribution doit respecter les autorisations applicables.
+    </p>
+
+    <h2>6. Commandes et livraisons</h2>
+    <p>
+        Les utilisateurs doivent fournir des informations de commande exactes
+        et respecter les instructions de livraison et de paiement affichées
+        au moment de la commande. Les modalités spécifiques affichées lors
+        de l'achat complètent les présentes conditions.
+    </p>
+
+    <h2>7. Jetons et services payants</h2>
+    <p>
+        Lorsque des jetons sont utilisés pour accéder à un document ou à
+        un service, le coût applicable est celui affiché avant confirmation.
+        Les utilisateurs doivent vérifier les informations avant de valider
+        leur achat.
+    </p>
+
+    <h2>8. Suspension d'un compte</h2>
+    <p>
+        En cas d'abus ou de violation des règles, FormaShop peut prendre
+        des mesures proportionnées, conformément à la législation applicable
+        et aux procédures pertinentes.
+    </p>
+
+    <h2>9. Disponibilité du service</h2>
+    <p>
+        La plateforme peut être temporairement indisponible pour maintenance,
+        mise à jour ou raison technique. Des efforts raisonnables seront
+        déployés pour maintenir son fonctionnement.
+    </p>
+
+    <h2>10. Modifications des conditions</h2>
+    <p>
+        Les présentes conditions peuvent évoluer. La date de mise à jour
+        sera indiquée en haut de cette page.
+    </p>
+
+    <h2>11. Contact</h2>
+    <p>
+        Pour toute question concernant ces conditions, consultez les
+        coordonnées officielles du service client dans la rubrique Contact.
+    </p>
+
+    <p><a href="{% url 'about' %}">Retour à la page À propos</a></p>
+    <p><a href="{% url 'privacy_policy' %}">Lire la politique de confidentialité</a></p>
+</article>
+{% endblock %}
