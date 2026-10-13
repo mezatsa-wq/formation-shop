@@ -6,7 +6,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .pwa import service_worker, offline_page
+from .pwa import  offline_page
+from django.views.generic import TemplateView
 from .views import (
     home,
     about,
@@ -79,11 +80,16 @@ urlpatterns = [
 
     # DOCUMENTS
     path("documents/", include("documents.urls")),
+
+
+
+    path('service-worker.js', TemplateView.as_view(
+        template_name='service-worker.js',
+        content_type='application/javascript'
+    ), name='service_worker'),
+    path("offline/", offline_page, name="offline"),
+
 ]
-path("service-worker.js", service_worker, name="service_worker"),
-path("offline/", offline_page, name="offline"),
-
-
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
