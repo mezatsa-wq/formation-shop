@@ -1,13 +1,14 @@
 """
 URL configuration for config project.
 """
+from pathlib import Path
 
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from .pwa import  offline_page
-from django.views.generic import TemplateView
+from django.http import FileResponse
 
 from django.http import HttpResponse, Http404
 from .views import (
@@ -29,20 +30,19 @@ def service_worker_file(request):
     file_path = (
         Path(settings.BASE_DIR)
         / "config"
-        / "template"
+        / "static"
         / "service-worker.js"
     )
 
     if not file_path.is_file():
-        raise Http404("Fichier service-worker.js introuvable")
+        raise Http404("service-worker.js introuvable")
 
-    response = HttpResponse(
-        file_path.read_text(encoding="utf-8"),
-        content_type="application/javascript; charset=utf-8",
+    response = FileResponse(
+        file_path.open("rb"),
+        content_type="application/javascript",
     )
     response["Service-Worker-Allowed"] = "/"
     response["Cache-Control"] = "no-cache"
-
     return response
 urlpatterns = [
     # ADMIN DJANGO
