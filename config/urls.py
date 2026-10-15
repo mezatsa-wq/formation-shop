@@ -8,6 +8,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .pwa import  offline_page
 from django.views.generic import TemplateView
+
+from django.http import HttpResponse, Http404
 from .views import (
     home,
     about,
@@ -23,7 +25,25 @@ from app.views import (
     admin_trainer_reject,
 )
 
+def service_worker_file(request):
+    file_path = (
+        Path(settings.BASE_DIR)
+        / "config"
+        / "template"
+        / "service-worker.js"
+    )
 
+    if not file_path.is_file():
+        raise Http404("Fichier service-worker.js introuvable")
+
+    response = HttpResponse(
+        file_path.read_text(encoding="utf-8"),
+        content_type="application/javascript; charset=utf-8",
+    )
+    response["Service-Worker-Allowed"] = "/"
+    response["Cache-Control"] = "no-cache"
+
+    return response
 urlpatterns = [
     # ADMIN DJANGO
     path("admin/", admin.site.urls),
@@ -81,12 +101,11 @@ urlpatterns = [
     # DOCUMENTS
     path("documents/", include("documents.urls")),
 
-
-
-    path('service-worker.js', TemplateView.as_view(
-        template_name='service-worker.js',
-        content_type='application/javascript'
-    ), name='service_worker'),
+    path(
+        "service-worker.js",
+        service_worker_file,
+        name="service_worker",
+    ),
     path("offline/", offline_page, name="offline"),
 
 ]
