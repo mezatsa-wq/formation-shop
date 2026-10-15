@@ -146,6 +146,8 @@ def profile_view(request):
     wallet, created = TokenWallet.objects.get_or_create(
         user=request.user
     )
+    wallet.give_daily_reward()
+    wallet.refresh_from_db()
 
     profile, profile_created = UserProfile.objects.get_or_create(
         user=request.user
@@ -638,7 +640,8 @@ def trainer_dashboard(request):
     wallet, created = TokenWallet.objects.get_or_create(
         user=request.user
     )
-
+    wallet.give_daily_reward()
+    wallet.refresh_from_db()
     return render(
         request,
         "accounts/trainer_dashboard.html",

@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.db import models
+from django.db import models , transaction
 from django.utils import timezone
+from datetime import timedelta
 
 
 class TokenWallet(models.Model):
@@ -20,34 +21,56 @@ class TokenWallet(models.Model):
         blank=True
     )
 
+    @transaction.atomic
     def give_daily_reward(self):
-
         today = timezone.localdate()
 
-        if self.last_daily_reward != today:
+        wallet = TokenWallet.objects.select_for_update().get(
+            pk=self.pk
+        )
 
-            self.balance += 20
+        if wallet.last_daily_reward is None:
+            reward_dates = [today]
+        else:
+            days_to_reward = (
+                    today - wallet.last_daily_reward
+            ).days
 
-            self.last_daily_reward = today
+            if days_to_reward <= 0:
+                self.balance = wallet.balance
+                self.last_daily_reward = wallet.last_daily_reward
+                return False
 
-            self.save(
-                update_fields=[
-                    "balance",
-                    "last_daily_reward"
-                ]
-            )
+            reward_dates = [
+                wallet.last_daily_reward + timedelta(days=day)
+                for day in range(1, days_to_reward + 1)
+            ]
 
-            TokenTransaction.objects.create(
-                wallet=self,
+        total_tokens = 20 * len(reward_dates)
+
+        wallet.balance += total_tokens
+        wallet.last_daily_reward = today
+
+        wallet.save(
+            update_fields=["balance", "last_daily_reward"]
+        )
+
+        TokenTransaction.objects.bulk_create([
+            TokenTransaction(
+                wallet=wallet,
                 amount=20,
                 transaction_type="daily",
-                description="Bonus quotidien de 20 jetons"
+                description=(
+                    f"Bonus quotidien de 20 jetons — {reward_date}"
+                ),
             )
+            for reward_date in reward_dates
+        ])
 
-            return True
+        self.balance = wallet.balance
+        self.last_daily_reward = wallet.last_daily_reward
 
-        return False
-
+        return True
     def __str__(self):
         return f"{self.user.username} - {self.balance} jetons"
 
@@ -572,3 +595,20 @@ class SellerNotification(models.Model):
 
     def __str__(self):
         return f"{self.title} — {self.user.username}"
+class PushSubscription(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="push_subscriptions",
+    )
+    endpoint = models.URLField(max_length=2000, unique=True)
+    p256dh = models.CharField(max_length=255)
+    auth = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"Abonnement push de {self.user}"

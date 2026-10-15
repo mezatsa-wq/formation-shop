@@ -2586,7 +2586,9 @@ body {
         style="display:none;position:fixed;right:18px;bottom:76px;z-index:9999;border:0;border-radius:14px;padding:14px 18px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;font-weight:800;box-shadow:0 12px 32px #0006;cursor:pointer">
     ⬇ Installer FormaShop
 </button>
-
+{% if request.user.is_authenticated %}
+  {% include "accounts/push_prompt.html" %}
+{% endif %}
 <script>
 (function () {
     const installButton = document.getElementById("pwa-install");
@@ -2634,7 +2636,7 @@ body {
 
     if ("serviceWorker" in navigator && location.protocol === "https:") {
         window.addEventListener("load", function () {
-            navigator.serviceWorker.register('/static/service-worker.js')
+            navigator.serviceWorker.register("/service-worker.js")
                 .then(function (registration) {
                     console.log("FormaShop PWA enregistrée :", registration.scope);
                 })
@@ -2647,5 +2649,6 @@ body {
     updateConnection();
 })();
 </script>
+
 </body>
 </html>

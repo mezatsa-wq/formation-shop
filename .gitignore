@@ -7,6 +7,16 @@ db_sauvegarde.sqlite3
 # Python
 __pycache__/
 *.py[cod]
+# Clés privées VAPID et scripts temporaires
+vapid_private.pem
+vapid_public.pem
+scripts/generate_vapid.py
+
+# Variables et fichiers de configuration locaux
+.env
+.env.*
+!.env.example
+
 
 # Fichiers de sauvegarde
 *.backup

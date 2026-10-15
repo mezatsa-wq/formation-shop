@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from . import views
+from . import views, push_views
 
 
 urlpatterns = [
@@ -101,5 +101,20 @@ path(
     "seller/notifications/",
     views.seller_notifications,
     name="seller_notifications",
+),
+path(
+    "push/public-key/",
+    push_views.push_public_key,
+    name="push_public_key",
+),
+path(
+    "push/subscribe/",
+    push_views.push_subscribe,
+    name="push_subscribe",
+),
+path(
+    "push/unsubscribe/",
+    push_views.push_unsubscribe,
+    name="push_unsubscribe",
 ),
 ]

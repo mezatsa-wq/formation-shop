@@ -1,0 +1,389 @@
+<style>
+  #fs-push-panel {
+    position: fixed;
+    right: 18px;
+    bottom: 142px;
+    z-index: 10001;
+    width: min(390px, calc(100vw - 28px));
+    padding: 19px;
+    color: #f8fafc;
+    background: linear-gradient(145deg, #11152a, #0b1020 72%);
+    border: 1px solid rgba(139, 92, 246, .55);
+    border-radius: 20px;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, .48),
+                0 0 30px rgba(124, 58, 237, .14);
+    font-family: inherit;
+  }
+
+  #fs-push-panel[hidden],
+  #fs-push-launcher[hidden] {
+    display: none !important;
+  }
+
+  .fs-push-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .fs-push-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    font-size: 23px;
+  }
+
+  .fs-push-copy {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fs-push-copy h3 {
+    margin: 1px 0 6px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.35;
+  }
+
+  .fs-push-copy p {
+    margin: 0;
+    color: #b8bfd3;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  #fs-push-close {
+    flex: 0 0 auto;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    color: #aab1c5;
+    font-size: 23px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  #fs-push-action {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px 15px;
+    border: 0;
+    border-radius: 12px;
+    color: #fff;
+    background: linear-gradient(100deg, #7c3aed, #2563eb);
+    font-size: 14px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  #fs-push-action:disabled {
+    opacity: .65;
+    cursor: wait;
+  }
+
+  #fs-push-status {
+    margin: 10px 0 0;
+    color: #aeb7cc;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #fs-push-launcher {
+    position: fixed;
+    right: 17px;
+    bottom: 18px;
+    z-index: 10000;
+    width: 47px;
+    height: 47px;
+    border: 1px solid rgba(167, 139, 250, .65);
+    border-radius: 50%;
+    color: #fff;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, .28);
+    font-size: 19px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 480px) {
+    #fs-push-panel {
+      right: 14px;
+      bottom: 130px;
+      width: calc(100vw - 28px);
+    }
+  }
+</style>
+
+<div id="fs-push-panel" role="dialog" aria-labelledby="fs-push-title" hidden>
+  <div class="fs-push-top">
+    <div class="fs-push-icon" aria-hidden="true">🔔</div>
+
+    <div class="fs-push-copy">
+      <h3 id="fs-push-title">Restez connecté à FormaShop</h3>
+      <p>
+        Recevez les nouveautés, les nouvelles formations et les mises à jour
+        importantes de vos commandes.
+      </p>
+    </div>
+
+    <button id="fs-push-close" type="button" aria-label="Fermer">×</button>
+  </div>
+
+  <button id="fs-push-action" type="button">
+    Activer les notifications
+  </button>
+
+  <p id="fs-push-status" role="status" aria-live="polite">
+    Vous gardez le contrôle : l’activation se fait uniquement avec votre accord.
+  </p>
+</div>
+
+<button
+  id="fs-push-launcher"
+  type="button"
+  aria-label="Gérer les notifications FormaShop"
+  title="Gérer les notifications"
+  hidden
+>🔔</button>
+
+<script>
+(() => {
+  const panel = document.getElementById("fs-push-panel");
+  const launcher = document.getElementById("fs-push-launcher");
+  const closeButton = document.getElementById("fs-push-close");
+  const actionButton = document.getElementById("fs-push-action");
+  const statusText = document.getElementById("fs-push-status");
+
+  if (!panel || !launcher || !actionButton) return;
+
+  const dismissedKey = "formashop-push-panel-dismissed-v1";
+  let currentSubscription = null;
+  let working = false;
+
+  function setStatus(message) {
+    statusText.textContent = message;
+  }
+
+  function showPanel() {
+    panel.hidden = false;
+    launcher.hidden = true;
+  }
+
+  function hidePanel() {
+    panel.hidden = true;
+    launcher.hidden = false;
+  }
+
+  function isIOS() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+
+  function isInstalledOnIOS() {
+    return window.navigator.standalone === true ||
+      window.matchMedia("(display-mode: standalone)").matches;
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const raw = atob(base64);
+    const output = new Uint8Array(raw.length);
+
+    for (let i = 0; i < raw.length; i++) {
+      output[i] = raw.charCodeAt(i);
+    }
+
+    return output;
+  }
+
+  function getCookie(name) {
+    const prefix = name + "=";
+    const parts = document.cookie.split(";");
+
+    for (let part of parts) {
+      part = part.trim();
+      if (part.startsWith(prefix)) {
+        return decodeURIComponent(part.slice(prefix.length));
+      }
+    }
+
+    return "";
+  }
+
+  async function postJSON(url, data) {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || "La requête a échoué.");
+    }
+
+    return result;
+  }
+
+  async function getRegistration() {
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("Ce navigateur ne prend pas en charge le service worker.");
+    }
+
+    // Le service worker à la racine contrôle l'ensemble du site.
+    await navigator.serviceWorker.register("/service-worker.js", {
+      scope: "/"
+    });
+
+    return await navigator.serviceWorker.ready;
+  }
+
+  async function refreshState() {
+    if (!("serviceWorker" in navigator) ||
+        !("PushManager" in window) ||
+        !("Notification" in window)) {
+      panel.hidden = false;
+      launcher.hidden = true;
+      actionButton.disabled = true;
+      actionButton.textContent = "Non disponible";
+      setStatus("Les notifications push ne sont pas prises en charge par ce navigateur.");
+      return;
+    }
+
+    try {
+      const registration = await getRegistration();
+      currentSubscription = await registration.pushManager.getSubscription();
+    } catch (error) {
+      setStatus("Impossible de préparer les notifications. Rechargez la page puis réessayez.");
+    }
+
+    if (currentSubscription) {
+      actionButton.textContent = "Désactiver les notifications";
+      setStatus("Les notifications sont activées sur cet appareil.");
+      hidePanel();
+      return;
+    }
+
+    actionButton.textContent = "Activer les notifications";
+
+    if (Notification.permission === "denied") {
+      setStatus("Les notifications sont bloquées dans les réglages du navigateur. Autorisez-les dans les réglages pour les activer.");
+    } else if (isIOS() && !isInstalledOnIOS()) {
+      setStatus("Sur iPhone ou iPad, ajoutez d’abord FormaShop à l’écran d’accueil, puis ouvrez l’application installée pour activer les notifications.");
+    }
+
+    if (localStorage.getItem(dismissedKey) === "1") {
+      hidePanel();
+    } else {
+      showPanel();
+    }
+  }
+
+  closeButton.addEventListener("click", () => {
+    localStorage.setItem(dismissedKey, "1");
+    hidePanel();
+  });
+
+  launcher.addEventListener("click", () => {
+    localStorage.removeItem(dismissedKey);
+    showPanel();
+  });
+
+  actionButton.addEventListener("click", async () => {
+    if (working) return;
+
+    working = true;
+    actionButton.disabled = true;
+
+    try {
+      if (currentSubscription) {
+        const endpoint = currentSubscription.endpoint;
+
+        await postJSON("/accounts/push/unsubscribe/", { endpoint });
+        await currentSubscription.unsubscribe();
+
+        currentSubscription = null;
+        actionButton.textContent = "Activer les notifications";
+        setStatus("Les notifications sont désactivées sur cet appareil.");
+        localStorage.setItem(dismissedKey, "1");
+        hidePanel();
+        return;
+      }
+
+      if (!("Notification" in window) ||
+          !("PushManager" in window) ||
+          !("serviceWorker" in navigator)) {
+        throw new Error("Ce navigateur ne prend pas en charge les notifications push.");
+      }
+
+      if (isIOS() && !isInstalledOnIOS()) {
+        setStatus("Sur iPhone ou iPad : ouvrez le menu Partager de Safari, choisissez « Sur l’écran d’accueil », puis lancez FormaShop depuis son icône.");
+        return;
+      }
+
+      if (Notification.permission === "denied") {
+        setStatus("L’autorisation est bloquée. Modifiez les réglages de notifications de votre navigateur, puis réessayez.");
+        return;
+      }
+
+      // La permission est demandée uniquement après le clic de l'utilisateur.
+      const permission = Notification.permission === "granted"
+        ? "granted"
+        : await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        setStatus("Autorisation non accordée. Aucune notification ne sera envoyée à cet appareil.");
+        return;
+      }
+
+      const keyResponse = await fetch("/accounts/push/public-key/", {
+        credentials: "same-origin"
+      });
+
+      const keyData = await keyResponse.json();
+
+      if (!keyResponse.ok || !keyData.publicKey) {
+        throw new Error(keyData.error || "La clé publique push n'est pas configurée.");
+      }
+
+      const registration = await getRegistration();
+
+      currentSubscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+      });
+
+      await postJSON(
+        "/accounts/push/subscribe/",
+        currentSubscription.toJSON()
+      );
+
+      localStorage.removeItem(dismissedKey);
+      actionButton.textContent = "Désactiver les notifications";
+      setStatus("C’est activé ! Vous recevrez les notifications FormaShop sur cet appareil.");
+      hidePanel();
+
+    } catch (error) {
+      setStatus(error.message || "Une erreur est survenue. Vérifiez votre connexion puis réessayez.");
+    } finally {
+      working = false;
+      actionButton.disabled = false;
+    }
+  });
+
+  refreshState();
+})();
+</script>

@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "app",
-    "accounts",
+    "accounts.apps.AccountsConfig",
     "courses",
     "products",
     "orders",
@@ -301,3 +301,21 @@ PREMIUM_ORANGE_NUMBER = "694452058"
 # =========================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# =========================================================
+# NOTIFICATIONS PUSH FORMASHOP
+# =========================================================
+
+WEBPUSH_VAPID_PUBLIC_KEY = os.environ.get(
+    "BEhi-ZstekYWu2Ed-trYlPdF9K8aR_Zqi4FrbrPxA0wclMQBoLk9q57zM7yPV69WW0ls8DxxnjohGZucY0UzETU",
+    "",
+)
+
+WEBPUSH_VAPID_PRIVATE_KEY = os.environ.get(
+    "WEBPUSH_VAPID_PRIVATE_KEY",
+    "",
+).replace("\\n", "\n")
+
+WEBPUSH_VAPID_SUBJECT = os.environ.get(
+    "WEBPUSH_VAPID_SUBJECT",
+    "mailto:admin@formashop.com",
+)
