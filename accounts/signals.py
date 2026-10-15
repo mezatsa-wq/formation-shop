@@ -43,7 +43,7 @@ def safe_url(name, args=None, fallback="/"):
         return fallback
 
 
-def queue_private_notification(user, title, url="/accounts/"):
+def queue_private_notification(user, title, url="/"):
     """
     Envoie une notification push privée après validation
     de la transaction en base de données.
@@ -87,7 +87,7 @@ def order_notification_push(sender, instance, created, **kwargs):
         queue_private_notification(
             instance.recipient,
             instance.title,
-            "/orders/",
+            "/",
         )
 
 
@@ -97,7 +97,7 @@ def seller_notification_push(sender, instance, created, **kwargs):
         queue_private_notification(
             instance.user,
             instance.title,
-            "/accounts/",
+            "/",
         )
 
 
@@ -107,7 +107,7 @@ def trainer_notification_push(sender, instance, created, **kwargs):
         queue_private_notification(
             instance.trainer,
             instance.title,
-            "/accounts/",
+            "/",
         )
 
 
@@ -130,11 +130,7 @@ def new_product_push(sender, instance, created, **kwargs):
         or "Nouveau produit"
     )
 
-    url = safe_url(
-        "product_detail",
-        args=[instance.pk],
-        fallback=f"/products/{instance.pk}/",
-    )
+    url = "/"
 
     queue_public_notification(
         title=f"Nouveau produit : {product_name}",
@@ -165,14 +161,7 @@ def new_course_push(sender, instance, created, **kwargs):
 
     slug = getattr(instance, "slug", None)
 
-    if slug:
-        url = safe_url(
-            "course_detail",
-            args=[slug],
-            fallback=f"/courses/{slug}/",
-        )
-    else:
-        url = f"/courses/{instance.pk}/"
+    url = "/"
 
     queue_public_notification(
         title=f"Nouvelle formation : {course_title}",
@@ -196,11 +185,7 @@ def new_document_push(sender, instance, created, **kwargs):
         or "Nouveau document"
     )
 
-    url = safe_url(
-        "document_detail",
-        args=[instance.pk],
-        fallback=f"/documents/{instance.pk}/",
-    )
+    url = "/"
 
     queue_public_notification(
         title=f"Nouveau document : {document_title}",
