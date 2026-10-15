@@ -595,20 +595,26 @@ class SellerNotification(models.Model):
 
     def __str__(self):
         return f"{self.title} — {self.user.username}"
+from django.conf import settings
+from django.db import models
+
+
 class PushSubscription(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="push_subscriptions",
     )
-    endpoint = models.URLField(max_length=2000, unique=True)
-    p256dh = models.CharField(max_length=255)
-    auth = models.CharField(max_length=255)
+    endpoint = models.URLField(max_length=2048, unique=True)
+    p256dh = models.TextField()
+    auth = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-updated_at"]
+        verbose_name = "Abonnement aux notifications"
+        verbose_name_plural = "Abonnements aux notifications"
 
     def __str__(self):
-        return f"Abonnement push de {self.user}"
+        return f"Notifications de {self.user}"

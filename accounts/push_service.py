@@ -2,16 +2,19 @@ import json
 import logging
 
 from django.conf import settings
-from django.utils import timezone
 
-from pywebpush import webpush, WebPushException
+from pywebpush import WebPushException, webpush
 
 from .models import PushSubscription
 
 logger = logging.getLogger(__name__)
 
 
-def _send_to_subscription(subscription, payload):
+def send_push_to_user(user, title, body, url="/"):
+    """
+    Envoie une notification à tous les appareils abonnés
+    de l'utilisateur. Retourne le nombre d'envois réussis.
+    """
     private_key = getattr(
         settings,
         "WEBPUSH_VAPID_PRIVATE_KEY",
@@ -24,87 +27,131 @@ def _send_to_subscription(subscription, payload):
     )
 
     if not private_key or not subject:
-        logger.warning(
-            "Web Push non configuré : clés VAPID manquantes."
-        )
-        return False
-
-    subscription_info = {
-        "endpoint": subscription.endpoint,
-        "keys": {
-            "p256dh": subscription.p256dh,
-            "auth": subscription.auth,
-        },
-    }
-
-    try:
-        webpush(
-            subscription_info=subscription_info,
-            data=json.dumps(payload, ensure_ascii=False),
-            vapid_private_key=private_key,
-            vapid_claims={"sub": subject},
-            ttl=86400,
-        )
-        return True
-
-    except WebPushException as exc:
-        response = getattr(exc, "response", None)
-        status_code = getattr(response, "status_code", None)
-
-        # Le navigateur a supprimé cet abonnement.
-        if status_code in (404, 410):
-            subscription.delete()
-        else:
-            logger.warning(
-                "Échec d'envoi Web Push (HTTP %s).",
-                status_code,
-            )
-
-        return False
-
-    except Exception:
-        logger.exception("Erreur lors de l'envoi Web Push.")
-        return False
-
-
-def send_user_push(user, title, body, url="/accounts/"):
-    """Envoie une notification uniquement aux abonnements d'un compte."""
-    if not user or not getattr(user, "is_active", False):
+        logger.error("Configuration VAPID incomplète.")
         return 0
 
-    payload = {
-        "title": str(title)[:120],
-        "body": str(body)[:240],
-        "url": url if url.startswith("/") else "/",
-        "tag": f"formashop-user-{user.pk}-{int(timezone.now().timestamp())}",
-    }
+    payload = json.dumps({
+        "title": title,
+        "body": body,
+        "url": url,
+    })
+
+    sent = 0
 
     subscriptions = PushSubscription.objects.filter(user=user)
-    sent = 0
 
     for subscription in subscriptions.iterator():
-        if _send_to_subscription(subscription, payload):
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": subscription.endpoint,
+                    "keys": {
+                        "p256dh": subscription.p256dh,
+                        "auth": subscription.auth,
+                    },
+                },
+                data=payload,
+                vapid_private_key=private_key,
+                vapid_claims={"sub": subject},
+                timeout=10,
+            )
             sent += 1
+
+        except WebPushException as exc:
+            response = getattr(exc, "response", None)
+            status_code = getattr(response, "status_code", None)
+
+            logger.warning(
+                "Échec Web Push pour l'abonnement %s : %s",
+                subscription.pk,
+                exc,
+            )
+
+            # Ces statuts indiquent généralement un abonnement
+            # expiré ou devenu invalide.
+            if status_code in (404, 410):
+                subscription.delete()
+
+        except Exception:
+            logger.exception(
+                "Erreur inattendue lors de l'envoi Web Push."
+            )
 
     return sent
 
 
-def send_public_push(title, body, url="/"):
-    """Diffuse une annonce publique aux comptes abonnés actifs."""
-    payload = {
-        "title": str(title)[:120],
-        "body": str(body)[:240],
-        "url": url if url.startswith("/") else "/",
-        "tag": f"formashop-public-{timezone.now().strftime('%Y%m%d%H%M')}",
-    }
+def send_push_to_all(title, body, url="/"):
+    """
+    Envoie une notification à tous les abonnements actifs
+    enregistrés dans FormaShop.
+    """
+    private_key = getattr(
+        settings,
+        "WEBPUSH_VAPID_PRIVATE_KEY",
+        "",
+    )
+    subject = getattr(
+        settings,
+        "WEBPUSH_VAPID_SUBJECT",
+        "",
+    )
+
+    if not private_key or not subject:
+        logger.error("Configuration VAPID incomplète.")
+        return 0
+
+    payload = json.dumps({
+        "title": title,
+        "body": body,
+        "url": url,
+    })
 
     sent = 0
-    subscriptions = PushSubscription.objects.filter(
-        user__is_active=True
-    ).iterator()
 
-    for subscription in subscriptions:
-        if _send_to_subscription(subscription, payload):
+    for subscription in PushSubscription.objects.all().iterator():
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": subscription.endpoint,
+                    "keys": {
+                        "p256dh": subscription.p256dh,
+                        "auth": subscription.auth,
+                    },
+                },
+                data=payload,
+                vapid_private_key=private_key,
+                vapid_claims={"sub": subject},
+                timeout=10,
+            )
             sent += 1
 
+        except WebPushException as exc:
+            response = getattr(exc, "response", None)
+            status_code = getattr(response, "status_code", None)
+
+            logger.warning(
+                "Échec Web Push pour l'abonnement %s : %s",
+                subscription.pk,
+                exc,
+            )
+
+            if status_code in (404, 410):
+                subscription.delete()
+
+        except Exception:
+            logger.exception(
+                "Erreur inattendue lors de l'envoi Web Push."
+            )
+
     return sent
+def send_public_push(title, body, url="/"):
+    """
+    Envoie une notification aux abonnements enregistrés.
+    Alias de compatibilité pour le code qui appelle
+    send_public_push().
+    """
+    return send_push_to_all(
+        title=title,
+        body=body,
+        url=url,
+    )
